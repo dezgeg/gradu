@@ -1,0 +1,98 @@
+\documentclass[a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsfonts,amsmath,amssymb,amsthm,booktabs,color,enumitem,graphicx,listings,float}
+\usepackage[pdftex,hidelinks]{hyperref}
+\usepackage[finnish]{babel}
+\selectlanguage{finnish}
+\usepackage[fixlanguage]{babelbib}
+
+\title{Pro gradu--suunnitelma: \\ Eheyden säilyminen tiedostojärjestelmän kaatumistilanteissa}
+\author{Tuomas Tynkkynen}
+
+\begin{document}
+\maketitle
+
+Tiedostojärjestelmät ovat käyttäjille ja ohjelmistoille tapa tallettaa tietoa pysyvään muistiin, kuten kiintolevylle.
+Käytännössä kaikissa käyttöjärjestelmissä tiedostojen käsittelyyn vaaditut rajapinnat sekä käyttöliittymä
+sisältyvät itse käyttöjärjestelmään.
+Esimerkiksi Unix-pohjaisissa käyttöjärjestelmissä tiedostojen hallinta tapahtuu POSIX-standardissa
+määritellyillä systeemikutsuilla, esimerkiksi \texttt{open}, \texttt{read}, \texttt{write}, \texttt{stat}, \texttt{unlink}, \texttt{mkdir}
+sekä lukuisia muita.
+
+Tiedostojen levylle kirjoituksen aikana on mahdollista että kirjoitus keskeytyy jostakin odottamattomasta syystä.
+Esimerkiksi ohjelmassa itsesään voi olla virhe ja se voi kaatua kesken tiedoston kirjoituksen.
+Sähkökatkoksen yhteydessä tietokoneen virta voi katketa,
+tai käyttäjä saattaa irroittaa siirrettävän median (kuten USB-tikun) tietokoneesta tahallisesti tai tahattomasti.
+Tällaisissa poikkeustilanteissa on mahdollista että tietoa katoaa tai korruptoituu,
+mikä ei luonnollisesti ole toivottavaa.
+Tämän välttämiseksi on kuitenkin kehitelty erilaisia mekanismeja
+joilla sekä sovellukset että tiedostojärjestelmät voivat säilyä eheänä kaatumisista huolimatta.
+Aion gradutyössäni siis käsitellä näitä menetelmiä eheyden säilymiseen tiedostojärjestelmien kaatumistilanteissa.
+Pääasiallinen tutkielman tekotapa on kirjallisuuskatsaus kolmesta eri osa-alueesta:
+eheys sovellusohjelmoijan näkökulmasta,
+tekniikat tiedostojärjestelmän sisäisen metadatan turvaamiseksi
+sekä itse tiedostojärjestelmäajuritoteutusten testaaminen kaatumistilanteissa.
+Muut virhetilanteet kuin kaatumiset,
+esimerkiksi bittivirheet tai koko levyn hajoaminen RAID-järjestelmässä
+jätetään ainakin alustavasti aihealueen ulkopuolelle mutta on mahdollinen laajentamisen aihe.
+
+Yksi lähestymissuunta on eheyden säilyminen sovellusten kannalta.
+Otetaan esimerkiksi graafinen tekstieditori.
+Kun muokattua olemassaolevaa tiedostoa tallennetaan,
+on toivottavaa että tallentaminen tapahtuu atomisesti,
+eli virhetilanteesta huolimatta levylle täytyy päätyä joko muokattu versio kokonaisena,
+tai tiedoston tulee säilyä muuttumattomana.
+Tällaista operaatiota ei löydy suoraan POSIX-standardista,
+vaan sovelluskehittäjän täytyy itse toteuttaa tiedoston tallennuksen atomisuus useasta POSIX-tiedosto-operaatiosta koostamalla.
+Toimivan ratkaisun löytäminen ei ole välttämättä itsestäänselvää,
+sillä paremman suorituskyvyn saavuttamiseksi suurin osa POSIX-funktiokutsusta ei takaa operaation olevan persistentisti kirjoitettuna levylle synkronisesti.
+Esimerkiksi tiedostoon \texttt{write()}-kutsulla kirjoitettu data päätyy modernissa käyttöjärjestelmässä ensin välimuistiin.
+Samaten monet hakemistoja muokkaavat kutsut eivät ole oletuksena pysyviä (durable)
+eivätkä välttämättä päädy levylle samassa järjestyksessä kuin missä sovellus teki ne.
+Tätä aihetta käsittelee artikkeli ``All File Systems Are Not Created Equal: On the Complexity of Crafting Crash-consistent Applications''~\cite{PosixDataConsistency},
+jossa empiirisesti testataan joitakin Linux-sovelluksia erityisellä työkalulla.
+Usean sovelluksen todetaan korruptoivan dataa yleisillä Linux-tiedostojärjestelmillä,
+mutta myös että useat käytännössä oikein toimivat sovellukset tekevät oletuksia tiedostojärjestemäoperaatioiden eheydestä joita POSIX ei lupaa.
+Tietyt tiedostojärjestelmät siis tarjoavat (ei välttämättä tarkoituksenmukaisesti) vahvempia lupauksia eheydestä,
+mikä voi aiheuttaa sovelluksen korruptoivan dataa tietyillä tiedostojärjestelmillä mutta toimivan oikein joillain toisilla.
+Esimerkiksi aikoinaan Linux-jakeluiden siirtymä \texttt{ext3}-tiedestojärjestelmästä sen seuraajaan \texttt{ext4}:ään tuotti ongelmia,
+sillä lukuisat tosimaailman sovellukset toimivat oikein \texttt{ext3}:lla mutta ei enää \texttt{ext4}:llä.
+
+Toinen tiedostojärjestelmien eheyden osa-alue on tiedostojärjestelmän sisäisen metadatan konsistenssiuden säilyminen.
+Tiedostojärjestelmän sisäisessä toteutuksessa on tyypillisesti useita levyllä sijaitsevia tietorakenteita joilla ovat omat invarianttinsa.
+Esimerkiksi hakemistorakenteen täytyy muodostaa yhtenäinen puu,
+eli hakemistorakenteessa ei saa esiintyä syklejä ja jokaiseen tiedostoon pitää voida kulkea juurihakemistosta.
+Yksittäisen hakemiston toteutuksena voidaan käyttää esimerkiksi B-puuta jossa avaimena käytetään tiedoston nimeä,
+ja jolle luonnollisesti täytyy päteä B-puulle ominaiset järjestysinvariantit.
+Monet POSIX-tiedostojärjestelmäoperaatiot sisältävät vaatimuksia mitä tiedostojärjestelmän pitää toteuttaa.
+Esimerkiksi tiedoston siirtäminen tai uudelleennimeäminen \texttt{rename()}-kutsulla täytyy olla atominen,
+ja tiedoston voi siirtää eri alihakemistoon kuin missä se alunperin oli.
+Jos tällaisen siirto-operaation lähde- ja kohdehakemistot sijaitsevat eri levylohkoilla,
+täytyisi kahta levylohkoa päivittää samaan aikaan mikä ei suoraan ole mahdollista tehdä lohkolaitteella.
+Samaten esimerkiksi tiedoston poistaminen tyypillisesti vaatii useamman tietorakenteen päivitystä atomisesti,
+kuten tiedoston käyttämän tilan vapauttaminen sekä tiedoston nimen poistamisen hakemistosta.
+Tämänkaltaisten ongelmien ratkaisuun on neljä laaja-alaista lähestymistapaa:
+kirjaavat tiedostojärjestelmät (journaling) kuten \texttt{ext3}~\cite{Ext2Journal},
+copy on write-pohjaiset tiedostojärjestelmät kuten \texttt{btrfs}~\cite{Btrfs},
+lokipohjaiset tiedostojärjestelmät kuten \texttt{Sprite LFS}~\cite{SpriteLfs} sekä "soft updates"~\cite{SoftUpdates}-pohjautuvat tiedostojärjestelmät kuten Berkeley FFS.
+Näillä menetelmillä on kaikilla erilaisia hyviä ja huonoja puolia muutenkin kuin eheyden kannalta,
+esimerkiksi lokipohjaisilla tiedostojärjestelmillä on mahdollista ottaa
+pienellä vaivalla snapshoteja tiedostojärjestelmästä,
+mikä helpottaa esimerkiksi inkrementaalisten varmuuskopioiden tekemistä.
+
+Kolmas suuntaus on itse tiedostojärjestelmätoteutusten oikeellisuuden tutkiminen.
+Erityisesti Linux-tiedostojärjestelmäajureista löytyy kohtuullinen määrä tutkimuksia lähdekoodin avoimuuden takia.
+Yleinen tapa tutkia ajurin tai tiedostojärjestelmätyökalun tutkimista kaatumistilanteissa on asentaa lohkolaiteajurin ympärille komponentti
+joka kirjaa lokitiedostoon kaikki kirjoitukset ylös lokitiedostoon.
+Tästä lokitiedostosta voi jälkikäteen muodostaa kaikki tilat joissa lohkolaitteen on mahdollista olla kaatumisen jälkeen,
+jolloin jokaiselle kohdatulle kaatumistilalle voidaan varmistaa esimerkiksi tiedostojärjestelmän sisäisten invarianttien säilyminen.
+Tähän menetelmään on yhdistetty esimerkiksi mallintarkastusta (model checking) erinäisissä muodoissa,
+muun muassa artikkelissa ``Using Model Checking to Find Serious File System Errors''~\cite{ModelChecking}.
+
+\bibliographystyle{babalpha-lf}
+\bibliography{lahteet}
+
+\end{document}
