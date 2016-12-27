@@ -1,3 +1,16 @@
 \section{Johdanto}
 
+\section{POSIX-tiedostojärjestelmärajapinnat}
+
+Aikoinaan oli käytössä useita Unix-pohjaisia käyttöjärjestelmiä jotka olivat periaatteessa samankaltaisia mutta käytännössä toimivat hieman eri tavalla.
+Sovellusohjelmoijan kannalta tämä hankaloitti huomattavasti monella eri Unix-järjestelmällä toivivien ohjelmien toteutusta.
+Tämän ratkaisemiseksi kehiteltiin POSIX-standardi~\ref{PosixSpec} yhtenäistämään eri Unix-toteutusten tarjoamat rajapinnat.
+Ensimmäinen versio standardista julkaistiin vuonna 1988.
+POSIX-standardi määrittelee muun muassa komentorivityökaluja sekä C-kielisiä rajapintoja muun muassa tiedostojen, säikeiden ja prosessien hallintaan.
+Käytännössä mitään Linux-jakelua ei virallisesti ole sertifioitu POSIX-yhteensopivaksi,
+mutta käytännössä kehittäjät tähtäävät POSIX-yhteensopivuuteen.
+
+Luotettavien ja kaatumisen kestävien sovellusten luominen POSIXissa on suhteellisen monimutkaista.
+Esitelläänkin seuraavaksi POSIXin tarjoamat C-rajapinnat tiedostojen käsittelyyn.
+
 \section{Yhteenveto}
