@@ -14,7 +14,20 @@ Luotettavien ja kaatumisen kestävien sovellusten luominen POSIXissa on suhteell
 Esitelläänkin seuraavaksi POSIXin tarjoamat C-rajapinnat tiedostojen käsittelyyn.
 
 \subsection{Tiedostonimet}
-POSIX-Tiedostopoluissa hakemistojen erottimena toimii kauttaviiva eli \texttt{/}-merkki.
+POSIX-tiedostojärjestelmät tukevat hakemistoja, eli tiedostojärjestelmä muodostaa hierarkisen puurakenteen.
+Tiedostopoluissa hakemistojen erottimena toimii kauttaviiva eli \texttt{/}-merkki.
+\texttt{/}-merkillä alkavat tiedostopolut ovat \emph{absoluuttisia} polkuja,
+muut polut ovat \emph{suhteellisia} polkuja.
+Jokaisella ajonaikaisella prosessilla on oma nykyinen hakemistonsa (current directory),
+jonka suhteen suhteelliset polut tulkitaan.
+Esimerkiksi prosessilla jonka nykyinen hakemisto on \texttt{/home/tuomas},
+viittaisi polku \texttt{Downloads/kuva.jpg} tiedostoon \texttt{/home/tuomas/Downloads/kuva.jpg}.
+POSIXissa on kaksi erityistä tiedostonimeä: \texttt{.} ja \texttt{..} joiden voidaan mieltää löytyvän jokaisesta hakemistosta.
+Näistä \texttt{.} viittaa aina siihen hakemistoon jossa se sijaitsee,
+esimerkiksi polku \texttt{/home/tuomas/.} viittaa samaan hakemistoon kuin polku \texttt{/home/tuomas}.
+Niinikään \texttt{.}-nimeä voi käyttää missä tahansa kohtaa polkua,
+eli esimerkiksi \texttt{/home/./tuomas} tai \texttt{/home/././tuomas/././.} viittaavat edelleen samaan hakemistoon.
+Nimi \texttt{..} taas viittaa ylempään tasoon hakemistorakenteessa.
 
 % http://pubs.opengroup.org/onlinepubs/9699919799/functions/open.html#tag_16_357
 \begin{verbatim}
