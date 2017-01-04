@@ -13,4 +13,105 @@ mutta käytännössä kehittäjät tähtäävät POSIX-yhteensopivuuteen.
 Luotettavien ja kaatumisen kestävien sovellusten luominen POSIXissa on suhteellisen monimutkaista.
 Esitelläänkin seuraavaksi POSIXin tarjoamat C-rajapinnat tiedostojen käsittelyyn.
 
+\subsection{Tiedostonimet}
+POSIX-Tiedostopoluissa hakemistojen erottimena toimii kauttaviiva eli \texttt{/}-merkki.
+
+% http://pubs.opengroup.org/onlinepubs/9699919799/functions/open.html#tag_16_357
+\begin{verbatim}
+int open(const char *path, int oflag, ...);
+\end{verbatim}
+
+% http://pubs.opengroup.org/onlinepubs/9699919799/functions/close.html#tag_16_67
+\begin{verbatim}
+int close(int fildes);
+\end{verbatim}
+
+% http://pubs.opengroup.org/onlinepubs/9699919799/functions/read.html#tag_16_474
+\begin{verbatim}
+ssize_t read(int fildes, void *buf, size_t nbyte);
+\end{verbatim}
+
+% http://pubs.opengroup.org/onlinepubs/9699919799/functions/write.html#tag_16_685
+\begin{verbatim}
+ssize_t write(int fildes, const void *buf, size_t nbyte);
+\end{verbatim}
+
+% http://pubs.opengroup.org/onlinepubs/9699919799/functions/fstat.html#tag_16_173
+\begin{verbatim}
+int fstat(int fildes, struct stat *buf);
+\end{verbatim}
+
+% dev_t st_dev            Device ID of device containing file
+% ino_t st_ino            File serial number.
+% mode_t st_mode          Mode of file (see below).
+% nlink_t st_nlink        Number of hard links to the file.
+% uid_t st_uid            User ID of file.
+% gid_t st_gid            Group ID of file.
+% dev_t st_rdev           Device ID (if file is character or block special).
+% off_t st_size           For regular files, the file size in bytes.
+%                         For symbolic links, the length in bytes of the
+%                         pathname contained in the symbolic link.
+% struct timespec st_atim Last data access timestamp.
+% struct timespec st_mtim Last data modification timestamp.
+% struct timespec st_ctim Last file status change timestamp.
+% blksize_t st_blksize    A file system-specific preferred I/O block size
+%                         for this object. In some file system types, this
+%                         may vary from file to file.
+% blkcnt_t st_blocks      Number of blocks allocated for this object.
+%
+% http://pubs.opengroup.org/onlinepubs/9699919799/functions/chmod.html#tag_16_58
+\begin{verbatim}
+int chmod(const char *path, mode_t mode);
+\end{verbatim}
+
+% http://pubs.opengroup.org/onlinepubs/9699919799/functions/chown.html#tag_16_59
+\begin{verbatim}
+int chown(const char *path, uid_t owner, gid_t group);
+\end{verbatim}
+
+% http://pubs.opengroup.org/onlinepubs/9699919799/functions/link.html#tag_16_293
+\begin{verbatim}
+int link(const char *path1, const char *path2);
+\end{verbatim}
+
+% http://pubs.opengroup.org/onlinepubs/9699919799/functions/unlink.html#tag_16_635
+\begin{verbatim}
+int unlink(const char *path);
+\end{verbatim}
+
+% http://pubs.opengroup.org/onlinepubs/9699919799/functions/rename.html#tag_16_487
+\begin{verbatim}
+int rename(const char *old, const char *new);
+\end{verbatim}
+
+% http://pubs.opengroup.org/onlinepubs/9699919799/functions/readdir.html#tag_16_475
+\begin{verbatim}
+struct dirent *readdir(DIR *dirp);
+\end{verbatim}
+
+% http://pubs.opengroup.org/onlinepubs/9699919799/functions/readlink.html#tag_16_476
+\begin{verbatim}
+ssize_t readlink(const char *restrict path, char *restrict buf, size_t bufsize);
+\end{verbatim}
+
+% http://pubs.opengroup.org/onlinepubs/9699919799/functions/ftruncate.html
+\begin{verbatim}
+int ftruncate(int fildes, off_t length);
+\end{verbatim}
+
+% http://pubs.opengroup.org/onlinepubs/9699919799/functions/fdopendir.html#tag_16_127
+\begin{verbatim}
+DIR *opendir(const char *dirname);
+\end{verbatim}
+
+% http://pubs.opengroup.org/onlinepubs/9699919799/functions/closedir.html
+\begin{verbatim}
+int closedir(DIR *dirp);
+\end{verbatim}
+
+% http://pubs.opengroup.org/onlinepubs/9699919799/functions/lseek.html#tag_16_310
+\begin{verbatim}
+off_t lseek(int fildes, off_t offset, int whence);
+\end{verbatim}
+
 \section{Yhteenveto}
