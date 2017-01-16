@@ -29,25 +29,81 @@ Niinikään \texttt{.}-nimeä voi käyttää missä tahansa kohtaa polkua,
 eli esimerkiksi \texttt{/home/./tuomas} tai \texttt{/home/././tuomas/././.} viittaavat edelleen samaan hakemistoon.
 Nimi \texttt{..} taas viittaa ylempään tasoon hakemistorakenteessa.
 
+\subsection{Tiedoston avaus ja sulkeminen}
+Tiedoston avaus tapahtuu \texttt{open}-funktiolla:
+
 % http://pubs.opengroup.org/onlinepubs/9699919799/functions/open.html#tag_16_357
 \begin{verbatim}
 int open(const char *path, int oflag, ...);
 \end{verbatim}
+
+Parametri \texttt{path} on tiedoston polku merkkijonona
+ja \texttt{oflag} on kasa lippuja jotka määräävät miten tiedosto avataan.
+Yksi lipuista \texttt{O\_RDONLY}, \texttt{O\_WRONLY} ja \texttt{O\_RDWR} on pakko antaa.
+Ne määräävät avataanko tiedosto vain lukua, vain kirjoitusta tai sekä lukua että
+kirjoitusta varten.
+Muita mahdollisia lippuja on esimerkiksi \texttt{O\_TRUNC},
+joka tyhjentään tiedoston sisällön (truncate).
+Tiedoston voi myös luoda antamalla lipun \texttt{O\_CREAT},
+jolloin kolmas parametri määrittelee luodun tiedoston oikeudet.
+Funktio palauttaa onnistuessaan \texttt{int}-tyyppisen \emph{tiedostokahvan},
+joka viittaa kyseiseen avattuun tiedostoon.
+Tiedostokahvat ovat prosessikohtaisia,
+eli yrittämällä lukea samalla tiedostokahvan numeerisella arvolla
+jossakin toisessa prosessissa tapahtuu jotain odottomatonta.
+
+Tiedoston sulkeminen tapahtuu \texttt{close}-funktiolla,
+jolle annetaan auki oleva tiedostokahva ainoana parametrina:
 
 % http://pubs.opengroup.org/onlinepubs/9699919799/functions/close.html#tag_16_67
 \begin{verbatim}
 int close(int fildes);
 \end{verbatim}
 
-% http://pubs.opengroup.org/onlinepubs/9699919799/functions/read.html#tag_16_474
-\begin{verbatim}
-ssize_t read(int fildes, void *buf, size_t nbyte);
-\end{verbatim}
+\subsection{Tiedoston luku ja kirjoitus}
 
+Tiedostosta luku ja tiedostoon kirjoitus tapahtuu ohjelmoijan näkökulmasta suhteellisen
+samalla tavalla, funktioilla \texttt{read} ja \texttt{write}:
+
+% http://pubs.opengroup.org/onlinepubs/9699919799/functions/read.html#tag_16_474
 % http://pubs.opengroup.org/onlinepubs/9699919799/functions/write.html#tag_16_685
 \begin{verbatim}
+ssize_t read(int fildes, void *buf, size_t nbyte);
 ssize_t write(int fildes, const void *buf, size_t nbyte);
 \end{verbatim}
+
+Ensimmäinen parametri \texttt{fildes} on tiedostokahva jota operoidaan.
+\texttt{buf} on osoitin \texttt{nbyte} tavun kokoiseen puskuriin johon
+luetaan tai josta kirjoitetaan.
+Onnistuessaan funktiot palauttavat kuinka monta tavua luettiin tai kirjoitettiin.
+Paluuarvo voi siis olla pienempi kuin mitä ohjelma pyysi lukemaan tai kirjoittamaan,
+esimerkiksi jos kirjoittaessa levy täyttyi kesken tai luettaessa
+tiedosto loppui kesken.
+
+Jokaisella tavalliseen tiedostoon viittaavalla tiedostokahvalla on
+sijainti tavuina missä kohtaa tiedostoa ollaan ja josta
+lukeminen tai kirjoittaminen aloitetaan.
+Onnistuessaan sijainti tiedostossa siirtyy eteenpäin paluuarvon verran.
+
+Tiedostokahvan sijainnin voi selvittää ja sijaintia tiedostossa voi
+siirtää \texttt{lseek}-kutsulla:
+
+% http://pubs.opengroup.org/onlinepubs/9699919799/functions/lseek.html#tag_16_310
+\begin{verbatim}
+off_t lseek(int fildes, off_t offset, int whence);
+\end{verbatim}
+
+Ensimmäinen parametri \texttt{fildes} on tiedostokahva jota operoidaan.
+Kolmas parametri \texttt{whence} kertoo miten \texttt{offset}-parametri tulkitaan:
+
+\begin{itemize}
+    \item Arvo \texttt{SEEK\_SET} asettaa kahvan sijainniksi \texttt{offset}.
+    \item Arvo \texttt{SEEK\_CUR} siirtää kahvaa eteenpäin \texttt{offset} tavua.
+    \item Arvo \texttt{SEEK\_END} siirtää kahvan \texttt{offset} tavua eteenpäin laskien tiedoston lopusta.
+\end{itemize}
+
+Onnistuessaan kutsu palauttaa sijainnin johon siirryttiin.
+Sijainnin voi siis selvittää siirtymättä tiedostossa kutsulla \texttt{lseek(fd, , SEEK\_CUR)}.
 
 % http://pubs.opengroup.org/onlinepubs/9699919799/functions/fstat.html#tag_16_173
 \begin{verbatim}
@@ -122,9 +178,5 @@ DIR *opendir(const char *dirname);
 int closedir(DIR *dirp);
 \end{verbatim}
 
-% http://pubs.opengroup.org/onlinepubs/9699919799/functions/lseek.html#tag_16_310
-\begin{verbatim}
-off_t lseek(int fildes, off_t offset, int whence);
-\end{verbatim}
 
 \section{Yhteenveto}
