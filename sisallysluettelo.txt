@@ -1,0 +1,54 @@
+Sisällysluettelosuunnitelma:
+
+1. Johdanto
+    - Ongelmakuvaus, eli tiedostojärjestelmät ja mitä niille tapahtuu kaatumistilanteissa.
+    - Varmaankin tarvitsee lyhyehkön määrittelyn kaatumistilanteille sekä tiedostojärjestelmille.
+    - Missä asemassa tiedostojärjestelmät ovat käyttäjän / sovellusten näkökulmasta.
+        - Voisi esitellä esim. PostgreSQL tai SQLite esimerkkinä tiedostojärjestelmän päälle toteutetusta tietokantatoteutuksesta joka tarjoaa ACID-semantiikat.
+
+2. POSIX-tiedostojärjestelmä
+    - Kuvaus (ehkäpä funktiotasolla) siitä millaiset rajapinnat sovelluskehittäjillä on käytettävissä.
+      Suhteellisen monimutkainen esitieto jota tarvitaan seuraavissa kappaleissa.
+
+3. POSIX ja kaatumistilanteet
+    - Selitetään mahdolliset välimuistit ja miksi suorituskyvyn kannalta olennaisia, mahdollinen operaatioiden uudelleenjärjestely, fsync
+    - Selitetään miten erilaiset tiedostojärjestelmät voivat toimia eri tavoilla
+        - Jotkut operaatiot voivat olla atomisia yhdellä tiedostojärjestelmällä muttei toisella
+        - Toiset tiedostojärjestelmät voivat kirjoittaa levylle eri järjestyksessä missä sovellus teki ne
+    - Päälähteenä "All File Systems Are Not Created Equal: On the Complexity of Crafting Crash-consistent Applications"
+
+3 (?). Sovellusten toteutus kaatumisturvallisesti
+    - Päälähteenä "All File Systems Are Not Created Equal: On the Complexity of Crafting Crash-consistent Applications"
+    - Esimerkkinä joku teoreettinen tekstieditori, tai (e.m. lähteestä) Git tai joku SQL-tietokanta
+    - Ehkä tarvitsee toisenkin aiheeseen liittyvän lähteen
+
+3. (ext2 tai Berkeley Fast Filesystem):n rakenne & invariantit
+    - Joko ext2 tai FFS. Molemmat hyvin samankaltaisia.
+    - ext2 Linuxin tukema, FFS taas ehkä paremmin lähteiden tukema.
+    - Esitellään atalan tason rakenne levyllä.
+    - Mitä ongelmia voi syntyä kaatumistilanteessa.
+    - Miten näitä on yritetty ratkaista
+        - Synkroniset metadatakirjoitukset -> matala suorituskyky
+        - Koko levyn fsck kaatumisen jälkeen -> kestää todella kauan isoilla tiedostojärjestelmillä
+        - Ehkä erillinen kappale tälle
+
+4. Kirjaava (journaling) tiedostojärjestelmä
+    - Katsaus ext3:n, joka lisää kirjauksen ext2:een.
+    - Mitä ongelmia ratkaisee, (esim. atominen rename())
+
+5. Soft updates
+    - Lähteenä "Journaling Versus Soft Updates: Asynchronous Meta-data Protection in File Systems"
+    - Vaihtoehtoinen tapa (vrt. journalointi) toteuttaa metadatan puskurointi ja säilyttää tiedostojärjestelmä (enimmäkseen) konsistenttina.
+    - Ei estä kaikkia epäkonsistenttiuksia (mutta ei korruptoi dataa kaatuessa)
+    - Suhteellinen monimutkainen toteuttaa
+
+6. Lokipohjaiset (log-structured) ja copy-on-write-tiedostojärjestelmät
+    - Kaksi erilaista lähestymistapaa
+    - Molemmat ovat suht läheisiä toisilleen, niin yksi kappale todennäköisesti riittää molemmille.
+
+7. Tiedostojärjestelmätoteutusten testaus
+    - Katsaus aiheeseen mm. seuraavien paperien kautta:
+        - Recon: Verifying File System Consistency at Runtime
+        - Using Model Checking to Find Serious File System Errors
+
+8. Yhteenveto
