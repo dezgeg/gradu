@@ -41,6 +41,7 @@
 }
 
 % Runtime invariant validation of ext2/3 and btrfs
+% - modifies block layer & ext3/btrfs transaction commit code
 @article{Recon,
  author = {Fryer, Daniel and Sun, Kuei and Mahmood, Rahat and Cheng, Tinghao and Benjamin, Shaun and Goel, Ashvin and Brown, Angela Demke},
  title = {Recon: Verifying File System Consistency at Runtime},
@@ -63,6 +64,7 @@
 }
 
 % ext2 fsck described in SQL, details some ext2 invariants
+% Otherwise quite bland
 @inproceedings{SQCK,
  author = {Gunawi, Haryadi S. and Rajimwale, Abhishek and Arpaci-Dusseau, Andrea C. and Arpaci-Dusseau, Remzi H.},
  title = {SQCK: A Declarative File System Checker},
@@ -155,6 +157,19 @@
 }
 
 % Description of Ext2 journaling
+% - Long recovery time of non-journalled fs.
+% - Mentions internal invariants & caching
+%    - "The layout of data on disk (or alternatively, perhaps, its network protocol, if the filesystem is not local), details of internal caching,
+        and the algorithms used to schedule disk IO - these are all things which can be changed without necessarily violating the specification of
+        the filesystem's application interface."
+% - Mentions Fast Filesystem as a synchronous Unix filesystem variant
+% - Mentions recovery constructs such as preserving (ext2 has), predictability & atomicity (which ext2 doesn't)
+% - Easy to extend existing ext2
+% - Simply record metadata blocks to journal, wrap around when needed
+% - Only once journal safely committed, writing to actual blocks can start
+% - Concept of transaction and some ordering dependencies
+%   - Relative to database transactions, short-lived & never need to abort
+% Interesting related presentation: https://www.linuxfoundation.jp/jp_uploads/seminar20060911/Ted_Tso.pdf
 @inproceedings{Ext2Journal,
  author = {Stephen C. Tweedie},
  title = {Journaling the Linux ext2fs Filesystem},
@@ -162,7 +177,27 @@
  year = {1998},
 }
 
-@inproceedings{SoftUpdates,
+@article{SoftUpdates,
+ author = {Ganger, Gregory R. and McKusick, Marshall Kirk and Soules, Craig A. N. and Patt, Yale N.},
+ title = {Soft Updates: A Solution to the Metadata Update Problem in File Systems},
+ journal = {ACM Trans. Comput. Syst.},
+ issue_date = {May 2000},
+ volume = {18},
+ number = {2},
+ month = may,
+ year = {2000},
+ issn = {0734-2071},
+ pages = {127--153},
+ numpages = {27},
+ url = {http://doi.acm.org/10.1145/350853.350863},
+ doi = {10.1145/350853.350863},
+ acmid = {350863},
+ publisher = {ACM},
+ address = {New York, NY, USA},
+}
+
+% - Lists update dependencies for Berkeley Fast File System
+@inproceedings{SoftUpdatesFfs,
  author = {McKusick, Marshall Kirk and Ganger, Gregory R.},
  title = {Soft Updates: A Technique for Eliminating Most Synchronous Writes in the Fast Filesystem},
  booktitle = {Proceedings of the Annual Conference on USENIX Annual Technical Conference},
@@ -176,6 +211,8 @@
  publisher = {USENIX Association},
  address = {Berkeley, CA, USA},
 }
+
+
 
 % Alternative approach to journaling/etc.
 @inproceedings{ConsistencyWithoutOrdering,
