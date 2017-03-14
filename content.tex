@@ -178,5 +178,17 @@ DIR *opendir(const char *dirname);
 int closedir(DIR *dirp);
 \end{verbatim}
 
+\section{ext2:n rakenne}
+ext2 (``Second extended filesystem'')  on tiedostojärjestelmä joka on luotu jo Linuxin alkuaikoina, vuonna 1993.
+Ennen ext2:ta Linux käytti MINIX-tiedostojärjestelmää,
+joka oli yksinkertainen mutta sisälsi erinäisiä rajoitteita jotka alkoivat haittaamaan.
+Esimerkiksi MINIX-tiedostojärjestelmässä tiedostonimen pituus oli rajoitettu 14 merkkiin
+ja tiedoston koko 64 megatavuun.
+Ext2 ei ainoastaan korjaa näitä puutteeita,
+mutta on lisäksi suunniteltu siten että tiedostojärjelmän levyformaattia voidaan laajentaa taaksepäin yhteensopivasti.
+Ext2:lle onkin kehitetty seuraajat ext3 ja ext4 joissa olemassaoleva ext2- tai ext3-osio voidaan päivittää seuraavaan
+ext:n versioon ilman tiedostojärjestelmän uudelleenformatointia.
+
+Tässä luvussa tarkastellaan ext2:n rakennetta levyllä.
 
 \section{Yhteenveto}
