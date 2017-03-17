@@ -188,7 +188,12 @@ Ext2 ei ainoastaan korjaa näitä puutteeita,
 mutta on lisäksi suunniteltu siten että tiedostojärjelmän levyformaattia voidaan laajentaa taaksepäin yhteensopivasti.
 Ext2:lle onkin kehitetty seuraajat ext3 ja ext4 joissa olemassaoleva ext2- tai ext3-osio voidaan päivittää seuraavaan
 ext:n versioon ilman tiedostojärjestelmän uudelleenformatointia.
+Erityisesti mainittakoon ext3:n tuoma kirjaus, joka parantaa merkittävästi ext2:n kykyä säilyä konsistenttina kaatumistilanteessa.
+Kirjaavia tiedostojärjestelmiä käsitelläänkin myöhemmin luvussa X.
 
 Tässä luvussa tarkastellaan ext2:n rakennetta levyllä.
+Tiedostojärjestelmän levyrakenne vaikuttaa olennaisesti siihen minkälaisia epäkonsistenttiuksia tiedostojärjestelmään voi syntyä virhetilanteissa.
+Yleisesti ottaen ext2:n rakenne on varsin suoraviivainen tapa toteuttaa Unix-tyylinen tiedostojärjestelmä ja se muistuttaakin hyvin pitkälti muita aikaisia Unix-tiedostojärjestelmätoteutuksia, kuten Berkeley Fast Filesystem.
+Siksi ymmärrys ext2:sta auttaa merkittävästi muidenkin tiedostojärjestelmien ymmärtämisessä.
 
 \section{Yhteenveto}
