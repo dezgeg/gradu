@@ -196,4 +196,25 @@ Tiedostojärjestelmän levyrakenne vaikuttaa olennaisesti siihen minkälaisia ep
 Yleisesti ottaen ext2:n rakenne on varsin suoraviivainen tapa toteuttaa Unix-tyylinen tiedostojärjestelmä ja se muistuttaakin hyvin pitkälti muita aikaisia Unix-tiedostojärjestelmätoteutuksia, kuten Berkeley Fast Filesystem.
 Siksi ymmärrys ext2:sta auttaa merkittävästi muidenkin tiedostojärjestelmien ymmärtämisessä.
 
+Ext2:n levyrakenne korkealla tasolla on esitetty kuvaajassa \ref{ext2_disk_format}.
+
+\begin{figure}
+    \label{ext2_disk_format}
+    \includegraphics[width=1.0\textwidth]{gfx/foo.pdf}
+    \caption{Ext2:n rakenne levyllä.}
+\end{figure}
+
+Korkeimmalla tasolla ext2:n rakenne on jaettu kahteen osaan: on \emph{käynnistyslohkoon} sekä useisiin \emph{lohkoryhmiin}.
+Käynnistyslohkon tarkoitus on yksinkertaisesti varattua tilaa jollekin ext2:ta riippumattomalle käynnistyslataajalle,
+itse tiedostojärjestelmä ei käytä tätä tilaa mitenkään.
+Loput ext2:n levynkäytöstä on lohkoryhmiä,
+Jokainen ext2:n lohkoryhmä on puolestaan jaettu seuraaviin osiin:
+\emph{superlohkoon}, 
+lohkoryhmien kuvaajiin,
+lohkobittikarttoihin,
+inodebittikarttoihin,
+inodetauluun sekä datalohkoihin.
+
+joista jokainen lohkoryhmä viimeistä lukuunottamatta vie yhtä paljon tilaa levyltä.
+
 \section{Yhteenveto}
