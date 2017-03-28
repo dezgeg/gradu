@@ -207,14 +207,51 @@ Ext2:n levyrakenne korkealla tasolla on esitetty kuvaajassa \ref{ext2_disk_forma
 Korkeimmalla tasolla ext2:n rakenne on jaettu kahteen osaan: on \emph{käynnistyslohkoon} sekä useisiin \emph{lohkoryhmiin}.
 Käynnistyslohkon tarkoitus on yksinkertaisesti varattua tilaa jollekin ext2:ta riippumattomalle käynnistyslataajalle,
 itse tiedostojärjestelmä ei käytä tätä tilaa mitenkään.
-Loput ext2:n levynkäytöstä on lohkoryhmiä,
-Jokainen ext2:n lohkoryhmä on puolestaan jaettu seuraaviin osiin:
-\emph{superlohkoon}, 
-lohkoryhmien kuvaajiin,
-lohkobittikarttoihin,
-inodebittikarttoihin,
-inodetauluun sekä datalohkoihin.
-
+Valtaosa ext2:n levynkäytöstä on lohkoryhmiä,
 joista jokainen lohkoryhmä viimeistä lukuunottamatta vie yhtä paljon tilaa levyltä.
+Jokainen ext2:n lohkoryhmä on puolestaan jaettu seuraaviin tietorakenteisiin:
+\emph{superlohkoon}, 
+\emph{lohkoryhmien kuvaajiin},
+\emph{lohkobittikarttoihin},
+\emph{inodebittikarttoihin},
+\emph{inodetauluun} sekä datalohkoihin.
+Näistä superlohko ja lohkoryhmien kuvaajat ovat koko tiedostojärjestelmälle yhtenäistä metadataa,
+joiden periaatteessa riittäisi olla levyllä vain kerran,
+ja itse asiassa Linux-ajuri käyttääkin vain ensimmäisestä lohkoryhmästä löytyviä rakenteita.
+Ext2:ssa on kuitenkin molemmista tietorakenteista on kopio jokaisessa lohkoryhmässä korruptoitumisen varalta.
+
+\subsection{Superlohkon sisältö}
+Superlohko sisältää muunmuassa seuraavanlaisia arvoja tiedostojärjestelmästä, enkoodattuna 32-bittisinä little-endian-kokonaislukuina:
+\begin{itemize}
+    \item Tiedostojärjestelmän lohkon (block) koko \texttt{s\_log\_block\_size}. Yleisesti käytettyjä lohkon kokoja on 1, 2, ja 4 kilotavua.
+          Mahdollisia tiedostojärjestelmän lohkokokoja rajoittaa se, että lohkon koon täytyy olla käytettävän levyn sektorin koon moninkerta.
+          Yleisimmät käytetyt sektorin koot nykypäivänä ovat 512 ja 4096 tavua.
+          Myöskin Linuxin ext2-ajurilla on lisärajoituksena että lohkon koko ei saa ylittää prosessoriarkkitehtuurin sivun kokoa,
+          mikä yleisemmin (muun muassa Intelin x86-arkkitehtuurissa) on 4096 tavua.
+    \item Lohkoryhmien koot, erikseen datalohkoille ja inodeille.
+          \texttt{s\_blocks\_per\_group} kertoo datalohkojen määrän yhdessä lohkoryhmässä ja \texttt{s\_inodes\_per\_group} inodejen lukumäärän yhdessä lohkoryhmässä.
+    \item Vapaiden datalohkojen määrä \texttt{s\_free\_blocks\_count} ja datalohkojen kokonaismäärä \texttt{s\_blocks\_count}.
+    \item Niinikään samat laskurit inodeille: \texttt{s\_free\_inodes\_count} kertoo vapaiden inodejen määrän ja \texttt{s\_inodes\_count} inodejen kokonaismäärän tiedostojärjestelmässä.
+\end{itemize}
+
+Ext2:ssa inodeille on varattu tila joka on erillinen datalohkoista.
+Tiedostojärjestelmää luodessa valitut \texttt{s\_blocks\_per\_group}- ja \texttt{s\_inodes\_per\_group}-parametrit määräävät inodejen ja datalohkojen suhteellisen osuuden koko levytilasta.
+Ext2:aa käyttäessä voikin joutua tilanteeseen, jossa käyttäjän näkökulmasta levytilaa (eli datalohkoja) on runsaasti vapaana, mutta kaikki inodet ovat käytössä, tai päinvastoin.
+
+\subsection{Lohkoryhmäkuvaajien sisältö}
+Kuten superlohkon kohdalla, lohkoryhmäkuvaajista säilytetään kopioita useassa kohtaa levyä.
+Lohkoryhmäkuvaajat on yksinkertaisesti taulukko seuraavista tietorakenteesta:
+\begin{itemize}
+    \item \texttt{bg\_block\_bitmap} kertoo lohkon josta kyseisen lohkoryhmän lohkobittikartta alkaa.
+          Bittikartan bitit kertovat mitkä lohkoryhmän datalohkoista ovat käytössä.
+          Ykkösbitti tarkoittaa käytössä olevaa lohkoa ja nollabitti vapaata lohkoa.
+    \item \texttt{bg\_inode\_bitmap} kertoo lohkon josta kyseisen lohkoryhmän inodebittikartta sijaitsee.
+          Inodebittikartta kertoo mitkä kyseisen lohkoryhmän inodeista on käytössä.
+          Samaan tapaan kuin lohkobittikartan kanssa, 1 tarkoittaa käytössä olevaa inodea ja 0 vapaata inodea.
+    \item \texttt{bg\_free\_blocks\_count} ja \texttt{bg\_free\_inodes\_count} kertovat vapaiden lohkojen ja inodejen lukumäärän kyseisessä lohkoryhmässä.
+          % Koska nämä kentät ovat vain 16-bittisiä, yhden lohkoryhmän 
+    \item \texttt{bg\_inode\_table} kertoo mistä lohkosta kyseisen lohkoryhmän inodetaulu alkaa. Lohkoryhmän datalohkot sijaitsevat heti lohkoryhmän inodetaulun jälkeen.
+\end{itemize}
+
 
 \section{Yhteenveto}
