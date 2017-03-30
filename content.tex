@@ -200,7 +200,7 @@ Ext2:n levyrakenne korkealla tasolla on esitetty kuvaajassa \ref{ext2_disk_forma
 
 \begin{figure}
     \label{ext2_disk_format}
-    \includegraphics[width=1.0\textwidth]{gfx/foo.pdf}
+    \includegraphics[width=1.0\textwidth]{gfx/ext2-structure.pdf}
     \caption{Ext2:n rakenne levyllä.}
 \end{figure}
 
@@ -210,11 +210,11 @@ itse tiedostojärjestelmä ei käytä tätä tilaa mitenkään.
 Valtaosa ext2:n levynkäytöstä on lohkoryhmiä,
 joista jokainen lohkoryhmä viimeistä lukuunottamatta vie yhtä paljon tilaa levyltä.
 Jokainen ext2:n lohkoryhmä on puolestaan jaettu seuraaviin tietorakenteisiin:
-\emph{superlohkoon}, 
-\emph{lohkoryhmien kuvaajiin},
-\emph{lohkobittikarttoihin},
-\emph{inodebittikarttoihin},
-\emph{inodetauluun} sekä datalohkoihin.
+\emph{superlohkoon} (superblock), 
+\emph{lohkoryhmien kuvaajiin} (block group descriptors),
+\emph{lohkobittikarttoihin} (block bitmap),
+\emph{inodebittikarttoihin} (inode bitap),
+\emph{inodetauluun} (inode table) sekä datalohkoihin.
 Näistä superlohko ja lohkoryhmien kuvaajat ovat koko tiedostojärjestelmälle yhtenäistä metadataa,
 joiden periaatteessa riittäisi olla levyllä vain kerran,
 ja itse asiassa Linux-ajuri käyttääkin vain ensimmäisestä lohkoryhmästä löytyviä rakenteita.
@@ -253,5 +253,17 @@ Lohkoryhmäkuvaajat on yksinkertaisesti taulukko seuraavista tietorakenteesta:
     \item \texttt{bg\_inode\_table} kertoo mistä lohkosta kyseisen lohkoryhmän inodetaulu alkaa. Lohkoryhmän datalohkot sijaitsevat heti lohkoryhmän inodetaulun jälkeen.
 \end{itemize}
 
+\subsection{Inoden rakenne}
+
+Ext2:ssa tietyn inoden paikannus inodenumeron perusteella on yksinkertaista.
+Kuten edellä nähtiin, jokaisessa lohkoryhmässä on sama määrä inodeja ja lohkoryhmän sisällä inodet sijaitsevat yksinkertaisesti taulukossa.
+Inodeiden numerointi alkaa ykkösestä, joten inoden numerosta voidaan laskea lohkoryhmän numero kaavalla:
+$$ n_\text{bg} = \frac{n_\text{ino} - 1}{\texttt{s\_inodes\_per\_group}} $$
+
+\begin{figure}
+    \label{ext2_disk_format}
+    \includegraphics[width=1.0\textwidth]{gfx/ext2-blocks.pdf}
+    \caption{Ext2:n rakenne levyllä.}
+\end{figure}
 
 \section{Yhteenveto}

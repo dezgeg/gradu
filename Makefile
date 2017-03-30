@@ -2,7 +2,10 @@
 
 TARGET=gradu
 
-all:
+gfx/%.pdf: gfx/%.dot
+	dot -Tpdf < $< > $@
+
+all: $(patsubst %.dot,%.pdf,$(wildcard gfx/*.dot))
 	latexmk $(TARGET).tex
 
 clean:
