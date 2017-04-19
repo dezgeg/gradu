@@ -228,6 +228,8 @@ Superlohko sisältää muunmuassa seuraavanlaisia arvoja tiedostojärjestelmäst
           Yleisimmät käytetyt sektorin koot nykypäivänä ovat 512 ja 4096 tavua.
           Myöskin Linuxin ext2-ajurilla on lisärajoituksena että lohkon koko ei saa ylittää prosessoriarkkitehtuurin sivun kokoa,
           mikä yleisemmin (muun muassa Intelin x86-arkkitehtuurissa) on 4096 tavua.
+    \item Ominaisuusbitit \texttt{s\_feature\_compat}, \texttt{s\_feature\_incompat} ja \texttt{s\_feature\_ro\_compat} jotka kertovat mitä laajennoksia tiedostojärjestelmässä on käytössä.
+          Nämä ovat jaettu kolmeen eri luokkaan mikä mahdollistaa sekä taaksepäin- että eteenpäinyhteensopivuuden tietyissä rajoissa.
     \item Lohkoryhmien koot, erikseen datalohkoille ja inodeille.
           \texttt{s\_blocks\_per\_group} kertoo datalohkojen määrän yhdessä lohkoryhmässä ja \texttt{s\_inodes\_per\_group} inodejen lukumäärän yhdessä lohkoryhmässä.
     \item Vapaiden datalohkojen määrä \texttt{s\_free\_blocks\_count} ja datalohkojen kokonaismäärä \texttt{s\_blocks\_count}.
