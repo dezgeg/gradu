@@ -262,10 +262,26 @@ Kuten edellä nähtiin, jokaisessa lohkoryhmässä on sama määrä inodeja ja l
 Inodeiden numerointi alkaa ykkösestä, joten inoden numerosta voidaan laskea lohkoryhmän numero kaavalla:
 $$ n_\text{bg} = \frac{n_\text{ino} - 1}{\texttt{s\_inodes\_per\_group}} $$
 
+Kenttä \texttt{i\_blocks} viittaa lohkoihin jossa inoden data sijaitsee.
+Kentän formaatti on 15-alkioinen taulukko 32-bittisiä kokonaislukuja jonka sisältö tulkitaan seuraavasti:
+\begin{itemize}
+    \item Taulukon ensimmäiset 12 alkiota sisältävät lohkonumerot tiedoston ensimmäiselle 12 lohkolle (lohkot 0--11).
+          Nämä ovat \emph{suoria lohkoja} (direct blocks).
+    \item Taulukon seuraava (13.) alkio kertoo lohkonumeron, joka viittaa ensimmäiseen \emph{epäsuoraan lohkoon} (indirect block).
+          Itse epäsuora lohko taas sisältää taulukon lohkonumeroita, jotka kertovat inoden seuraavat datalohkojen numerot.
+          Esimerkiksi jos tiedostojärjestelmän lohkokoko on 4096, sisältää epäsuora lohko 1024 lohkonumeroa,
+          jolloin lohkot 12 -- 1035 löytyvät ensimmäisen epäsuoran lohkon kautta.
+    \item Taulukon seuraava (14.) alkio kertoo lohkonumeron, joka viittaa ensimmäiseen \emph{toisen tason epäsuoraan lohkoon} (doubly indirect block).
+
+    \item Taulukon seuraava (15.) alkio kertoo lohkonumeron, joka viittaa ensimmäiseen \emph{kolmannen tason epäsuoraan lohkoon} (triply indirect block).
+\end{itemize}
+
 \begin{figure}
-    \label{ext2_disk_format}
+    \label{ext2_inode_format}
     \includegraphics[width=1.0\textwidth]{gfx/ext2-blocks.pdf}
     \caption{Ext2:n rakenne levyllä.}
 \end{figure}
+
+\subsection{Hakemiston rakenne}
 
 \section{Yhteenveto}
