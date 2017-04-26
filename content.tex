@@ -286,5 +286,39 @@ Kentän formaatti on 15-alkioinen taulukko 32-bittisiä kokonaislukuja jonka sis
 Ext2:n hakemisto koostuu \emph{hakemistoalkioista} (directory entry) jotka sijaitsevat inoden datalohkoissa.
 Hakemistoalkion koko on vaihtelevanmittainen riippuen hakemistoalkion sisältämän tiedostonimen pituudesta.
 Hakemistoalkio sijaitsee aina kokonaan yhden datalohkon sisällä.
+Hakemistoalkio koostuu vakiokokoisesta otsakkeesta jota välittömästi seuraa tiedostonimi.
+Otsakkeen rakenne on seuraavanlainen:
+
+\begin{verbatim}
+	uint32_t inode;
+	uint16_t rec_len;
+	uint8_t name_len;
+	uint8_t file_type;
+\end{verbatim}
+
+Kenttä \texttt{inode} sisältää hakemistoalkion viittavan inoden numeron.
+Mikäli inoden numero on nolla, on kyseinen hakemisto
+Otsakkeen kenttä \texttt{name\_len} kertoo tiedostonimen pituuden.
+Koska kentän koko on 8 bittiä, rajoittuu tiedostonimen maksimipituudeksi 255.
+Kenttä \texttt{rec\_len} kertoo koko hakemistoalkion koon,
+jonka perusteella voidaan paikantaa hakemiston seuraava hakemistoalkio.
+joka voi olla suurempi kuin otsakkeen koko ja tiedostonimen pituus.
+
+ext2:ssa siis hakemistoalkion paikantaminen tiedostonimen perusteella on aikavaativuudeltaan $O(n)$,
+mikä tarkoittaa heikkoa suorituskykyä hakemiston koon kasvaessa.
+Yksi ext2:n välittömän seuraajan, ext3:n tuomista uudistuksista on hajautukseen pohjautuva hakemistorakenne.
+
+\subsection{Esimerkki hakemistosta}
+Tarkastellaan hakemiston rakennetta luotaessa 1024 tavun lohkokokoa käyttävän tiedostojärjestelmän juureen alihakemisto \texttt{dir} ja sinne tyhjät tiedostot \texttt{abc}, \texttt{defghijklmn} ja \texttt{opqrstuvwxyz}.
+Linux-ajurin luoma rakenne on seuraavanlainen:
+
+%inode=12 rec_len=12 name_len=1 name="." sekä 3 0-tavua.
+%inode=2 rec_len=12 name_len=2 name=".." sekä 2 0-tavua.
+%inode=13 rec_len=12 name_len=3 name="abc" sekä 1 0-tavu.
+%inode=14 rec_len=20 name_len=11 name="defghijklmn" sekä 1 0-tavu.
+%inode=15 rec_len=968 name_len=12 name="opqrstuvwxyz" sekä loput lohkosta ovat 0-tavuja.
+
+Nyt poistettaessa tiedosto \texttt{defghijklmn} muuttuu kolmannen alkion sisällöksi:
+%inode=13 rec_len=20 name_len=3 name="abc" sekä roskaa.
 
 \section{Yhteenveto}
