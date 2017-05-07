@@ -329,4 +329,22 @@ Nyt poistettaessa tiedosto \texttt{defghijklmn} muuttuu kolmannen hakemistoalkio
 
 Siis poistettavaa hakemistoalkiota edeltävän hakemistoalkion \texttt{rec\_len}-kenttää kasvatetään ``hyppäämään'' poistetun alkion yli.
 
+\section{ext2 kaatumistilanteissa}
+
+Edellisessä luvussa käytiin lävitse ext2:n tärkeimpiä levyllä sijaitsevia tietorakenteita.
+Tarkastellaan nyt miten POSIX-tiedostojärjestelmäoperaatiot vaikuttavat ext2:n levyrakenteeseen.
+
+\subsection{Tiedoston luominen}
+Tarkastellaan Linuxin ext2-ajurin tekemiä levykirjoituksia luotaessa tyhjän ext2-tiedostojärjestelmän juurihakemistoon uusi tyhjä tiedosto komennolla \texttt{touch new}.
+Havaittiin seuraavat operaatiot:
+
+\begin{enumerate}
+    \item{Juurihakemistoon luodaan uusi hakemistoalkio nimelle \texttt{new} osoittamaan inodeen 13.}
+    \item{Inode 13 merkitään inodebittikarttaan.}
+    \item{Juurihakemiston aikaleimaa (\texttt{i\_mtime}) päivitetään.}
+    \item{Inoden rakenne inodetaulussa täytetään.}
+    \item{Superlohkon vapaiden inodejen määrää vähennetään yhdellä.}
+    \item{Lohkoryhmän 0 vapaiden inodejen määrää vähennetään yhdellä.}
+\end{enumerate}
+
 \section{Yhteenveto}
