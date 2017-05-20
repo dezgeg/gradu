@@ -340,11 +340,13 @@ Havaittiin seuraavat operaatiot:
 
 \begin{enumerate}
     \item{Juurihakemistoon luodaan uusi hakemistoalkio nimelle \texttt{new} osoittamaan inodeen 13.}
-    \item{Inode 13 merkitään inodebittikarttaan.}
-    \item{Juurihakemiston aikaleimaa (\texttt{i\_mtime}) päivitetään.}
+    \item{Inode 13 merkitään varatuksi inodebittikarttaan.}
+    \item{Juurihakemiston inoden aikaleimaa (\texttt{i\_mtime}) päivitetään.}
     \item{Inoden rakenne inodetaulussa täytetään.}
     \item{Superlohkon vapaiden inodejen määrää vähennetään yhdellä.}
     \item{Lohkoryhmän 0 vapaiden inodejen määrää vähennetään yhdellä.}
 \end{enumerate}
+
+Yhteensä siis koko operaation suorittamiseen vaaditaan kuusi levykirjoitusta viiteen eri tietorakenteeseen levyllä.
 
 \section{Yhteenveto}
