@@ -348,5 +348,30 @@ Havaittiin seuraavat operaatiot:
 \end{enumerate}
 
 Yhteensä siis koko operaation suorittamiseen vaaditaan kuusi levykirjoitusta viiteen eri tietorakenteeseen levyllä.
+Nyt kaatumistilanteessa tämän operaation aikana voi olla seuraavia vaikutuksia.
+Mikäli kaatuminen tapahtuu levykirjoitusten 4--5 tai 5--6 välissä,
+ovat vain vapaiden inodejen laskurit epäkonsistentteja itse levyn kanssa.
+Tällä ei sinänsä pitäisi olla muuta merkitystä tiedostojärjestelmälle kuin että käyttäjä näkee vapaiden inodejen määrän (komennolla \texttt{df -i}) väärin.
+Sen sijaan kaatuminen kirjoitusten 1--2, 2--3 tai 3--4 välillä johtaa hakemistoalkioon mikä osoittaa alustamattomaan inodeen.
+Lisäksi kaatuminen kirjoitusten 1--2 välissä johtaa edellisten ongelmien lisäksi uuteen ongelmatilanteeseen jossa hakemistoalkio viittaa inodeen jota ei ole varattu inodebittikartassa.
 
+\subsection{Tiedostojärjestelmän tarkistusohjelma \emph{fsck}}
+
+Tiedostojärjestelmän mukana jaellaan tyypillisesti \emph{fsck (file system check)}-niminen tarkastusohjelma joka pyrkii tarkistamaan tiedostojärjestelmän metadatan oikeellisuuden ja tarvittaessa korjaamaan kohdattuja ongelmia.
+Ext2:n mukana tuleekin \texttt{e2fsck}-niminen tarkistustyökalu jonka toimintaa kuvaillaan tässä luvussa.
+
+\subsubsection{Toiminta}
+
+Tyypillinen vaatimus tiedostojärjestelmän tarkistusohjelmilta on että niiden kuuluu toimia monentyyppisten korruptioiden kanssa.
+Kaatumistilanteiden lisäksi korruptioita voi aiheutua tiedostojärjestelmäajurin ohjelmointivirheistä tai laitteiston aiheuttamista ongelmista.
+Koska \texttt{e2fsck}:n täytyy käydä koko tiedostojärjestelmän metadata läpi,
+pitää jo koko metadatan paikantamisessa olla varovainen,
+koska johonkin muuhun metadataan viittaava kenttä itsessään voi olla korruptoitunut.
+Myöskin metadataan tehtävät korjaukset on tärkeä tehdä tietyssä järjestyksessä.
+
+\texttt{e2fsck} käy tiedostojärjestelmän läpi kuudessa vaiheessa:
+\begin{enumerate}
+    \item{Superlohko}
+    \item{}
+\end{enumerate}
 \section{Yhteenveto}
