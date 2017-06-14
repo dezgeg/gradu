@@ -178,6 +178,15 @@ DIR *opendir(const char *dirname);
 int closedir(DIR *dirp);
 \end{verbatim}
 
+\subsection{POSIX ja levyvälimuistit}
+Tietokoneiden massamuistit ovat tyypillisesti keskusmuistia merkittävästi hitaampia lukea ja kirjoittaa.
+Tyypillinen tapa parantaa tiedostojärjestelmän suorituskykyä onkin käyttää osaa keskusmuistista välimuistina tiedostojärjestelmälle.
+POSIX-standardi antaakin tiedostojärjestelmätoteutuksille merkittäviä vapauksia erilaisten välimuistien käyttöön,
+joita muun muassa Linux hyödyntää merkittävissä määrin.
+Kyseisenkaltaisilla optimoinneilla on kuitenkin varjopuolensa,
+sillä ne hankaloittavat kaatumistilanteita kestävien sovellusten, kuten tietokantajärjestelmien toteuttamista.
+Tässä luvussa tarkastellaankin POSIXin tarjoamia rajapintoja tiedostojärjestelmän välimuistien hallintaan sekä muita sovellusohjelmoijan kannalta huomioonotettavia seikkoja.
+
 \section{ext2:n rakenne}
 ext2 (``Second extended filesystem'')  on tiedostojärjestelmä joka on luotu jo Linuxin alkuaikoina, vuonna 1993.
 Ennen ext2:ta Linux käytti MINIX-tiedostojärjestelmää,
