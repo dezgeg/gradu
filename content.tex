@@ -178,7 +178,7 @@ DIR *opendir(const char *dirname);
 int closedir(DIR *dirp);
 \end{verbatim}
 
-\subsection{POSIX ja levyvälimuistit}
+\section{POSIX ja levyvälimuistit}
 Tietokoneiden massamuistit ovat tyypillisesti keskusmuistia merkittävästi hitaampia lukea ja kirjoittaa.
 Tyypillinen tapa parantaa tiedostojärjestelmän suorituskykyä onkin käyttää osaa keskusmuistista välimuistina tiedostojärjestelmälle.
 POSIX-standardi antaakin tiedostojärjestelmätoteutuksille merkittäviä vapauksia erilaisten välimuistien käyttöön,
@@ -186,6 +186,14 @@ joita muun muassa Linux hyödyntää merkittävissä määrin.
 Kyseisenkaltaisilla optimoinneilla on kuitenkin varjopuolensa,
 sillä ne hankaloittavat kaatumistilanteita kestävien sovellusten, kuten tietokantajärjestelmien toteuttamista.
 Tässä luvussa tarkastellaankin POSIXin tarjoamia rajapintoja tiedostojärjestelmän välimuistien hallintaan sekä muita sovellusohjelmoijan kannalta huomioonotettavia seikkoja.
+
+Unix-käyttöjärjestelmissä on tyypillisesti jo pitkään toteutettu välimuisti levylohkoille (buffer cache).
+Tämänkaltainen pelkkiä levylukuja säilyttävä välimuisti ei näy sovellusohjelmoijalle mitenkään.
+Tästä looginen seuraus on kirjoitusten vieminen välimuistiin.
+Tämä voidaan tehdä sekä tiedoston metadatalle että varsinaiselle datalle.
+Siis sekä datan kirjoitus \texttt{write()}-funktiolla että
+tiedoston metadataa muokkaavat operaatiot,
+mukaanlukien aikaleimojen päivitykset eivät välttämättä päädy levylle asti tiedostojärjestelmäkutsun palatessa.
 
 \section{ext2:n rakenne}
 ext2 (``Second extended filesystem'')  on tiedostojärjestelmä joka on luotu jo Linuxin alkuaikoina, vuonna 1993.
