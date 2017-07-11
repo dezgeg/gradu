@@ -189,11 +189,28 @@ Tässä luvussa tarkastellaankin POSIXin tarjoamia rajapintoja tiedostojärjeste
 
 Unix-käyttöjärjestelmissä on tyypillisesti jo pitkään toteutettu välimuisti levylohkoille (buffer cache).
 Tämänkaltainen pelkkiä levylukuja säilyttävä välimuisti ei näy sovellusohjelmoijalle mitenkään.
-Tästä looginen seuraus on kirjoitusten vieminen välimuistiin.
+Tästä looginen seuraus on kirjoitusten vieminen välimuistiinn.
 Tämä voidaan tehdä sekä tiedoston metadatalle että varsinaiselle datalle.
 Siis sekä datan kirjoitus \texttt{write()}-funktiolla että
 tiedoston metadataa muokkaavat operaatiot,
 mukaanlukien aikaleimojen päivitykset eivät välttämättä päädy levylle asti tiedostojärjestelmäkutsun palatessa.
+
+Levyvälimuistin hallintaan löytyy POSIXissa kaksi keskeistä funktiota.
+
+% http://pubs.opengroup.org/onlinepubs/9699919799/functions/fsync.html
+% http://pubs.opengroup.org/onlinepubs/9699919799/functions/fdatasync.html
+\begin{verbatim}
+int fsync(int fildes);
+int fdatasync(int fildes);
+\end{verbatim}
+
+Operaatio \texttt{fdatasync()} pakottaa parametrina annettua tiedostokahvaa \texttt{fildes} vastaavan tiedoston levyvälimuistin kirjoittamisen.
+Funktiokutsu ei palaa kunnes data on turvallisesti kirjoitettu levylle.
+\texttt{fdatasync()}-kutsu ei vaikuta tiedoston metadataan muuten kuin että kutsun onnistuessa taataan että tiedostoon tähän asti tehdyt kirjoitukset ovat luettavissa kaatumisen jälkeenkin.
+Käytännössä käyttäjän näkokulmasta tämä takaa vain että tiedoston koko on ajan tasalla.
+Funktio \texttt{fsync()} on vahvempi versio \texttt{fdatasync()}:stä joka lisäksi pakottaa kaiken tiedoston viittaavan inoden metadatan kirjoitettavan levylle.
+Lisäksi on varmistettava erikseen että tiedoston inodeen viittaavat tiedostonimet ovat kirjoitettu pysyvästi levylle.
+Tämä tapahtuu kutsumalla \texttt{fsync()}-funktiota hakemistolle jossa tiedostonimi sijaitsee.
 
 \section{ext2:n rakenne}
 ext2 (``Second extended filesystem'')  on tiedostojärjestelmä joka on luotu jo Linuxin alkuaikoina, vuonna 1993.
