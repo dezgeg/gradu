@@ -212,6 +212,15 @@ Funktio \texttt{fsync()} on vahvempi versio \texttt{fdatasync()}:stä joka lisä
 Lisäksi on varmistettava erikseen että tiedoston inodeen viittaavat tiedostonimet ovat kirjoitettu pysyvästi levylle.
 Tämä tapahtuu kutsumalla \texttt{fsync()}-funktiota hakemistolle jossa tiedostonimi sijaitsee.
 
+\subsection{Artikkeli}
+Kuten edellä nähtiin, POSIXin konsistenssimalli tarjoaa tiedostojärjestelmätoteutuksille vapauksia suorituskyvyn parantamiseen
+mutta jotka samalla tuottavat haasteita sovellusohjelmoijille mikäli tavoitteena on käyttää tiedostojärjestelmää kaatumisturvallisesti.
+POSIX kuitenkin on pelkkä abstrakti spesifikaatio, joten herääkin kysymys millaisia ongelmia käytännössä syntyy.
+Tätä onkin tutkittu kokeellisesti artikkelissa ``All File Systems Are Not Created Equal: On the Complexity of Crafting Crash-consistent Applications''~\cite{PosixDataConsistency} vuodelta 2014.
+Tutkimuksen kohteena on Linux kahdelta eri kannalta:
+yleisimpien Linux-tiedostojärjestelmien konsistenttiusmallien vertailuja
+sekä joidenkin Linux-ohjelmistojen ja tietokantojen kaatumisturvallisuuden testausta.
+
 \section{ext2:n rakenne}
 ext2 (``Second extended filesystem'')  on tiedostojärjestelmä joka on luotu jo Linuxin alkuaikoina, vuonna 1993.
 Ennen ext2:ta Linux käytti MINIX-tiedostojärjestelmää,
