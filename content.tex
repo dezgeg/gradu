@@ -221,6 +221,13 @@ Tutkimuksen kohteena on Linux kahdelta eri kannalta:
 yleisimpien Linux-tiedostojärjestelmien konsistenttiusmallien vertailuja
 sekä joidenkin Linux-ohjelmistojen ja tietokantojen kaatumisturvallisuuden testausta.
 
+Tiedostojärjestelmien osalta testattiin kuutta Linux-tiedostojärjestelmää: btrfs, ext2, ext3, ext4, reiserfs sekä xfs.
+Lisäksi tiedostojärjestemiä kokeiltiin eri tiedostojärjestelmäkohtaisilla optioilla,
+tuottaen yhteensä 16 konfiguraatiota.
+Persistenssiominaisuuksien testaus tapahtuu tutkijaryhmän kehittämällä BOB:ksi (\emph{Block order breaker}) kutsutulla työkalulla.
+Sen periaatteena on nauhoittaa testattavan tiedostojärjestelmän tekemiä levykirjoituksia lokitiedostoon,
+jonka avulla voidaan jälkikäteen simuloida jokainen mahdollinen levyn tilanne kaatumisen jälkeen.
+
 \section{ext2:n rakenne}
 ext2 (``Second extended filesystem'')  on tiedostojärjestelmä joka on luotu jo Linuxin alkuaikoina, vuonna 1993.
 Ennen ext2:ta Linux käytti MINIX-tiedostojärjestelmää,
