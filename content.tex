@@ -226,7 +226,15 @@ Lisäksi tiedostojärjestemiä kokeiltiin eri tiedostojärjestelmäkohtaisilla o
 tuottaen yhteensä 16 konfiguraatiota.
 Persistenssiominaisuuksien testaus tapahtuu tutkijaryhmän kehittämällä BOB:ksi (\emph{Block order breaker}) kutsutulla työkalulla.
 Sen periaatteena on nauhoittaa testattavan tiedostojärjestelmän tekemiä levykirjoituksia lokitiedostoon,
-jonka avulla voidaan jälkikäteen simuloida jokainen mahdollinen levyn tilanne kaatumisen jälkeen.
+jonka avulla voidaan jälkikäteen käydä kaikki mahdolliset levyn tilat (joista siis jokainen vastaa mahdollista kaatumistilannetta) läpi.
+Nyt kaatumistilanteista voidaan etsiä vastaesimerkkejä joissa testattava persistenssiominaisuus ei päde.
+BOB:n voidaan siis vain todeta jonkin persistenssiominaisuuden paikkaansapitämättömyys, mutta ei toisinpäin.
+
+Ensimmäisiä testattuja persistenssiominaisuuksia on erinäisten operaatioiden atomisuus.
+Jo varsin yksinkertainen operaatio, tiedoston loppuun kirjoittaminen tuottaa erilaisia tuloksia eri tiedostojärjestelmäkonfiguraatioilla
+sekä myös kirjoitettavan datan määrä vaikuttaa tulokseen.
+Jo yhden sektorin (tai vähemmän) lisääminen tiedostoon ei ole atominen operaatio muutamalla tiedostojärjestelmällä: ext2 sekä
+ext3, ext4 ja reiserfs mikäli käytetään writeback-journalointitilaa.
 
 \section{ext2:n rakenne}
 ext2 (``Second extended filesystem'')  on tiedostojärjestelmä joka on luotu jo Linuxin alkuaikoina, vuonna 1993.
