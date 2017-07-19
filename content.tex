@@ -236,6 +236,11 @@ sekä myös kirjoitettavan datan määrä vaikuttaa tulokseen.
 Jo yhden sektorin (tai vähemmän) lisääminen tiedostoon ei ole atominen operaatio muutamalla tiedostojärjestelmällä: ext2 sekä
 ext3, ext4 ja reiserfs mikäli käytetään writeback-journalointitilaa.
 
+Toinen ``All File Systems Are Not Created Equal: On the Complexity of Crafting Crash-consistent Applications''-artikkelin tutkima aihe on erinäisten Linux-sovellusten ja tietokantojen käyttäytyminen kaatumistilanteessa.
+Tätä varten kehitetty työkalu ALICE (\emph{Application-Level Intelligent Crash Explorer}) toimii samantyyppisellä periaatteella kuin aiemmin kuvattu BOB:
+testattavan sovelluksen tekemät tiedostojärjestelmäkutsut nauhoitetaan lokitiedostoon,
+joista voidaan jälkikäteen simuloida mahdollisia kaatumistilanteita.
+
 \section{ext2:n rakenne}
 ext2 (``Second extended filesystem'')  on tiedostojärjestelmä joka on luotu jo Linuxin alkuaikoina, vuonna 1993.
 Ennen ext2:ta Linux käytti MINIX-tiedostojärjestelmää,
