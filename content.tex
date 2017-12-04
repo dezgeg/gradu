@@ -462,12 +462,23 @@ ovat monet ext2:ta edistyneemmät tiedostojärjestelmät kehittäneet menetelmi�
 Eräs varsin laajasti käytetty tekniikka on \emph{kirjaavat tiedostojärjestelmät} (\emph{journalling file systems}).
 Tätä tekniikkaa käyttääkin ext2:n seuraaja ext3, sekä sen lisäksi
 muun muassa IBM:n JFS vuodelta 1990, Microsoftin NTFS vuodelta 1993 sekä SGI:n XFS vuodelta 1994.
-Tässä kappaleessa tarkastellaan ext3:n toteutusta kirjauksesta.
+Kirjauksen toteuttaminen tiedostojärjestelmään voidaan tehdä muutamalla eri lähestymistavalla.
+Tässä kappaleessa kuitenkin tarkastellaan pääosin ext3:n toteutusta kirjauksesta.
 
 \subsection{Motivaatio}
 
 Tarve ext2:n jatkokehitykselle syntyi pääosin kaatumistilanteista selviämiseen,
 sillä kiintolevyjen koon kasvaessa kasvoi myös \texttt{fsck}-ohjelman viemä aika samaa tahtia~\cite{Ext2Journal}.
+Tavoitteeksi asetettiin luoda menetelmä kaatumistilanteista selviämiseen joka ei vaadi pitkää palautumisaikaa jolloin tiedostojärjestelmä ei ole käytettävissä.
+Nopeuden lisäksi samalla tavoiteltiin parannuksia tiedostojärjestelmän kaatumisesta palautumiseen seuraavilla kriteereillä: säilyvyys, ennakoitavuus, ja atomisuus~\cite{Ext2Journal}.
+Säilyvyys tarkoittaa ...
+Ext2-tiedostojärjestelmän \emph{fsck}-pohjainen palautumismekanismi täyttää tämän kriteerin jo valmiiksi,
+joten sen seuraajankin kuuluu täyttää tämä kriteeri.
+Atomisuuskriteeri vaatii että tietyt loogisesti yksittäiset tiedostojärjestelmäoperaatiot tapahtuvat
+joko kokonaan loppuun asti tai eivät ollenkaan.
+Kuten aiemmin nähtiin, tämä kriteeri ei täyty ext2:n kohdalla uudelleennimettäessä tiedostoa hakemistosta toiseen,
+vaan fsck-ohjelman ajamisesta huolimatta voidaan päätyä joko tiedoston katoamiseen tai tilanteeseen jossa sekä uusi että tiedostonimi ovat olemassa.
+Ennakoitavuus tarkoittaa ...
 
 \section{Kirjoitusjärjestyksen hallintaan perustuvat tiedostojärjestelmät (``soft updates'')}
 Tässä kappaleessa tarkastellaan Berkeley Fast Filesystem (FFS)-tiedostojärjestelmään toteutettua soft updates-mekanismiä~\cite{SoftUpdatesFfs}.
