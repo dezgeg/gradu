@@ -459,10 +459,20 @@ Myöskin metadataan tehtävät korjaukset on tärkeä tehdä tietyssä järjesty
 Edellisissä kappaleissa kuvailtiin ext2 ja sen käyttäytyminen kaatumistilanteissa.
 Koska kaatumistilanteen aiheuttamien seuraamuksien todettiin olevan varsin ikäviä,
 ovat monet ext2:ta edistyneemmät tiedostojärjestelmät kehittäneet menetelmiä kaatumistilanteita varten.
-Tässä luvussa tarkastellaan \emph{kirjaavia} (\emph{journalling}) tiedostojärjestelmiä yleisesti,
-sekä läheisemmin ext2:n seuraajaa ext3:a.
+Eräs varsin laajasti käytetty tekniikka on \emph{kirjaavat tiedostojärjestelmät} (\emph{journalling file systems}).
+Tätä tekniikkaa käyttääkin ext2:n seuraaja ext3, sekä sen lisäksi
+muun muassa IBM:n JFS vuodelta 1990, Microsoftin NTFS vuodelta 1993 sekä SGI:n XFS vuodelta 1994.
+Tässä kappaleessa tarkastellaan ext3:n toteutusta kirjauksesta.
+
+\subsection{Motivaatio}
+
+Tarve ext2:n jatkokehitykselle syntyi pääosin kaatumistilanteista selviämiseen,
+sillä kiintolevyjen koon kasvaessa kasvoi myös \texttt{fsck}-ohjelman viemä aika samaa tahtia~\cite{Ext2Journal}.
 
 \section{Kirjoitusjärjestyksen hallintaan perustuvat tiedostojärjestelmät (``soft updates'')}
+Tässä kappaleessa tarkastellaan Berkeley Fast Filesystem (FFS)-tiedostojärjestelmään toteutettua soft updates-mekanismiä~\cite{SoftUpdatesFfs}.
+Ext2:sta poiketen FFS-tiedostojärjestelmälle ei löydy tukea Linuxista,
+vaan tarkasteltavana on toteutus 90-luvun BSD 4.4-käyttöjärjestelmästä.
 
 \section{Lokipohjaiset (``log-structured'') tiedostojärjestelmät}
 
