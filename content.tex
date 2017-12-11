@@ -471,14 +471,24 @@ Tarve ext2:n jatkokehitykselle syntyi pääosin kaatumistilanteista selviämisee
 sillä kiintolevyjen koon kasvaessa kasvoi myös \texttt{fsck}-ohjelman viemä aika samaa tahtia~\cite{Ext2Journal}.
 Tavoitteeksi asetettiin luoda menetelmä kaatumistilanteista selviämiseen joka ei vaadi pitkää palautumisaikaa jolloin tiedostojärjestelmä ei ole käytettävissä.
 Nopeuden lisäksi samalla tavoiteltiin parannuksia tiedostojärjestelmän kaatumisesta palautumiseen seuraavilla kriteereillä: säilyvyys, ennakoitavuus, ja atomisuus~\cite{Ext2Journal}.
-Säilyvyys tarkoittaa ...
+Säilyvyydellä tarkoitetaan että aikaisemmin onnistuneesti turvallisesti levylle kirjoitettujen tiedostojen sisällöt pysyvät sellaisenaan.
 Ext2-tiedostojärjestelmän \emph{fsck}-pohjainen palautumismekanismi täyttää tämän kriteerin jo valmiiksi,
 joten sen seuraajankin kuuluu täyttää tämä kriteeri.
 Atomisuuskriteeri vaatii että tietyt loogisesti yksittäiset tiedostojärjestelmäoperaatiot tapahtuvat
 joko kokonaan loppuun asti tai eivät ollenkaan.
 Kuten aiemmin nähtiin, tämä kriteeri ei täyty ext2:n kohdalla uudelleennimettäessä tiedostoa hakemistosta toiseen,
 vaan fsck-ohjelman ajamisesta huolimatta voidaan päätyä joko tiedoston katoamiseen tai tilanteeseen jossa sekä uusi että tiedostonimi ovat olemassa.
-Ennakoitavuus tarkoittaa ...
+Ennakoitavuus tarkoittaa että kaikkien tilanteiden josta tiedostojärjestelmä joutuu palautumaan kaatumistilanteessa ovat ennakoitavissa.
+Nykyisen ext2:n kohdalla näin ei ole, sillä levyvälimuistien takia kaatumistilanteen aikana voi olla useita ...
+
+Yksi tapa kaikkien näiden kriteereiden täyttämiseksi on suunnitella menetelmä jolla koko tiedostojärjestelmän metadatan voidaan tehdä päivityksiä atomisesti.
+Tähän on useita mahdollisia tapoja, mutta ext2:n kehittäjät valitsivat kirjauksen.
+
+\subsection{Kirjauksen toimintaperiaate}
+
+Kirjauksen perusperiaate pohjautuu pääpiirteissään tietokantajärjestelmissä käytettyyn Write-Ahead Logging-menetelmään (tarttee lähteen).
+Ennen metadatalohkojen kirjoitusta niiden varsinaisille paikalleen levyllä, kopio niistä kirjataan lokiin.
+Kirjauksen vaatima loki on kiinteän pituinen ja tila sille on varattu piilotetun, tiedostojärjestelmän käyttäjällä näkymättömän inoden avulla.
 
 \section{Kirjoitusjärjestyksen hallintaan perustuvat tiedostojärjestelmät (``soft updates'')}
 Tässä kappaleessa tarkastellaan Berkeley Fast Filesystem (FFS)-tiedostojärjestelmään toteutettua soft updates-mekanismiä~\cite{SoftUpdatesFfs}.
