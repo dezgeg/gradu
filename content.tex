@@ -496,12 +496,12 @@ Ext2:sta poiketen FFS-tiedostojärjestelmälle ei löydy tukea Linuxista,
 vaan tarkasteltavana on toteutus 90-luvun BSD 4.4-käyttöjärjestelmästä.
 
 \section{Lokipohjaiset (``log-structured'') tiedostojärjestelmät}
-Aiemmissa kappaleissa käsitellyt ext2/ext3 ja Berkeley FFS ovat niin sanottuja päälle kirjoittavia (\emph{``in-place''}) tiedostojärjestelmiä.
-Esimerkiksi aiemmin ext2:n yhteydessä nähtiin kuinka olemassaolevaa tiedostoa uudelleennimettäessä
+Aiemmissa kappaleissa käsitellyt ext2/ext3 ja Berkeley FFS ovat niin sanottuja päälle kirjoittavia tiedostojärjestelmiä (\emph{overwrite-based filesystem}~\cite{Btrfs}).
+Esimerkiksi aiemmin ext3:n yhteydessä nähtiin kuinka olemassaolevaa tiedostoa uudelleennimettäessä
 alkuperäisen tiedostonimen hakemistoalkion sisältävä sektorilta poistetaan vanha hakemistoalkio
 ja vastaavasti kohdehakemistossa lisätätään uusi hakemistoalkio.
-Lisäksi ext3:n kanssa kopiot molemmista kirjoitetaan journaliin.
-
+Mutta koska kahden eri levylohkon päivitys atomisesti ei ole mahdollista,
+kirjoittaa ext3 myös kopiot lohkoista journaliin josta molemmat varsinaiset hakemistolohkot voidaan tarvittaessa palauttaa kaatumistilanteen sattuessa.
 
 \section{Kirjoittaessa kopioivat (``copy-on-write'') tiedostojärjestelmät}
 
