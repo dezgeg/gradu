@@ -1,5 +1,7 @@
 \section{Johdanto}
-Tiedostojärjestelmät ovat olleet jo tovin se pääasiallinen tapa jolla sekä käyttäjät että sovellukset voivat käsitellä tietokoneen pysyväismuistia.
+
+Tiedostojärjestelmät ovat olleet jo tovin se pääasiallinen tapa jolla sekä käyttäjät että sovellukset voivat käsitellä tietokoneen massamuistia.
+Lähes jokainen 
 
 \section{POSIX-tiedostojärjestelmärajapinnat}
 
@@ -280,6 +282,7 @@ Ext2:n levyrakenne korkealla tasolla on esitetty kuvaajassa \ref{ext2_disk_forma
 
 \begin{figure}
     \label{ext2_disk_format}
+    \centering
     \includegraphics[width=1.0\textwidth]{gfx/ext2-structure.pdf}
     \caption{Ext2:n rakenne levyllä.}
 \end{figure}
@@ -357,8 +360,9 @@ Kentän formaatti on 15-alkioinen taulukko 32-bittisiä kokonaislukuja jonka sis
 \end{itemize}
 
 \begin{figure}
-    \label{ext2_inode_format}
-    \includegraphics[width=1.0\textwidth]{gfx/ext2-blocks.pdf}
+    \label{ext2_block_maps}
+    \centering
+    \includegraphics[width=0.5\textwidth]{gfx/ext2-blocks.pdf}
     \caption{Ext2:n rakenne levyllä.}
 \end{figure}
 
@@ -502,6 +506,7 @@ alkuperäisen tiedostonimen hakemistoalkion sisältävä sektorilta poistetaan v
 ja vastaavasti kohdehakemistossa lisätätään uusi hakemistoalkio.
 Mutta koska kahden eri levylohkon päivitys atomisesti ei ole mahdollista,
 kirjoittaa ext3 myös kopiot lohkoista journaliin josta molemmat varsinaiset hakemistolohkot voidaan tarvittaessa palauttaa kaatumistilanteen sattuessa.
+Siis yleisesti ottaen ext3 kirjoittaa kaiken metadatan kahdesti.
 
 \section{Kirjoittaessa kopioivat (``copy-on-write'') tiedostojärjestelmät}
 

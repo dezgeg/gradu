@@ -156,6 +156,8 @@
  address = {Berkeley, CA, USA},
 }
 
+% Ext2 details
+% See also: https://github.com/torvalds/linux/blob/v4.14/fs/ext2/ext2.h
 @article{Ext2Design,
   booktitle = {Proceedings to the First Dutch International Symposium on Linux},
   title = {Design and Implementation of the Second Extended Filesystem},
@@ -310,8 +312,11 @@
  address = {Boston, MA, USA},
 }
 
-% BeFS book. Could be useful for some basic terminology.
-@book{Befs,
+% BeFS book.
+%  - Seems to have better explanations of very basic concepts.
+%  - Filesystem hierarchies.
+%  - BeFS buffer cache
+@book{BefsBook,
  author = {Giampaolo, Dominic},
  title = {Practical File System Design with the Be File System},
  year = {1998},
@@ -321,6 +326,17 @@
  address = {San Francisco, CA, USA},
 }
 
+% - For some basics, like open() etc. calls.
+% - Unix/POSIX history.
+@book{UnixFsBook,
+ author = {Steve D. Pate},
+ title = {UNIX Filesystems: Evolution, Design, and Implementation},
+ year = {2003},
+ isbn = {0-471-16483-6},
+ edition = {1st},
+ publisher = {Wiley Publishing, Inc.},
+ address = {Indianapolis, Indiana, USA},
+}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Not used
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

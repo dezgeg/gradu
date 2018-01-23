@@ -1,7 +1,8 @@
 digraph ext2 {
-    splines=false;
+    splines = false;
     nodesep = 0;
     ranksep = 0.5;
+    fontsize = 10;
     struct1a [shape=record,label="<f0> käynnistyslohko"];
     struct1b [shape=record,label="<f1> lohkoryhmä 0"];
     struct1b [shape=record,label="<f1> lohkoryhmä 1"];
