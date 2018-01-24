@@ -7,6 +7,12 @@ kuten tiedostojen tallentamiseen kiintolevylle, niiden poistamiseen tai kopioimi
 Sekä käyttäjän että sovelluskehittäjän näkökulmasta tiedostojärjestelmän sisäinen toiminta on abstraktoitu verrattaen hyvin.
 Riippumatta siitä onko käyttäjä avaamassa dokumenttia tekstinkäsittelyohjelmalla useiden teratavujen kokoiselta mekaaniselta kiintolevyltä taikka muutaman gigatavun flash-muistitikulta,
 on käyttäjäkokemus samanlainen ja tekstinkäsittelyohjelma toimii samoilla käyttöjärjestelmäkutsuilla.
+Moderneissa käyttöjärjestelmissä on sovellusten käyttämät rajapinnat tiedostojen käsittelyyn eroteltu itse tiedostojärjestelmästä.
+Tämä mahdollistaa sen että käyttöjärjestelmä voi tukea useita tiedostojärjestelmiä samaan aikaan
+jolloin samaan tietokoneeseen voi olla samaan aikaan liitettynä monentyyppisiä tiedostojärjestelmiä eri tallennusmedioilla tai saman levyn eri osioilla.
+Uusia tiedostojärjestelmiä kehitetäänkin tasaiseen tahtiin muun muassa parantamaan suorituskykyä tai tuomaan uusia ominaisuuksia.
+Esimerkiksi Microsoft on vuosien saatossa vaihtanut Windowsin oletustiedostojärjestelmän FAT:sta NTFS:ään,
+ja Linux-maailmassa tiedostojärjestelmissä on ollut reilusti valinnanvaraa jo pitkään.
 
 \section{POSIX-tiedostojärjestelmärajapinnat}
 
@@ -92,6 +98,9 @@ Jokaisella tavalliseen tiedostoon viittaavalla tiedostokahvalla on
 sijainti tavuina missä kohtaa tiedostoa ollaan ja josta
 lukeminen tai kirjoittaminen aloitetaan.
 Onnistuessaan sijainti tiedostossa siirtyy eteenpäin paluuarvon verran.
+Huomattavaa on, että tiedostosta voi lukea ja kirjoittaa tavun tarkkuudella,
+vaikka taustalla oleva media tukisi vain esimerkiksi 512 tavun kokoisen sektorin lukemista tai kirjoittamista.
+Tämä on yksi tapa jolla tiedostojärjestelmä abstraktoi laitteistoa.
 
 Tiedostokahvan sijainnin voi selvittää ja sijaintia tiedostossa voi
 siirtää \texttt{lseek}-kutsulla:
