@@ -341,6 +341,25 @@
 % Not used
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% Ubifs, in case we ever need to refer to non-block filesystems.
+@inproceedings{Ubifs,
+author="Schierl, Andreas
+and Schellhorn, Gerhard
+and Haneberg, Dominik
+and Reif, Wolfgang",
+editor="Cavalcanti, Ana
+and Dams, Dennis R.",
+title="Abstract Specification of the UBIFS File System for Flash Memory",
+booktitle="FM 2009: Formal Methods",
+year="2009",
+publisher="Springer Berlin Heidelberg",
+address="Berlin, Heidelberg",
+pages="190--206",
+abstract="Today we see an increasing demand for flash memory because it has certain advantages like resistance against kinetic shock. However, reliable data storage also requires a specialized file system knowing and handling the limitations of flash memory. This paper develops a formal, abstract model for the UBIFS flash file system, which has recently been included in the Linux kernel. We develop formal specifications for the core components of the file system: the inode-based file store, the flash index, its cached copy in the RAM and the journal to save the differences. Based on these data structures we give an abstract specification of the interface operations of UBIFS and prove some of the most important properties using the interactive verification system KIV.",
+isbn="978-3-642-05089-3"
+}
+
+
 % https://people.eecs.berkeley.edu/~brewer/cs262/FFS.pdf / A Fast File System for UNIX
 %   - details performance of cylinder groups etc. but no power-off safety mentioned
 
