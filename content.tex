@@ -14,7 +14,20 @@ Uusia tiedostojärjestelmiä kehitetäänkin tasaiseen tahtiin muun muassa paran
 Esimerkiksi Microsoft on vuosien saatossa vaihtanut Windowsin oletustiedostojärjestelmän FAT:sta NTFS:ään,
 ja Linux-maailmassa tiedostojärjestelmissä on ollut reilusti valinnanvaraa jo pitkään.
 
+Eräs motivaattori uusien tiedostojärjestelmien kehittämiseen on luotettavuuden parantaminen.
+Useat aikanaan käytetyt tiedostojärjestelmät eivät antaneet juuri mitään valmiuksia sille että tiedostojärjestelelmän eheys säilyisi \emph{kaatumistilantiessa},
+kuten esimerkiksi mikäli tietokone sammuu sähkökatkoksen takia.
+Kaatumistilannetta seurasikin aina koko tiedostojärjestelmän tarkistus \texttt{fsck}-ohjelmalla,
+joka kävi koko levyn läpi ja yritti parhaansa mukaan palauttaa tiedostojärjestelmän toimivaan tilaan.
+Fsck-ohjelman suorituksen aikana tiedostojärjestelmää ei voi muuten käyttää,
+mikä tarkoittikin mahdollista käyttökatkosta koko tietokoneelle.
+Nykypäivän tiedostojärjestelmissä ovat tällaiset rajoitukset olleet historiaa jo pitkään.
+Tämän tutkielman tavoitteena on esitellä kyseisiä menetelmiä tiedostojärjestelmän eheyden äilyttämiseen kaatumistilanteissa.
+
+
 \section{POSIX-tiedostojärjestelmärajapinnat}
+
+Vaikka käyttäjän näkökulmasta tiedostojärjestelmät konseptina ovatkin todennäköisesti tuttuja tietokoneenkäyttäjille,
 
 Aikoinaan oli käytössä useita Unix-pohjaisia käyttöjärjestelmiä jotka olivat periaatteessa samankaltaisia mutta käytännössä toimivat hieman eri tavalla.
 Sovellusohjelmoijan kannalta tämä hankaloitti huomattavasti monella eri Unix-järjestelmällä toivivien ohjelmien toteutusta.
