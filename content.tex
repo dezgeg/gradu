@@ -25,9 +25,16 @@ Nykypäivän tiedostojärjestelmissä ovat tällaiset rajoitukset olleet histori
 Tämän tutkielman tavoitteena on esitellä kyseisiä menetelmiä tiedostojärjestelmän eheyden äilyttämiseen kaatumistilanteissa.
 
 
-\section{POSIX-tiedostojärjestelmärajapinnat}
+\section{Unix-tiedostojärjestelmien perusteet}
 
-Vaikka käyttäjän näkökulmasta tiedostojärjestelmät konseptina ovatkin todennäköisesti tuttuja tietokoneenkäyttäjille,
+Vaikka tiedostojärjestelmät konseptina ovatkin todennäköisesti tuttuja monille tietokoneenkäyttäjille,
+on pantava merkille ettei ole olemassa mitään yhtä oikeaa määritelmää tiedostojärjestelmille
+vaan eri käyttöjärjestelmissä ne toimivat hieman eri tavoilla.
+Koska tässä tutkielmassa tarkastellaan pääosin Unix-tyyppisten käyttöjärjestelmien tiedostojärjestelmiä,
+tutustutaan ensin niiden periaatteisiin läheisemmin.
+Nykypäivän Unix-käyttöjärjestelmiä yhdistää merkittävästi \emph{POSIX (Portable Operating System Interface for uniX)}-standardi~\cite{PosixSpec}.
+
+\subsection{POSIX}
 
 Aikoinaan oli käytössä useita Unix-pohjaisia käyttöjärjestelmiä jotka olivat periaatteessa samankaltaisia mutta käytännössä toimivat hieman eri tavalla.
 Sovellusohjelmoijan kannalta tämä hankaloitti huomattavasti monella eri Unix-järjestelmällä toivivien ohjelmien toteutusta.

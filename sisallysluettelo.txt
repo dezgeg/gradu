@@ -52,3 +52,6 @@ Sisällysluettelosuunnitelma:
         - Using Model Checking to Find Serious File System Errors
 
 8. Yhteenveto
+
+Tarttee lähteitä:
+ - Linux ja POSIX-yhteensopivuus
