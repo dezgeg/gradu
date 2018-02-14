@@ -20,7 +20,7 @@ on Linux-maailmassa ollut reilustikin valinnanvaraa erityyppisissä tiedostojär
 Eräs motivaattori uusien tiedostojärjestelmien kehittämiseen on luotettavuuden parantaminen.
 Useat aikanaan käytetyt tiedostojärjestelmät,
 kuten DOS-käyttöjärjestelmän FAT tai alkuperäisen Unixin tiedostojärjestelmä,
-eivät antaneet juuri mitään valmiuksia sille että tiedostojärjestelmän eheys säilyisi \emph{kaatumistilanteissa}.
+olivat nykymittapuulla erittäin yksinkertaisia eivätkä antaneet juuri mitään takuuta sille että tiedostojärjestelmän eheys säilyisi \emph{kaatumistilanteissa}.
 Tyypillisiä tiedostojärjestelmän kaatumistilanteita ovat esimerkisi koko tietokoneen sammuminen virtakatkoksen takia tai
 tilanteita jossa järjestelmä pitää käynnistää uudelleen sammuttamatta sitä turvallisesti,
 esimerkiksi jonkin vakavan käyttöjärjestelmävirheen takia.
@@ -29,9 +29,14 @@ joka kävi koko levyn läpi ja yritti parhaansa mukaan palauttaa tiedostojärjes
 % FIXME lähde
 Fsck-ohjelman suorituksen aikana tiedostojärjestelmä ei ole normaalisti käytettävissä,
 mikä tiedostojärjestelmän käyttötarkoituksesta riippuen tarkoittikin mahdollista käyttökatkosta koko järjestelmälle.
-Tämänkaltaiset rajoitukset olleet historiaa jo varsin pitkään modernimmissa tiedostojärjestelmissä,
-kuten Linuxin ext3:ssa jo vuodesta 2001 lähtien.
+Modernimmat tiedostojärjestelmät, kuten Linuxin ext3 vuodelta 2001, ovatkin suunniteltu selviämään kaatumistilanteista nopeasti ja turvallisesti,
+joten tämänkaltaiset pitkät käyttökatkot tiedostojärjestelmätarkistusten takia ovat olleet historiaa jo tovin.
+
+Itse tiedostojärjestelmä siis vaikuttaa merkittävästi siihen mitä seurauksia järjestelmän kaatumistilanteesta johtaa, mutta ongelma on monitahoinen.
+Vastuu siitä että käyttäjän dataa ei korruptoidu tiedostojärjestelmän kaatumistilanteessa ei ole pelkästään tiedostojärjestelmä-ajurin tai käyttöjärjestelmän taholla,
+vaan myös sovelluksilla.
 Tämän tutkielman tavoitteena on esitellä kyseisiä menetelmiä tiedostojärjestelmän eheyden äilyttämiseen kaatumistilanteissa.
+% FIXME: motivaatio etc.
 
 \section{Unix-tiedostojärjestelmien perusteet}
 
