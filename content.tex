@@ -48,6 +48,7 @@ Nykypäivän Unix-käyttöjärjestelmiä yhdistää merkittävästi \emph{POSIX 
 
 \subsection{POSIX}
 
+% FIXME: enemmän Unix-historiaa
 Aikoinaan oli käytössä useita Unix-pohjaisia käyttöjärjestelmiä jotka olivat periaatteessa samankaltaisia mutta käytännössä toimivat hieman eri tavalla.
 Sovellusohjelmoijan kannalta tämä hankaloitti huomattavasti monella eri Unix-järjestelmällä toivivien ohjelmien toteutusta.
 Tämän ratkaisemiseksi kehiteltiin POSIX-standardi~\cite{PosixSpec} yhtenäistämään eri Unix-toteutusten tarjoamat rajapinnat.
@@ -154,6 +155,11 @@ Kolmas parametri \texttt{whence} kertoo miten \texttt{offset}-parametri tulkitaa
 Onnistuessaan kutsu palauttaa sijainnin johon siirryttiin.
 Sijainnin voi siis selvittää siirtymättä tiedostossa kutsulla \texttt{lseek(fd, , SEEK\_CUR)}.
 
+Itse sisällön lisäksi jokaisella tiedostolla on metadataa,
+joka kertoo muun muassa tiedoston omistajan tai aikaleiman jolloin tiedostoa on viimeksi muokattu.
+Metadataa voi lukea \texttt{fstat()}- tai \texttt{stat()}-funktioilla:
+% FIXME jatka
+
 % http://pubs.opengroup.org/onlinepubs/9699919799/functions/fstat.html#tag_16_173
 \begin{verbatim}
 int fstat(int fildes, struct stat *buf);
@@ -177,6 +183,20 @@ int fstat(int fildes, struct stat *buf);
 %                         may vary from file to file.
 % blkcnt_t st_blocks      Number of blocks allocated for this object.
 %
+
+
+Tiedoston tai hakemiston voi uudelleennimetä \texttt{rename()}-funktiolla:
+% FIXME jatka
+
+% http://pubs.opengroup.org/onlinepubs/9699919799/functions/rename.html#tag_16_487
+\begin{verbatim}
+int rename(const char *old, const char *new);
+\end{verbatim}
+
+
+
+% FIXME: hard links
+
 % http://pubs.opengroup.org/onlinepubs/9699919799/functions/chmod.html#tag_16_58
 \begin{verbatim}
 int chmod(const char *path, mode_t mode);
@@ -195,11 +215,6 @@ int link(const char *path1, const char *path2);
 % http://pubs.opengroup.org/onlinepubs/9699919799/functions/unlink.html#tag_16_635
 \begin{verbatim}
 int unlink(const char *path);
-\end{verbatim}
-
-% http://pubs.opengroup.org/onlinepubs/9699919799/functions/rename.html#tag_16_487
-\begin{verbatim}
-int rename(const char *old, const char *new);
 \end{verbatim}
 
 % http://pubs.opengroup.org/onlinepubs/9699919799/functions/readdir.html#tag_16_475
