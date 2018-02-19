@@ -7,13 +7,13 @@ kuten tiedostojen tallentamiseen kiintolevylle, niiden poistamiseen tai kopioimi
 Sekä käyttäjän että sovelluskehittäjän näkökulmasta tiedostojärjestelmän sisäinen toiminta on abstraktoitu verrattaen hyvin.
 Riippumatta siitä onko käyttäjä avaamassa dokumenttia tekstinkäsittelyohjelmalla useiden teratavujen kokoiselta mekaaniselta kiintolevyltä taikka muutaman gigatavun flash-muistitikulta,
 on käyttäjäkokemus samanlainen ja tekstinkäsittelyohjelma käyttää täsmälleen samoja käyttöjärjestelmän rajapintoja tiedostojen käsittelyyn.
-Moderneissa käyttöjärjestelmissä on sovellusten käyttämät rajapinnat tiedostojen käsittelyyn eroteltu itse tiedostojärjestelmästä.
-% FIXME lähde, esim. Unix VFS
+Moderneissa käyttöjärjestelmissä on sovellusten käyttämät rajapinnat tiedostojen käsittelyyn eroteltu itse tiedostojärjestelmästä~\cite{UnixFsBook}.
+% UnixFsBook: page 6, FSS, SVR3, 1987.
 Tämä mahdollistaa sen, että käyttöjärjestelmä voi tukea useita tiedostojärjestelmiä samaan aikaan,
 jolloin samaan tietokoneeseen voi olla samaan aikaan liitettynä monentyyppisiä tiedostojärjestelmiä joko eri tallennusmedioilla tai saman levyn eri osioilla.
 Uusia tiedostojärjestelmiä kehitetäänkin jatkuvasti muun muassa parantamaan suorituskykyä tai tuomaan uusia ominaisuuksia.
-Esimerkiksi Microsoft on vuosien saatossa vaihtanut Windows-käyttöjärjestelmän oletustiedostojärjestelmän FAT:sta NTFS:ään,
-% FIXME lähde
+Esimerkiksi Microsoft on vuosien saatossa vaihtanut Windows-käyttöjärjestelmän oletustiedostojärjestelmän FAT:sta NTFS:ään~\cite{BefsBook},
+% BefsBook: page 40
 ja kuten tämän tutkielman myöhemmissä luvuissa nähdään,
 on Linux-maailmassa ollut reilustikin valinnanvaraa erityyppisissä tiedostojärjestelmissä.
 
@@ -25,8 +25,7 @@ Tyypillisiä tiedostojärjestelmän kaatumistilanteita ovat esimerkisi koko tiet
 tilanteita jossa järjestelmä pitää käynnistää uudelleen sammuttamatta sitä turvallisesti,
 esimerkiksi jonkin vakavan käyttöjärjestelmävirheen takia.
 Kyseisillä tiedostojärjestelmillä kaatumistilannetta seurasikin aina koko tiedostojärjestelmän tarkistus \texttt{fsck}-ohjelmalla,
-joka kävi koko levyn läpi ja yritti parhaansa mukaan palauttaa tiedostojärjestelmän toimivaan tilaan.
-% FIXME lähde
+joka kävi koko levyn läpi ja yritti parhaansa mukaan palauttaa tiedostojärjestelmän toimivaan tilaan~\cite{Ext2Journal}.
 Fsck-ohjelman suorituksen aikana tiedostojärjestelmä ei ole normaalisti käytettävissä,
 mikä tiedostojärjestelmän käyttötarkoituksesta riippuen tarkoittikin mahdollista käyttökatkosta koko järjestelmälle.
 Modernimmat tiedostojärjestelmät, kuten Linuxin ext3 vuodelta 2001, ovatkin suunniteltu selviämään kaatumistilanteista nopeasti ja turvallisesti,
@@ -35,7 +34,7 @@ joten tämänkaltaiset pitkät käyttökatkot tiedostojärjestelmätarkistusten 
 Itse tiedostojärjestelmä siis vaikuttaa merkittävästi siihen mitä seurauksia järjestelmän kaatumistilanteesta johtaa, mutta ongelma on monitahoinen.
 Vastuu siitä että käyttäjän dataa ei korruptoidu tiedostojärjestelmän kaatumistilanteessa ei ole pelkästään tiedostojärjestelmä-ajurin tai käyttöjärjestelmän taholla,
 vaan myös sovelluksilla.
-Tämän tutkielman tavoitteena on esitellä kyseisiä menetelmiä tiedostojärjestelmän eheyden äilyttämiseen kaatumistilanteissa.
+Tämän tutkielman tavoitteena on esitellä kyseisiä menetelmiä tiedostojärjestelmän eheyden säilyttämiseen kaatumistilanteissa.
 % FIXME: motivaatio etc.
 
 \section{Unix-tiedostojärjestelmien perusteet}
