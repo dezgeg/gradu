@@ -276,6 +276,47 @@ Funktio \texttt{fsync()} on vahvempi versio \texttt{fdatasync()}:stä joka lisä
 Lisäksi on varmistettava erikseen että tiedoston inodeen viittaavat tiedostonimet ovat kirjoitettu pysyvästi levylle.
 Tämä tapahtuu kutsumalla \texttt{fsync()}-funktiota hakemistolle jossa tiedostonimi sijaitsee.
 
+\subsection{Esimerkki tekstieditorista}
+Tarkastellaan nyt esimerkin avulla miten POSIXin levyvälimuistin käsittelyfunktioilla voidaan toteuttaa kaatumisturvallisia sovelluksia.
+Melkeinpä yksinkertaisin mahdollinen sovellus jossa kaatumisturvallisuus on tärkeää on perus tekstieditori.
+Tyypillinen käyttötapaus on, että käyttäjä avaa editorissa tiedoston, muokkaa sitä, ja tallentaa muokatun sisällön samalla nimellä alkuperäisen tiedoston päälle.
+
+Suoraviivaisin tapa toteuttaa tämä on luultavasti:
+
+\begin{verbatim}
+int fd = open("/mnt/usb/file.txt", O_CREAT | O_WRONLY | O_TRUNC);
+write(fd, uusi_sisalto, strlen(uusi_sisalto));
+close(fd);
+\end{verbatim}
+
+Tämä sekvenssi operaatioita ei kuitenkaan ole turvallinen vaikka edes tiedostojärjestelmän kaatumista ei tapahtuisi.
+Jo pelkkä tekstieditorin kaatuminen \texttt{open()}- ja \texttt{write()}- kutsujen välissä jättää jäljelleen tyhjän tiedoston.
+Yksinkertainen yritys välttyä tältä ongelmalta on ensin kirjoittaa tallennettava sisältö väliaikaistiedostoon,
+ja hyödyntää \texttt{rename()}-kutsun kykyä atomisesti korvata tiedosto toisella:
+
+\begin{verbatim}
+int fd = open("/mnt/usb/file.txt.tmp", O_CREAT | O_WRONLY | O_TRUNC);
+write(fd, uusi_sisalto, strlen(uusi_sisalto));
+close(fd);
+rename("/mnt/usb/file.txt.tmp", "/mnt/usb/file.txt");
+\end{verbatim}
+
+Tämä toimii IN-MEMORY mutta ei toimi tiedostojärjestelmän kaatumistilanteessa,
+sillä mikään ei takaa että \texttt{write()}-kutsun tekemät kirjoitukset ja tiedoston uudelleennimeäminen \texttt{rename()}-kutsulla tapahtuisi samassa järjestyksessä.
+Tiedostojärjestelmän kaatumistilanteessa tyhjä tai osittain kirjoitettu tiedosto on siis edelleen mahdollinen.
+Sen sijaan täysin kaatumisturvallinen tallennus on toteutettu Gedit-tekstieditorissa seuraavasti~\cite{OptimisticCrashConsistency}:
+
+\begin{verbatim}
+int fd = open("/mnt/usb/file.txt.tmp", O_CREAT | O_WRONLY | O_TRUNC);
+write(fd, uusi_sisalto, strlen(uusi_sisalto));
+fsync(fd);
+close(fd);
+rename("/mnt/usb/file.txt.tmp", "/mnt/usb/file.txt");
+int dfd = open("/mnt/usb", O_DIRECTORY | O_RDONLY);
+fsync(dfd);
+close(dfd);
+\end{verbatim}
+
 \subsection{Artikkeli}
 Kuten edellä nähtiin, POSIXin konsistenssimalli tarjoaa tiedostojärjestelmätoteutuksille vapauksia suorituskyvyn parantamiseen
 mutta jotka samalla tuottavat haasteita sovellusohjelmoijille mikäli tavoitteena on käyttää tiedostojärjestelmää kaatumisturvallisesti.
@@ -307,7 +348,6 @@ Koska POSIXin tarjoamat funktiot tiedostojen hallintaan ovat varsin matalan taso
 täytyy kaatumisesta selviäviin tiedostojärjestelmän muutoksien koostua useista operaatioista, käyttäen vähintään \texttt{fsync()}-operaatiota.
 Näitä sovellusten käyttämiä operaatiosekvenssejä kutsutaan \emph{päivitysprotokolliksi} (\emph{update protocol})~\cite{PosixDataConsistency}.
 Esimerkkinä päivitysprotokollasta löytyy useista tekstieditoreista, jotka pyrkivät tallentamaan käyttäjän muokkaaman tiedoston atomisesti.
-Muun muassa Gedit-tekstieditorin päivitysprotokolla toimii seuraavasti~\cite{OptimisticCrashConsistency}:
 \begin{enumerate}
     \item{Luodaan uusi väliaikaistiedosto samalle tiedostojärjestelmälle eri nimellä kuin varsinainen tallennettava tiedosto \texttt{open()}- tai \texttt{creat()}-kutsulla.}
     \item{Kirjoitetaan koko tallennettava sisältö kyseiseen väliaikaistiedostoo \texttt{write()}-kutsuilla.}
