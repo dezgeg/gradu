@@ -40,18 +40,21 @@ Tämän tutkielman tavoitteena on esitellä kyseisiä menetelmiä tiedostojärje
 \section{Unix-tiedostojärjestelmien perusteet}
 
 Vaikka tiedostojärjestelmät konseptina ovatkin todennäköisesti tuttuja monille tietokoneenkäyttäjille,
-on pantava merkille ettei ole olemassa mitään yhtä oikeaa määritelmää tiedostojärjestelmille
+on laitettava merkille ettei ole olemassa mitään yhtä oikeaa määritelmää tiedostojärjestelmille
 vaan eri käyttöjärjestelmissä ne toimivat hieman eri tavoilla.
 Koska tässä tutkielmassa tarkastellaan pääosin Unix-tyyppisten käyttöjärjestelmien tiedostojärjestelmiä,
 tutustutaan ensin niiden periaatteisiin läheisemmin.
-Nykypäivän Unix-käyttöjärjestelmiä yhdistää merkittävästi \emph{POSIX (Portable Operating System Interface for uniX)}-standardi~\cite{PosixSpec}.
+Nykypäivän Unix-tyyppisten käyttöjärjestelmien tiedostojärjestelmärajapintoja yhdistää pääosin \emph{POSIX (Portable Operating System Interface for uniX)}-standardi~\cite{PosixSpec}.
 
 \subsection{POSIX}
 
-% FIXME: enemmän Unix-historiaa
+Unixin kehitys alkoi 60-luvun lopulla AT\&T:n Bell Labs-kehityslaboratoriassa.
+Ken Thompson ja Dennis Ritchie eivät olleet tyytyväisiä GECOS-käyttöjärjestelmään
+ja alkoivat kehittää interaktiivista usean käyttäjän moniajokäyttöjärjestelmää PDP-7-tietokoneelle.
+
 Aikoinaan oli käytössä useita Unix-pohjaisia käyttöjärjestelmiä jotka olivat periaatteessa samankaltaisia mutta käytännössä toimivat hieman eri tavalla.
 Sovellusohjelmoijan kannalta tämä hankaloitti huomattavasti monella eri Unix-järjestelmällä toivivien ohjelmien toteutusta.
-Tämän ratkaisemiseksi kehiteltiin POSIX-standardi~\cite{PosixSpec} yhtenäistämään eri Unix-toteutusten tarjoamat rajapinnat.
+Tämän ratkaisemiseksi kehiteltiin POSIX-standardi~\cite{PosixSpec} yhtenäistämään eri Unix-toteutusten tarjoamat sovellusrajapinnat.
 Ensimmäinen versio standardista julkaistiin vuonna 1988.
 POSIX-standardi määrittelee muun muassa komentorivityökaluja sekä C-kielisiä rajapintoja muun muassa tiedostojen, säikeiden ja prosessien hallintaan.
 Käytännössä mitään Linux-jakelua ei virallisesti ole sertifioitu POSIX-yhteensopivaksi,
@@ -317,10 +320,13 @@ fsync(dfd);
 close(dfd);
 \end{verbatim}
 
+Kuten tästä esimerkistä nähtiin, on yksinkertaisenkin koostetun operaation toteuttaminen kaatumisturvallisesti verrattaen haastavaa,
+mikäli kaikki POSIXin tarjomat vapaudet tiedostojärjestelmille otetaan huomioon.
+POSIX kuitenkin on pelkkä abstrakti spesifikaatio, joten herääkin kysymys millaisia ongelmia käytännössä syntyy.
+
 \subsection{Artikkeli}
 Kuten edellä nähtiin, POSIXin konsistenssimalli tarjoaa tiedostojärjestelmätoteutuksille vapauksia suorituskyvyn parantamiseen
 mutta jotka samalla tuottavat haasteita sovellusohjelmoijille mikäli tavoitteena on käyttää tiedostojärjestelmää kaatumisturvallisesti.
-POSIX kuitenkin on pelkkä abstrakti spesifikaatio, joten herääkin kysymys millaisia ongelmia käytännössä syntyy.
 Tätä onkin tutkittu kokeellisesti artikkelissa ``All File Systems Are Not Created Equal: On the Complexity of Crafting Crash-consistent Applications''~\cite{PosixDataConsistency} vuodelta 2014.
 Tutkimuksen kohteena on Linux kahdelta eri kannalta:
 yleisimpien Linux-tiedostojärjestelmien konsistenttiusmallien vertailuja
