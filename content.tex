@@ -283,8 +283,7 @@ Tämä tapahtuu kutsumalla \texttt{fsync()}-funktiota hakemistolle jossa tiedost
 Tarkastellaan nyt esimerkin avulla miten POSIXin levyvälimuistin käsittelyfunktioilla voidaan toteuttaa kaatumisturvallisia sovelluksia.
 Melkeinpä yksinkertaisin mahdollinen sovellus jossa kaatumisturvallisuus on tärkeää on perus tekstieditori.
 Tyypillinen käyttötapaus on, että käyttäjä avaa editorissa tiedoston, muokkaa sitä, ja tallentaa muokatun sisällön samalla nimellä alkuperäisen tiedoston päälle.
-
-Suoraviivaisin tapa toteuttaa tämä on luultavasti:
+Suoraviivaisesti toteutettuna tämä menetelmä näyttää seuraavalta:
 
 \begin{verbatim}
 int fd = open("/mnt/usb/file.txt", O_CREAT | O_WRONLY | O_TRUNC);
@@ -347,7 +346,7 @@ sekä myös kirjoitettavan datan määrä vaikuttaa tulokseen.
 Jo yhden sektorin (tai vähemmän) lisääminen tiedostoon ei ole atominen operaatio muutamalla tiedostojärjestelmällä: ext2 sekä
 ext3, ext4 ja reiserfs mikäli käytetään writeback-journalointitilaa.
 
-\cite{OptimisticCrashConsistency}
+\subsection{Sovellusten käyttäytyminen}
 
 Toinen ``All File Systems Are Not Created Equal: On the Complexity of Crafting Crash-consistent Applications''-artikkelin tutkima aihe on erinäisten Linux-sovellusten ja tietokantojen käyttäytyminen kaatumistilanteessa.
 Koska POSIXin tarjoamat funktiot tiedostojen hallintaan ovat varsin matalan tason operaatioita ja kuten aiemmin tässä luvussa nähtiin,
