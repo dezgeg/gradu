@@ -322,11 +322,17 @@ close(dfd);
 Kuten tästä esimerkistä nähtiin, on yksinkertaisenkin koostetun operaation toteuttaminen kaatumisturvallisesti verrattaen haastavaa,
 mikäli kaikki POSIXin tarjomat vapaudet tiedostojärjestelmille otetaan huomioon.
 POSIX kuitenkin on pelkkä abstrakti spesifikaatio, joten herääkin kysymys millaisia ongelmia käytännössä syntyy.
+Aihetta on mahdollista tutkia kokeellisesti kahdelta kannalta -- sekä tiedostojärjestelmien että sovellusten näkökulmasta.
+Tiedostojärjestelmien kannalta mielenkiintoinen kysymys on esimerkiksi operaatioiden kirjoitus levylle eri järjestyksessä kuin mitä sovellus ne teki --
+tapahtuuko sitä ylipäätään vaiko esimerkiksi vain tiettyjä tiedostojärjestelmäkutsuja tehdessä sopivassa järjestyksessä.
+Toisaalta taas sama kysymys toistuu sovellustenkin kanssa, eli käyttävätkö sovellukset varmasti tiedostojärjestelmäfunktioita oikein siten
+että kaatumisturvallisuus säilyy millä tahansa POSIX-yhteensopivalla tiedostojärjestelmällä.
+Molempia näistä aiheista on tutkittu kokeellisesti artikkelissa ``All File Systems Are Not Created Equal: On the Complexity of Crafting Crash-consistent Applications''~\cite{PosixDataConsistency} vuodelta 2014,
+joten tarkastellaan aiheita seuraavissa aliluvuissa.
 
-\subsection{Artikkeli}
+\subsection{Tiedostojärjestelmän persistenssiominaisuudet}
 Kuten edellä nähtiin, POSIXin konsistenssimalli tarjoaa tiedostojärjestelmätoteutuksille vapauksia suorituskyvyn parantamiseen
 mutta jotka samalla tuottavat haasteita sovellusohjelmoijille mikäli tavoitteena on käyttää tiedostojärjestelmää kaatumisturvallisesti.
-Tätä onkin tutkittu kokeellisesti artikkelissa ``All File Systems Are Not Created Equal: On the Complexity of Crafting Crash-consistent Applications''~\cite{PosixDataConsistency} vuodelta 2014.
 Tutkimuksen kohteena on Linux kahdelta eri kannalta:
 yleisimpien Linux-tiedostojärjestelmien konsistenttiusmallien vertailuja
 sekä joidenkin Linux-ohjelmistojen ja tietokantojen kaatumisturvallisuuden testausta.
