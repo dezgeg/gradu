@@ -377,17 +377,18 @@ testattavan sovelluksen tekemät tiedostojärjestelmäkutsut nauhoitetaan lokiti
 joista voidaan jälkikäteen simuloida mahdollisia kaatumistilanteita.
 
 \section{ext2:n rakenne}
-ext2 (``Second extended filesystem'')  on tiedostojärjestelmä joka on luotu jo Linuxin alkuaikoina, vuonna 1993.
-Ennen ext2:ta Linux käytti MINIX-tiedostojärjestelmää,
-joka oli yksinkertainen mutta sisälsi erinäisiä rajoitteita jotka alkoivat haittaamaan.
-Esimerkiksi MINIX-tiedostojärjestelmässä tiedostonimen pituus oli rajoitettu 14 merkkiin
+ext2 (``Second extended filesystem'') on tiedostojärjestelmä joka on luotu jo Linuxin varhaisina aikoina, vuonna 1993.
+Tätä ennen Linuxilla ei ollut omaa varta vasten suunniteltua tiedostojärjestelmää,
+vaan se käytti MINIX-käyttöjärjestelmän tiedostojärjestelmää vain koska Linuxin alkuperäinen kehitys oli tehty MINIXillä.
+MINI-tiedostojärjestelmä kuitenkin sisälsi erinäisiä rajoitteita jotka alkoivat haittaamaan.
+Esimerkiksi tiedostonimen pituus oli rajoitettu 14 merkkiin
 ja tiedoston koko 64 megatavuun.
 Ext2 ei ainoastaan korjaa näitä puutteeita,
 mutta on lisäksi suunniteltu siten että tiedostojärjelmän levyformaattia voidaan laajentaa taaksepäin yhteensopivasti.
 Ext2:lle onkin kehitetty seuraajat ext3 ja ext4 joissa olemassaoleva ext2- tai ext3-osio voidaan päivittää seuraavaan
 ext:n versioon ilman tiedostojärjestelmän uudelleenformatointia.
-Erityisesti mainittakoon ext3:n tuoma kirjaus, joka parantaa merkittävästi ext2:n kykyä säilyä konsistenttina kaatumistilanteessa.
-Kirjaavia tiedostojärjestelmiä käsitelläänkin myöhemmin luvussa X.
+Erityisesti mainittakoon \texttt{ext3}:n tuoma kirjaus, joka parantaa merkittävästi \texttt{ext2}:n kykyä säilyä konsistenttina kaatumistilanteessa.
+Kirjaavia tiedostojärjestelmiä käsitelläänkin myöhemmin \texttt{ext3}:n kautta luvussa~\ref{ChapJournallingFs}.
 
 Tässä luvussa tarkastellaan ext2:n rakennetta levyllä.
 Tiedostojärjestelmän levyrakenne vaikuttaa olennaisesti siihen minkälaisia epäkonsistenttiuksia tiedostojärjestelmään voi syntyä virhetilanteissa.
@@ -576,6 +577,7 @@ Myöskin metadataan tehtävät korjaukset on tärkeä tehdä tietyssä järjesty
 \end{enumerate}
 
 \section{Kirjaavat tiedostojärjestelmät}
+\label{ChapJournallingFs}
 Edellisissä kappaleissa kuvailtiin ext2 ja sen käyttäytyminen kaatumistilanteissa.
 Koska kaatumistilanteen aiheuttamien seuraamuksien todettiin olevan varsin ikäviä,
 ovat monet ext2:ta edistyneemmät tiedostojärjestelmät kehittäneet menetelmiä kaatumistilanteita varten.
