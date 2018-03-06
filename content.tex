@@ -40,11 +40,12 @@ Tämän tutkielman tavoitteena on esitellä kyseisiä menetelmiä tiedostojärje
 \section{Unix-tiedostojärjestelmien perusteet}
 
 Vaikka tiedostojärjestelmät konseptina ovatkin todennäköisesti tuttuja monille tietokoneenkäyttäjille,
-on laitettava merkille ettei ole olemassa mitään yhtä oikeaa määritelmää tiedostojärjestelmille
+on laitettava merkille ettei tiedostojärjestelmälle ole olemassa mitään yhtä oikeaa määritelmää
 vaan eri käyttöjärjestelmissä ne toimivat hieman eri tavoilla.
 Koska tässä tutkielmassa tarkastellaan pääosin Unix-tyyppisten käyttöjärjestelmien tiedostojärjestelmiä,
 tutustutaan ensin niiden periaatteisiin läheisemmin.
 Nykypäivän Unix-tyyppisten käyttöjärjestelmien tiedostojärjestelmärajapintoja yhdistää pääosin \emph{POSIX (Portable Operating System Interface for uniX)}-standardi~\cite{PosixSpec}.
+% FIXME: jatka tätä ihan vähäsen
 
 \subsection{POSIX}
 
@@ -60,8 +61,11 @@ POSIX-standardi määrittelee muun muassa komentorivityökaluja sekä C-kielisi�
 Käytännössä mitään Linux-jakelua ei virallisesti ole sertifioitu POSIX-yhteensopivaksi,
 mutta käytännössä kehittäjät tähtäävät POSIX-yhteensopivuuteen.
 
-Luotettavien ja kaatumisen kestävien sovellusten luominen POSIXissa on suhteellisen monimutkaista.
-Esitelläänkin seuraavaksi POSIXin tarjoamat C-rajapinnat tiedostojen käsittelyyn.
+Tiedostojärjestelmien käsittelyä varten POSIX tarjoaa sekä komentorivikomentoja kuten \texttt{ls}, \texttt{cp}, \texttt{rm} pääasiassa käyttäjien käyttöön että C-funktioita sovelluksia varten.
+Käytännössä kaikki näistä rajapinnoista ovat kuitenkin varsin matalan tason rakennuspalikoita joista sovellusohjelmoijan täytyy itse koostaa useat vähänkään monimutkaisemmat tiedostojärjestelmä-operaatiot.
+Erityisesti tiedostojärjestelmän käyttö kaatumisturvallisesti vaatii ohjelmoijalta erityistä kykyä ja ymmärrystä käyttää POSIX-rajapintoja oikein,
+mitä käsitellään myöhemmin kappaleessa~\ref{ChapPosixDataConsistency}.
+Tästä syystä esitelläänkin seuraavaksi lyhyesti tärkeimmät POSIXin tarjoamat C-rajapinnat tiedostojen käsittelyyn.
 
 \subsection{Tiedostonimet}
 POSIX-tiedostojärjestelmät tukevat hakemistoja, eli tiedostojärjestelmä muodostaa hierarkisen puurakenteen.
@@ -246,6 +250,7 @@ int closedir(DIR *dirp);
 \end{verbatim}
 
 \section{POSIX ja levyvälimuistit}
+\label{ChapPosixDataConsistency}
 Tietokoneiden massamuistit ovat tyypillisesti keskusmuistia merkittävästi hitaampia lukea ja kirjoittaa.
 Tyypillinen tapa parantaa tiedostojärjestelmän suorituskykyä onkin käyttää osaa keskusmuistista välimuistina tiedostojärjestelmälle.
 POSIX-standardi antaakin tiedostojärjestelmätoteutuksille merkittäviä vapauksia erilaisten välimuistien käyttöön,
