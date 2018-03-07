@@ -266,8 +266,7 @@ Tämä voidaan tehdä sekä tiedoston metadatalle että varsinaiselle datalle.
 Siis sekä datan kirjoitus \texttt{write()}-funktiolla että
 tiedoston metadataa muokkaavat operaatiot,
 mukaanlukien aikaleimojen päivitykset eivät välttämättä päädy levylle asti tiedostojärjestelmäkutsun palatessa.
-
-Levyvälimuistin hallintaan löytyy POSIXissa kaksi keskeistä funktiota.
+Levyvälimuistin hallintaan löytyy POSIXissa kaksi keskeistä funktiota~\cite{PosixSpec}:
 
 % http://pubs.opengroup.org/onlinepubs/9699919799/functions/fsync.html
 % http://pubs.opengroup.org/onlinepubs/9699919799/functions/fdatasync.html
@@ -376,24 +375,32 @@ Erinäisten sovellusten päivitysprotokollienTätä varten kehitetty työkalu AL
 testattavan sovelluksen tekemät tiedostojärjestelmäkutsut nauhoitetaan lokitiedostoon,
 joista voidaan jälkikäteen simuloida mahdollisia kaatumistilanteita.
 
-\section{ext2:n rakenne}
+\section{ext2-tiedostojärjestelmä}
+Edellisissä kappaleissa nähtiin sovellusohjelmoijan näkökulmasta millaisia tiedostojärjestelmärajapintoja POSIX-spesifikaatio antaa sovellusten käytettäväksi sekä kuinka niitä täytyy käyttää oikein kaatumisturvallisuuden säilyttämiseksi.
+Nyt siirrytään tarkastelemaan miten itse tiedostojärjestelmän pitää toimia jotta kaatumisturvallisuus säilyy koko kokonaisuuden kannalta.
+Esimerkiksi aiemmin nähdyn tekstieditoriesimerkin toiminnan kannalta on kriittistä että \texttt{rename()}-kutsu toimii atomisesti,
+joten tiedostojärjestelmän täytyy siis pystyä toteuttamaan tämä sekä joitakin muita lupauksia tiedostojärjestelmäkutsujen toiminnasta.
+Tässä kappaleessa vastataan näihin kysymyksiin perehtymällä Linuxin \texttt{ext2}-tiedostojärjestelmän sisäiseen toimintaan ja sen rakenteeseen levyllä.
+
+\subsection{Historia}
+
 ext2 (``Second extended filesystem'') on tiedostojärjestelmä joka on luotu jo Linuxin varhaisina aikoina, vuonna 1993.
 Tätä ennen Linuxilla ei ollut omaa varta vasten suunniteltua tiedostojärjestelmää,
 vaan se käytti MINIX-käyttöjärjestelmän tiedostojärjestelmää vain koska Linuxin alkuperäinen kehitys oli tehty MINIXillä.
 MINI-tiedostojärjestelmä kuitenkin sisälsi erinäisiä rajoitteita jotka alkoivat haittaamaan.
 Esimerkiksi tiedostonimen pituus oli rajoitettu 14 merkkiin
 ja tiedoston koko 64 megatavuun.
-Ext2 ei ainoastaan korjaa näitä puutteeita,
+% TODO: lähde
+Ext2 ei ainoastaan korjaa näitä puutteita,
 mutta on lisäksi suunniteltu siten että tiedostojärjelmän levyformaattia voidaan laajentaa taaksepäin yhteensopivasti.
-Ext2:lle onkin kehitetty seuraajat ext3 ja ext4 joissa olemassaoleva ext2- tai ext3-osio voidaan päivittää seuraavaan
-ext:n versioon ilman tiedostojärjestelmän uudelleenformatointia.
+Ext2:lle onkin kehitetty seuraajat \texttt{ext3} ja \texttt{ext4} joissa olemassaoleva \texttt{ext2}- tai \texttt{ext3}-osio voidaan päivittää seuraavaan
+ext:n versioon ilman tiedostojärjestelmän uudelleenformatointia~\cite{Ext4Status}.
 Erityisesti mainittakoon \texttt{ext3}:n tuoma kirjaus, joka parantaa merkittävästi \texttt{ext2}:n kykyä säilyä konsistenttina kaatumistilanteessa.
 Kirjaavia tiedostojärjestelmiä käsitelläänkin myöhemmin \texttt{ext3}:n kautta luvussa~\ref{ChapJournallingFs}.
 
-Tässä luvussa tarkastellaan ext2:n rakennetta levyllä.
 Tiedostojärjestelmän levyrakenne vaikuttaa olennaisesti siihen minkälaisia epäkonsistenttiuksia tiedostojärjestelmään voi syntyä virhetilanteissa.
-Yleisesti ottaen ext2:n rakenne on varsin suoraviivainen tapa toteuttaa Unix-tyylinen tiedostojärjestelmä ja se muistuttaakin hyvin pitkälti muita aikaisia Unix-tiedostojärjestelmätoteutuksia, kuten Berkeley Fast Filesystem.
 Siksi ymmärrys ext2:sta auttaa merkittävästi muidenkin tiedostojärjestelmien ymmärtämisessä.
+Yleisesti ottaen \texttt{ext2}:n rakenne on varsin suoraviivainen tapa toteuttaa Unix-tyylinen tiedostojärjestelmä ja se muistuttaakin hyvin pitkälti muita aikaisia Unix-tiedostojärjestelmätoteutuksia, kuten Berkeley Fast Filesystem.
 
 Ext2:n levyrakenne korkealla tasolla on esitetty kuvaajassa \ref{ext2_disk_format}.
 
