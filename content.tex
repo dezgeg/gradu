@@ -388,10 +388,9 @@ ext2 (``Second extended filesystem'') on tiedostojärjestelmä joka on luotu jo 
 Tätä ennen Linuxilla ei ollut omaa varta vasten suunniteltua tiedostojärjestelmää,
 vaan se käytti MINIX-käyttöjärjestelmän tiedostojärjestelmää vain koska Linuxin alkuperäinen kehitys oli tehty MINIXillä.
 MINI-tiedostojärjestelmä kuitenkin sisälsi erinäisiä rajoitteita jotka alkoivat haittaamaan.
-Esimerkiksi tiedostonimen pituus oli rajoitettu 14 merkkiin
-ja tiedoston koko 64 megatavuun.
+Esimerkiksi tiedostonimen pituus oli rajoitettu 14 merkkiin ja tiedoston koko 64 megatavuun.
 % TODO: lähde
-Ext2 ei ainoastaan korjaa näitä puutteita,
+\texttt{ext2} ei ainoastaan korjaa näitä puutteita,
 mutta on lisäksi suunniteltu siten että tiedostojärjelmän levyformaattia voidaan laajentaa taaksepäin yhteensopivasti.
 Ext2:lle onkin kehitetty seuraajat \texttt{ext3} ja \texttt{ext4} joissa olemassaoleva \texttt{ext2}- tai \texttt{ext3}-osio voidaan päivittää seuraavaan
 ext:n versioon ilman tiedostojärjestelmän uudelleenformatointia~\cite{Ext4Status}.
@@ -620,11 +619,13 @@ Ennen metadatalohkojen kirjoitusta niiden varsinaisille paikalleen levyllä, kop
 Kirjauksen vaatima loki on kiinteän pituinen ja tila sille on varattu piilotetun, tiedostojärjestelmän käyttäjällä näkymättömän inoden avulla.
 
 \section{Kirjoitusjärjestyksen hallintaan perustuvat tiedostojärjestelmät (``soft updates'')}
+\label{ChapSoftUpdates}
 Tässä kappaleessa tarkastellaan Berkeley Fast Filesystem (FFS)-tiedostojärjestelmään toteutettua soft updates-mekanismiä~\cite{SoftUpdatesFfs}.
 Ext2:sta poiketen FFS-tiedostojärjestelmälle ei löydy tukea Linuxista,
 vaan tarkasteltavana on toteutus 90-luvun BSD 4.4-käyttöjärjestelmästä.
 
 \section{Lokipohjaiset (``log-structured'') tiedostojärjestelmät}
+\label{ChapLogStructured}
 Aiemmissa kappaleissa käsitellyt ext2/ext3 ja Berkeley FFS ovat niin sanottuja päälle kirjoittavia tiedostojärjestelmiä (\emph{overwrite-based filesystem}~\cite{Btrfs}).
 Esimerkiksi aiemmin ext3:n yhteydessä nähtiin kuinka olemassaolevaa tiedostoa uudelleennimettäessä
 alkuperäisen tiedostonimen hakemistoalkion sisältävä sektorilta poistetaan vanha hakemistoalkio
@@ -633,6 +634,16 @@ Mutta koska kahden eri levylohkon päivitys atomisesti ei ole mahdollista,
 kirjoittaa ext3 myös kopiot lohkoista journaliin josta molemmat varsinaiset hakemistolohkot voidaan tarvittaessa palauttaa kaatumistilanteen sattuessa.
 Siis yleisesti ottaen ext3 kirjoittaa kaiken metadatan kahdesti.
 
-\section{Kirjoittaessa kopioivat (``copy-on-write'') tiedostojärjestelmät}
+\section{Kirjoittaessa kopioivat tiedostojärjestelmät}
+\label{ChapCopyOnWrite}
+Kolmas yleinen tiedostojärjestelmien variaatio päälle kirjottavien ja lokipohjaisten tiedostojärjestelmien lisäksi on kirjoittaessa kopioivat (``CoW, Copy-on-Write'') tiedostojärjestelmät.
+Tässä kappaleessa tarkastellaan tähän tekniikkaan perustuvaa Linuxin \texttt{btrfs}-tiedostojärjestelmää~\cite{Btrfs}.
+
+\section{Tiedostojärjestelmätoteutusten luotettavuuden testaus}
+
+Edellisissä luvuissa käsiteltiin joukko mekanismejä joiden avulla tiedostojärjestelmät voivat varmistaa omien sisäisten tietorakenteidensa konsistenssin säilymisen kaatumistilanteessa.
+Lienee kuitenkin selkeää että nämä tekniikat pelkästään paperilla eivät vielä takaa itse toteutuksen toimivuutta,
+vaan itse toteutuksen oikeellisuus pitää erikseen todeta esimerkiksi mahdollisten ohjelmointivirheiden varalta.
+Linuxin tiedostojärjestelmätoteutuksien oikeellisuutta onkin tutkittu muun muassa mallintarkistamisen avulla teoksessa ``Using Model Checking to Find Serious File System Errors''~\cite{ModelChecking}.
 
 \section{Yhteenveto}
