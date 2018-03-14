@@ -249,7 +249,7 @@ DIR *opendir(const char *dirname);
 int closedir(DIR *dirp);
 \end{verbatim}
 
-\section{POSIX ja levyvälimuistit}
+\section{POSIX kaatumistilanteessa}
 \label{ChapPosixDataConsistency}
 Tietokoneiden massamuistit ovat tyypillisesti keskusmuistia merkittävästi hitaampia lukea ja kirjoittaa.
 Tyypillinen tapa parantaa tiedostojärjestelmän suorituskykyä onkin käyttää osaa keskusmuistista välimuistina tiedostojärjestelmälle.
@@ -387,7 +387,7 @@ Tässä kappaleessa vastataan näihin kysymyksiin perehtymällä Linuxin \texttt
 ext2 (``Second extended filesystem'') on tiedostojärjestelmä joka on luotu jo Linuxin varhaisina aikoina, vuonna 1993.
 Tätä ennen Linuxilla ei ollut omaa varta vasten suunniteltua tiedostojärjestelmää,
 vaan se käytti MINIX-käyttöjärjestelmän tiedostojärjestelmää vain koska Linuxin alkuperäinen kehitys oli tehty MINIXillä.
-MINI-tiedostojärjestelmä kuitenkin sisälsi erinäisiä rajoitteita jotka alkoivat haittaamaan.
+MINIX-tiedostojärjestelmä kuitenkin sisälsi erinäisiä rajoitteita jotka alkoivat haittaamaan.
 Esimerkiksi tiedostonimen pituus oli rajoitettu 14 merkkiin ja tiedoston koko 64 megatavuun.
 % TODO: lähde
 \texttt{ext2} ei ainoastaan korjaa näitä puutteita,
@@ -401,8 +401,6 @@ Tiedostojärjestelmän levyrakenne vaikuttaa olennaisesti siihen minkälaisia ep
 Siksi ymmärrys ext2:sta auttaa merkittävästi muidenkin tiedostojärjestelmien ymmärtämisessä.
 Yleisesti ottaen \texttt{ext2}:n rakenne on varsin suoraviivainen tapa toteuttaa Unix-tyylinen tiedostojärjestelmä ja se muistuttaakin hyvin pitkälti muita aikaisia Unix-tiedostojärjestelmätoteutuksia, kuten Berkeley Fast Filesystem.
 
-Ext2:n levyrakenne korkealla tasolla on esitetty kuvaajassa \ref{ext2_disk_format}.
-
 \begin{figure}
     \label{ext2_disk_format}
     \centering
@@ -410,6 +408,7 @@ Ext2:n levyrakenne korkealla tasolla on esitetty kuvaajassa \ref{ext2_disk_forma
     \caption{Ext2:n rakenne levyllä.}
 \end{figure}
 
+Ext2:n levyrakenne korkealla tasolla on esitetty kuvaajassa \ref{ext2_disk_format}.
 Korkeimmalla tasolla ext2:n rakenne on jaettu kahteen osaan: on \emph{käynnistyslohkoon} sekä useisiin \emph{lohkoryhmiin}.
 Käynnistyslohkon tarkoitus on yksinkertaisesti varattua tilaa jollekin ext2:ta riippumattomalle käynnistyslataajalle,
 itse tiedostojärjestelmä ei käytä tätä tilaa mitenkään.
