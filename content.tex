@@ -200,54 +200,52 @@ Tiedoston tai hakemiston voi uudelleennimetä \texttt{rename()}-funktiolla:
 int rename(const char *old, const char *new);
 \end{verbatim}
 
-
-
-% FIXME: hard links
-
-% http://pubs.opengroup.org/onlinepubs/9699919799/functions/chmod.html#tag_16_58
-\begin{verbatim}
-int chmod(const char *path, mode_t mode);
-\end{verbatim}
-
-% http://pubs.opengroup.org/onlinepubs/9699919799/functions/chown.html#tag_16_59
-\begin{verbatim}
-int chown(const char *path, uid_t owner, gid_t group);
-\end{verbatim}
-
-% http://pubs.opengroup.org/onlinepubs/9699919799/functions/link.html#tag_16_293
-\begin{verbatim}
-int link(const char *path1, const char *path2);
-\end{verbatim}
-
-% http://pubs.opengroup.org/onlinepubs/9699919799/functions/unlink.html#tag_16_635
-\begin{verbatim}
-int unlink(const char *path);
-\end{verbatim}
-
-% http://pubs.opengroup.org/onlinepubs/9699919799/functions/readdir.html#tag_16_475
-\begin{verbatim}
-struct dirent *readdir(DIR *dirp);
-\end{verbatim}
-
-% http://pubs.opengroup.org/onlinepubs/9699919799/functions/readlink.html#tag_16_476
-\begin{verbatim}
-ssize_t readlink(const char *restrict path, char *restrict buf, size_t bufsize);
-\end{verbatim}
-
-% http://pubs.opengroup.org/onlinepubs/9699919799/functions/ftruncate.html
-\begin{verbatim}
-int ftruncate(int fildes, off_t length);
-\end{verbatim}
-
-% http://pubs.opengroup.org/onlinepubs/9699919799/functions/fdopendir.html#tag_16_127
-\begin{verbatim}
-DIR *opendir(const char *dirname);
-\end{verbatim}
-
-% http://pubs.opengroup.org/onlinepubs/9699919799/functions/closedir.html
-\begin{verbatim}
-int closedir(DIR *dirp);
-\end{verbatim}
+%%% % FIXME: hard links
+%%%
+%%% % http://pubs.opengroup.org/onlinepubs/9699919799/functions/chmod.html#tag_16_58
+%%% \begin{verbatim}
+%%% int chmod(const char *path, mode_t mode);
+%%% \end{verbatim}
+%%%
+%%% % http://pubs.opengroup.org/onlinepubs/9699919799/functions/chown.html#tag_16_59
+%%% \begin{verbatim}
+%%% int chown(const char *path, uid_t owner, gid_t group);
+%%% \end{verbatim}
+%%%
+%%% % http://pubs.opengroup.org/onlinepubs/9699919799/functions/link.html#tag_16_293
+%%% \begin{verbatim}
+%%% int link(const char *path1, const char *path2);
+%%% \end{verbatim}
+%%%
+%%% % http://pubs.opengroup.org/onlinepubs/9699919799/functions/unlink.html#tag_16_635
+%%% \begin{verbatim}
+%%% int unlink(const char *path);
+%%% \end{verbatim}
+%%%
+%%% % http://pubs.opengroup.org/onlinepubs/9699919799/functions/readdir.html#tag_16_475
+%%% \begin{verbatim}
+%%% struct dirent *readdir(DIR *dirp);
+%%% \end{verbatim}
+%%%
+%%% % http://pubs.opengroup.org/onlinepubs/9699919799/functions/readlink.html#tag_16_476
+%%% \begin{verbatim}
+%%% ssize_t readlink(const char *restrict path, char *restrict buf, size_t bufsize);
+%%% \end{verbatim}
+%%%
+%%% % http://pubs.opengroup.org/onlinepubs/9699919799/functions/ftruncate.html
+%%% \begin{verbatim}
+%%% int ftruncate(int fildes, off_t length);
+%%% \end{verbatim}
+%%%
+%%% % http://pubs.opengroup.org/onlinepubs/9699919799/functions/fdopendir.html#tag_16_127
+%%% \begin{verbatim}
+%%% DIR *opendir(const char *dirname);
+%%% \end{verbatim}
+%%%
+%%% % http://pubs.opengroup.org/onlinepubs/9699919799/functions/closedir.html
+%%% \begin{verbatim}
+%%% int closedir(DIR *dirp);
+%%% \end{verbatim}
 
 \section{POSIX kaatumistilanteessa}
 \label{ChapPosixDataConsistency}
