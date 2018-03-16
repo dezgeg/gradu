@@ -307,8 +307,8 @@ close(fd);
 rename("/mnt/usb/file.txt.tmp", "/mnt/usb/file.txt");
 \end{verbatim}
 
-Tämä toimii IN-MEMORY mutta ei toimi tiedostojärjestelmän kaatumistilanteessa,
-sillä mikään ei takaa että \texttt{write()}-kutsun tekemät kirjoitukset ja tiedoston uudelleennimeäminen \texttt{rename()}-kutsulla tapahtuisi samassa järjestyksessä.
+Tämä versio sietää sovelluksen kaatumisen mutta ei toimi tiedostojärjestelmän kaatumistilanteessa,
+sillä mikään ei takaa että \texttt{write()}-kutsun tekemät kirjoitukset ja tiedoston uudelleennimeäminen \texttt{rename()}-kutsulla kirjoitettaisiin levylle edellä mainitussa järjestyksessä.
 Tiedostojärjestelmän kaatumistilanteessa tyhjä tai osittain kirjoitettu tiedosto on siis edelleen mahdollinen.
 Sen sijaan täysin kaatumisturvallinen tallennus on toteutettu Gedit-tekstieditorissa seuraavasti~\cite{OptimisticCrashConsistency}:
 
@@ -322,6 +322,8 @@ int dfd = open("/mnt/usb", O_DIRECTORY | O_RDONLY);
 fsync(dfd);
 close(dfd);
 \end{verbatim}
+
+\texttt{write()}-ja \texttt{rename()}-kutsujen väliin on siis lisätty yksi \texttt{fsync()}-kutsu takaamaan että näiden operaatioiden järjestys ei vaihdu levylle kirjoittaessa.
 
 Kuten tästä esimerkistä nähtiin, on yksinkertaisenkin koostetun operaation toteuttaminen kaatumisturvallisesti verrattaen haastavaa,
 mikäli kaikki POSIXin tarjomat vapaudet tiedostojärjestelmille otetaan huomioon.
@@ -355,23 +357,21 @@ sekä myös kirjoitettavan datan määrä vaikuttaa tulokseen.
 Jo yhden sektorin (tai vähemmän) lisääminen tiedostoon ei ole atominen operaatio muutamalla tiedostojärjestelmällä: ext2 sekä
 ext3, ext4 ja reiserfs mikäli käytetään writeback-journalointitilaa.
 
-\subsection{Sovellusten käyttäytyminen}
+\subsection{Sovellusten käyttäytyminen kaatumistilanteessa}
 
 Toinen ``All File Systems Are Not Created Equal: On the Complexity of Crafting Crash-consistent Applications''-artikkelin tutkima aihe on erinäisten Linux-sovellusten ja tietokantojen käyttäytyminen kaatumistilanteessa.
-Koska POSIXin tarjoamat funktiot tiedostojen hallintaan ovat varsin matalan tason operaatioita ja kuten aiemmin tässä luvussa nähtiin,
-täytyy kaatumisesta selviäviin tiedostojärjestelmän muutoksien koostua useista operaatioista, käyttäen vähintään \texttt{fsync()}-operaatiota.
-Näitä sovellusten käyttämiä operaatiosekvenssejä kutsutaan \emph{päivitysprotokolliksi} (\emph{update protocol})~\cite{PosixDataConsistency}.
-Esimerkkinä päivitysprotokollasta löytyy useista tekstieditoreista, jotka pyrkivät tallentamaan käyttäjän muokkaaman tiedoston atomisesti.
-\begin{enumerate}
-    \item{Luodaan uusi väliaikaistiedosto samalle tiedostojärjestelmälle eri nimellä kuin varsinainen tallennettava tiedosto \texttt{open()}- tai \texttt{creat()}-kutsulla.}
-    \item{Kirjoitetaan koko tallennettava sisältö kyseiseen väliaikaistiedostoo \texttt{write()}-kutsuilla.}
-    \item{Varmistetaan väliaikaistiedoston päätyminen levylle kutsumalla \texttt{fsync()}-funktiota.}
-    \item{Uudelleennimetään väliaikainen tiedosto oikealle nimelle.}
-\end{enumerate}
-Näillä vaiheilla toteutettu päivitysprotokolla mahdollistaa käyttäjän muokkaaman tiedoston tallentamisen atomisesti kaatumistilanteista huolimatta.
-Ainoa mahdollinen seuraus sovelluksen tai koko järjestelmän kaatumisesta pitäisi olla jäljelle jäänyt väliaikaistiedosto jonka poistaminen jää käyttäjän vastuulle.
-
-Erinäisten sovellusten päivitysprotokollienTätä varten kehitetty työkalu ALICE (\emph{Application-Level Intelligent Crash Explorer}) toimii samantyyppisellä periaatteella kuin aiemmin kuvattu BOB:
+Aiemmin kappaleen alussa nähtiin miten tekstieditorin tiedoston tallennuksesta saatiin tehtyä kaatumisturvallinen POSIX-tiedostojärjestelmäoperaatioita koostamalla.
+Tässä kyseisessä käyttötapauksessa päästiin haluttuun lopputulokseen varsin suoraviivaisella toteutuksella, jossa yksinkertaisesti kirjoitettiin koko tiedosto uudestaan.
+Muuntyyppisillä sovelluksilla voi olla huomattavastikin monimutkaisempia vaatimuksia.
+Esimerkiksi SQL-kyselykielen perustoiminnallisuuksiin kuuluvat transaktiot,
+joiden avulla relaatiotietokannassa voidaan atomisesti päivittää useita, mahdollisesti eri tauluihin kuuluvia rivejä atomisesti.
+Jo yksittäiset tietokannat voivat nykyään kuitenkin olla useiden teratavujen kokoisia (lähde?) ja käsitellä useita toisistaan riippumattomia kirjoitustransaktioita rinnakkain.
+% FIXME: lähde
+Selvästikin kelvollisen suorituskyvyn saavuttamiseksi koko tietokannan uudelleen kirjoitus joka transaktion yhteydessä ei tule kysymykseen tällaisessa käyttötapauksessa,
+vaan tietokannan ohjelmoijan täytyy itse suunnitella jokin mekanismi jolla kaatumistilanteessa voidaan palauttaa tietokannan tila konsistentiksi.
+Näitä sovellusten käyttämiä mekanismejä kutsutaan \emph{päivitysprotokolliksi} (\emph{update protocol})~\cite{PosixDataConsistency}.
+% FIXME: Continue...
+Erinäisten sovellusten päivitysprotokollien tutkimista varten kehitetty työkalu ALICE (\emph{Application-Level Intelligent Crash Explorer}) toimii samantyyppisellä periaatteella kuin aiemmin kuvattu BOB:
 testattavan sovelluksen tekemät tiedostojärjestelmäkutsut nauhoitetaan lokitiedostoon,
 joista voidaan jälkikäteen simuloida mahdollisia kaatumistilanteita.
 
