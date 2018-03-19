@@ -400,13 +400,13 @@ Siksi ymmärrys ext2:sta auttaa merkittävästi muidenkin tiedostojärjestelmien
 Yleisesti ottaen \texttt{ext2}:n rakenne on varsin suoraviivainen tapa toteuttaa Unix-tyylinen tiedostojärjestelmä ja se muistuttaakin hyvin pitkälti muita aikaisia Unix-tiedostojärjestelmätoteutuksia, kuten Berkeley Fast Filesystem.
 
 \begin{figure}
-    \label{ext2_disk_format}
+    \label{FigExt2DiskFormat}
     \centering
     \includegraphics[width=0.7\textwidth]{gfx/ext2-structure.pdf}
     \caption{Ext2:n rakenne levyllä.}
 \end{figure}
 
-Ext2:n levyrakenne korkealla tasolla on esitetty kuvaajassa \ref{ext2_disk_format}.
+Ext2:n levyrakenne korkealla tasolla on esitetty kuvaajassa \ref{FigExt2DiskFormat}.
 Korkeimmalla tasolla ext2:n rakenne on jaettu kahteen osaan: on \emph{käynnistyslohkoon} sekä useisiin \emph{lohkoryhmiin}.
 Käynnistyslohkon tarkoitus on yksinkertaisesti varattua tilaa jollekin ext2:ta riippumattomalle käynnistyslataajalle,
 itse tiedostojärjestelmä ei käytä tätä tilaa mitenkään.
@@ -480,7 +480,7 @@ Kentän formaatti on 15-alkioinen taulukko 32-bittisiä kokonaislukuja jonka sis
 \end{itemize}
 
 \begin{figure}
-    \label{ext2_block_maps}
+    \label{FigExt2BlockMap}
     \centering
     \includegraphics[width=0.5\textwidth]{gfx/ext2-blocks.pdf}
     \caption{Ext2:n lohkopuu.}
