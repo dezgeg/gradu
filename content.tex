@@ -49,20 +49,22 @@ Nykypäivän Unix-tyyppisten käyttöjärjestelmien tiedostojärjestelmärajapin
 
 \subsection{POSIX}
 
-Unixin kehitys alkoi 60-luvun lopulla AT\&T:n Bell Labs-kehityslaboratoriassa.
+Unix-käyttöjärjestelmän kehitys alkoi 60-luvun lopulla AT\&T:n Bell Labs-kehityslaboratoriassa.
 Ken Thompson ja Dennis Ritchie eivät olleet tyytyväisiä GECOS-käyttöjärjestelmään
 ja alkoivat kehittää interaktiivista usean käyttäjän moniajokäyttöjärjestelmää PDP-7-tietokoneelle.
-
-Aikoinaan oli käytössä useita Unix-pohjaisia käyttöjärjestelmiä jotka olivat periaatteessa samankaltaisia mutta käytännössä toimivat hieman eri tavalla.
+Jne...
+Sittemmin Unixin lähdekoodi lisensoitiin yrityksille jotka tekivät päälle omia muutoksiaan ja markkinoivat niitä Unix-yhteensopivina.
+Esimerkiksi Berkeleyn yliopiston kehittämä BSD, Microsoftin Xenix sekä Sun Microsystemsin SunOS.
+Markkinoilla oli siis saatavilla useita periaatteessa Unix-pohjaisia käyttöjärjestelmiä mutta jotka kaikki käytännössä toimivat hieman eri tavalla.
 Sovellusohjelmoijan kannalta tämä hankaloitti huomattavasti monella eri Unix-järjestelmällä toivivien ohjelmien toteutusta.
 Tämän ratkaisemiseksi kehiteltiin POSIX-standardi~\cite{PosixSpec} yhtenäistämään eri Unix-toteutusten tarjoamat sovellusrajapinnat.
 Ensimmäinen versio standardista julkaistiin vuonna 1988.
 POSIX-standardi määrittelee muun muassa komentorivityökaluja sekä C-kielisiä rajapintoja muun muassa tiedostojen, säikeiden ja prosessien hallintaan.
-Käytännössä mitään Linux-jakelua ei virallisesti ole sertifioitu POSIX-yhteensopivaksi,
-mutta käytännössä kehittäjät tähtäävät POSIX-yhteensopivuuteen.
+Käytännössä mitään Linux-jakelua ei virallisesti ole sertifioitu POSIX-yhteensopivaksi (lähde?),
+mutta käytännössä kehittäjät tähtäävät POSIX-yhteensopivuuteen~\cite{LinuxKernelBook}.
 
-Tiedostojärjestelmien käsittelyä varten POSIX tarjoaa sekä komentorivikomentoja kuten \texttt{ls}, \texttt{cp}, \texttt{rm} pääasiassa käyttäjien käyttöön että C-funktioita sovelluksia varten.
-Käytännössä kaikki näistä rajapinnoista ovat kuitenkin varsin matalan tason rakennuspalikoita joista sovellusohjelmoijan täytyy itse koostaa useat vähänkään monimutkaisemmat tiedostojärjestelmä-operaatiot.
+Tiedostojärjestelmien käsittelyä varten POSIX tarjoaa sekä komentorivikomentoja kuten \texttt{ls}, \texttt{cp}, \texttt{rm} pääasiassa käyttäjien käyttöön että ohjelmointirajapintoja C-ohjelmointikielellä sovellusten toteuttamista varten.
+Valtaosa näistä ohjelmointirajapinnoista toimivat varsin matalalla tasolla, joista sovellusohjelmoijan täytyy itse koostaa useat vähänkään monimutkaisemmat tiedostojärjestelmä-operaatiot.
 Erityisesti tiedostojärjestelmän käyttö kaatumisturvallisesti vaatii ohjelmoijalta erityistä kykyä ja ymmärrystä käyttää POSIX-rajapintoja oikein,
 mitä käsitellään myöhemmin kappaleessa~\ref{ChapPosixDataConsistency}.
 Tästä syystä esitelläänkin seuraavaksi lyhyesti tärkeimmät POSIXin tarjoamat C-rajapinnat tiedostojen käsittelyyn.
@@ -257,7 +259,8 @@ Kyseisenkaltaisilla optimoinneilla on kuitenkin varjopuolensa,
 sillä ne hankaloittavat kaatumistilanteita kestävien sovellusten, kuten tietokantajärjestelmien toteuttamista.
 Tässä luvussa tarkastellaankin POSIXin tarjoamia rajapintoja tiedostojärjestelmän välimuistien hallintaan sekä muita sovellusohjelmoijan kannalta huomioonotettavia seikkoja.
 
-Unix-käyttöjärjestelmissä on tyypillisesti jo pitkään toteutettu välimuisti levylohkoille (buffer cache).
+Unix-käyttöjärjestelmissä on tyypillisesti jo pitkään toteutettu välimuisti levylohkoille (buffer cache)~\cite{LinuxKernelBook}.
+% Not the best reference though.
 Tämänkaltainen pelkkiä levylukuja säilyttävä välimuisti ei näy sovellusohjelmoijalle mitenkään.
 Tästä looginen seuraus on kirjoitusten vieminen välimuistiinn.
 Tämä voidaan tehdä sekä tiedoston metadatalle että varsinaiselle datalle.
