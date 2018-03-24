@@ -64,7 +64,8 @@ Käytännössä mitään Linux-jakelua ei virallisesti ole sertifioitu POSIX-yht
 mutta käytännössä kehittäjät tähtäävät POSIX-yhteensopivuuteen~\cite{LinuxKernelBook}.
 
 Tiedostojärjestelmien käsittelyä varten POSIX tarjoaa sekä komentorivikomentoja kuten \texttt{ls}, \texttt{cp}, \texttt{rm} pääasiassa käyttäjien käyttöön että ohjelmointirajapintoja C-ohjelmointikielellä sovellusten toteuttamista varten.
-Valtaosa näistä ohjelmointirajapinnoista toimivat varsin matalalla tasolla, joista sovellusohjelmoijan täytyy itse koostaa useat vähänkään monimutkaisemmat tiedostojärjestelmä-operaatiot.
+Valtaosa näistä ohjelmointirajapinnoista toimivat varsin matalalla tasolla,
+joista sovellusohjelmoijan täytyy itse koostaa useat vähänkään monimutkaisemmat tiedostojärjestelmä-operaatiot.
 Erityisesti tiedostojärjestelmän käyttö kaatumisturvallisesti vaatii ohjelmoijalta erityistä kykyä ja ymmärrystä käyttää POSIX-rajapintoja oikein,
 mitä käsitellään myöhemmin kappaleessa~\ref{ChapPosixDataConsistency}.
 Tästä syystä esitelläänkin seuraavaksi lyhyesti tärkeimmät POSIXin tarjoamat C-rajapinnat tiedostojen käsittelyyn.
