@@ -92,9 +92,23 @@ tarkoittaa että juurihakemistosta \texttt{/} paikannetaan alihakemisto \texttt{
 POSIXissa on kaksi erityistä `virtuaalista' tiedostonimeä, \texttt{.} ja \texttt{..}, joiden voidaan mieltää löytyvän jokaisesta hakemistosta.
 Näistä \texttt{.} viittaa aina siihen hakemistoon jossa se sijaitsee ja \texttt{..} viittaa ylempään hakemistoon hakemistopuussa.
 Siis esimerkiksi polku \texttt{/home/tuomas/.} viittaa samaan hakemistoon kuin polku \texttt{/home/tuomas}.
-Niinikään \texttt{.}-nimeä voi käyttää missä tahansa kohtaa polkua,
+Lisäksi \texttt{.}-nimeä voi käyttää missä tahansa kohtaa polkua,
 eli esimerkiksi \texttt{/home/./tuomas} tai \texttt{/home/././tuomas/././.} viittaavat edelleen samaan hakemistoon.
-Nimi \texttt{..} taas viittaa ylempään tasoon hakemistorakenteessa.
+Nimi \texttt{..} taas viittaa ylempään tasoon hakemistorakenteessa,
+eli tiedostopolku \texttt{/home/tuomas/..} viittaa samaan hakemistoon kuin tiedostopolku \texttt{/home}.
+Juurihakemiston tapauksessa \texttt{..}-nimi vie takaisin juurihakemistoon itseensä, eli tiedostopolut \texttt{/..} ja \texttt{/} toimivat identtisesti.
+
+\subsection{Erityistiedostot}
+
+Tavallisten tiedostojen ja hakemistojen lisäksi POSIX-tiedostojärjestelmät tukevat muunkinlaisia erityistiedostoja.
+Merkittävin näistä on \emph{symbolinen linkki} (\emph{symbolic link}).
+
+Muita tuettuja tiedostotyyppejä ovat \emph{nimetty putki} (\emph{named pipe}) ja \emph{paikallinen pistoke} (\emph{domain socket}).
+Kumpikaan näistä ei persistoi mitään dataa levylle,
+vaan niitä käytetään Unix-sovellusohjelmoinnissa mekanismina \emph{prosessien väliseen kommunikointiin} (\emph{IPC}, \emph{Inter-Process Communication}).
+Periaatteessa siis vastaava toiminnallisuus voitaisiin toteuttaa käyttöjärjestelmään täysin tiedostojärjestelmästä riippumattomasti,
+mutta tämä Unixin tapa tuoda IPC-mekanismit ikään kun tiedostojärjestelmäobjekteiksi mahdollistaa niiden käsittelyn samoilla työkaluilla ja rajapinnoilla kuin tavallisia tiedostoja.
+Esimerkiksi myöhemmin esiteltävät tiedostojen käyttöoikeudet toimivat nimetyille putkille ja paikallisille pistokkeille samalla tavalla kuin ne toimivat tavallisille tiedostoille ja hakemistoille.
 
 \subsection{Tiedoston avaus ja sulkeminen}
 Tiedoston avaus tapahtuu \texttt{open}-funktiolla:
