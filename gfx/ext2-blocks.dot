@@ -1,6 +1,6 @@
 digraph ext2 {
     //splines = false;
-    rankdir = LR;
+    rankdir = UD;
     //nodesep = 0;
     //ranksep = 0.5;
     node[fontsize = 10,width=0.3];
