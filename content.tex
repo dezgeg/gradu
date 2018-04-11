@@ -578,25 +578,25 @@ Edellisessä luvussa käytiin lävitse ext2:n tärkeimpiä levyllä sijaitsevia 
 Tarkastellaan nyt miten POSIX-tiedostojärjestelmäoperaatiot vaikuttavat ext2:n levyrakenteeseen.
 
 \subsection{Tiedoston luominen}
-Tarkastellaan Linuxin ext2-ajurin tekemiä levykirjoituksia luotaessa tyhjän ext2-tiedostojärjestelmän juurihakemistoon uusi tyhjä tiedosto komennolla \texttt{touch new}.
-Havaittiin seuraavat operaatiot:
-
-\begin{enumerate}
-    \item{Juurihakemistoon luodaan uusi hakemistoalkio nimelle \texttt{new} osoittamaan inodeen 13.}
-    \item{Inode 13 merkitään varatuksi inodebittikarttaan.}
-    \item{Juurihakemiston inoden aikaleimaa (\texttt{i\_mtime}) päivitetään.}
-    \item{Inoden rakenne inodetaulussa täytetään.}
-    \item{Superlohkon vapaiden inodejen määrää vähennetään yhdellä.}
-    \item{Lohkoryhmän 0 vapaiden inodejen määrää vähennetään yhdellä.}
-\end{enumerate}
-
-Yhteensä siis koko operaation suorittamiseen vaaditaan kuusi levykirjoitusta viiteen eri tietorakenteeseen levyllä.
-Nyt kaatumistilanteessa tämän operaation aikana voi olla seuraavia vaikutuksia.
-Mikäli kaatuminen tapahtuu levykirjoitusten 4--5 tai 5--6 välissä,
-ovat vain vapaiden inodejen laskurit epäkonsistentteja itse levyn kanssa.
-Tällä ei sinänsä pitäisi olla muuta merkitystä tiedostojärjestelmälle kuin että käyttäjä näkee vapaiden inodejen määrän (komennolla \texttt{df -i}) väärin.
-Sen sijaan kaatuminen kirjoitusten 1--2, 2--3 tai 3--4 välillä johtaa hakemistoalkioon mikä osoittaa alustamattomaan inodeen.
-Lisäksi kaatuminen kirjoitusten 1--2 välissä johtaa edellisten ongelmien lisäksi uuteen ongelmatilanteeseen jossa hakemistoalkio viittaa inodeen jota ei ole varattu inodebittikartassa.
+% Tarkastellaan Linuxin ext2-ajurin tekemiä levykirjoituksia luotaessa tyhjän ext2-tiedostojärjestelmän juurihakemistoon uusi tyhjä tiedosto komennolla \texttt{touch new}.
+% Havaittiin seuraavat operaatiot:
+%
+% \begin{enumerate}
+%     \item{Juurihakemistoon luodaan uusi hakemistoalkio nimelle \texttt{new} osoittamaan inodeen 13.}
+%     \item{Inode 13 merkitään varatuksi inodebittikarttaan.}
+%     \item{Juurihakemiston inoden aikaleimaa (\texttt{i\_mtime}) päivitetään.}
+%     \item{Inoden rakenne inodetaulussa täytetään.}
+%     \item{Superlohkon vapaiden inodejen määrää vähennetään yhdellä.}
+%     \item{Lohkoryhmän 0 vapaiden inodejen määrää vähennetään yhdellä.}
+% \end{enumerate}
+%
+% Yhteensä siis koko operaation suorittamiseen vaaditaan kuusi levykirjoitusta viiteen eri tietorakenteeseen levyllä.
+% Nyt kaatumistilanteessa tämän operaation aikana voi olla seuraavia vaikutuksia.
+% Mikäli kaatuminen tapahtuu levykirjoitusten 4--5 tai 5--6 välissä,
+% ovat vain vapaiden inodejen laskurit epäkonsistentteja itse levyn kanssa.
+% Tällä ei sinänsä pitäisi olla muuta merkitystä tiedostojärjestelmälle kuin että käyttäjä näkee vapaiden inodejen määrän (komennolla \texttt{df -i}) väärin.
+% Sen sijaan kaatuminen kirjoitusten 1--2, 2--3 tai 3--4 välillä johtaa hakemistoalkioon mikä osoittaa alustamattomaan inodeen.
+% Lisäksi kaatuminen kirjoitusten 1--2 välissä johtaa edellisten ongelmien lisäksi uuteen ongelmatilanteeseen jossa hakemistoalkio viittaa inodeen jota ei ole varattu inodebittikartassa.
 
 \subsection{Tiedostojärjestelmän tarkistusohjelma \emph{fsck}}
 
@@ -683,3 +683,5 @@ vaan itse toteutuksen oikeellisuus pitää erikseen todeta esimerkiksi mahdollis
 Linuxin tiedostojärjestelmätoteutuksien oikeellisuutta onkin tutkittu muun muassa mallintarkistamisen avulla teoksessa ``Using Model Checking to Find Serious File System Errors''~\cite{ModelChecking}.
 
 \section{Yhteenveto}
+
+...
