@@ -50,11 +50,21 @@ Nykypäivän Unix-tyyppisten käyttöjärjestelmien tiedostojärjestelmärajapin
 \subsection{POSIX}
 
 Unix-käyttöjärjestelmän kehitys alkoi 60-luvun lopulla AT\&T:n Bell Labs-kehityslaboratoriassa.
-Ken Thompson ja Dennis Ritchie eivät olleet tyytyväisiä GECOS-käyttöjärjestelmään
-ja alkoivat kehittää interaktiivista usean käyttäjän moniajokäyttöjärjestelmää PDP-7-tietokoneelle.
-Jne...
-Sittemmin Unixin lähdekoodi lisensoitiin yrityksille jotka tekivät päälle omia muutoksiaan ja markkinoivat niitä Unix-yhteensopivina.
-Esimerkiksi Berkeleyn yliopiston kehittämä BSD, Microsoftin Xenix sekä Sun Microsystemsin SunOS.
+Ken Thompson ja Dennis Ritchie olivat olleet kehittämässa MULTICS-nimistä interaktiivista usean käyttäjän moniajokäyttöjärjestelmää yhdessä General Electricin ja MIT:n yliopiston kanssa.
+MULTICS-projektin tavoitteet olivat aikaansa nähden kunnianhimoisia ja käyttöjärjestelmän valmistuminen näyttikin venyvän ja venyvän, joten Bell Labs vetäytyi lopulta pois projektista.
+Thompson ja Ritchie eivät olleet tyytyväisiä tilanteeseen vaan alkoivat kehittää omaa MULTICSin insipiroimaa PDP-7-tietokoneelle~\cite{UnixFsBook}.
+Unixia suunniteltiin ja käytettiin aluksi vain AT\&T:n sisäiseen käyttöön,
+kuten tekstidokumenttien käsittelyyn sekä latomiseen,
+kunnes vuonna 1974 Unix tuotiin akateemisen maailman tietoisuuteen Thompsonin ja Ritchien julkaisemalla artikkelilla ``The UNIX time-sharing system''~\cite{UnixPaper}
+Tämän seurauksena ulkopuolisetkin kiinnostuivat Unixista.
+Bell Labsin emoyhtiöllä oli kuitenkin tuohon aikoihin monopoliasema Yhdysvaltojen puhelinverkkotoimintoihin,
+joten kilpailuviraston kanssa tehdyn sopimuksen pohjalta sen oli kiellettyä alkaa tekemään liiketoimintaa muilla toimialueilla eikä voinut siten tuotteistaa Unixia.
+Sen sijaan Unixin lähdekoodia alettiin lisensoida nimellistä kertakorvausta vastaan pääasiassa yliopistoille mutta myös joillekin yrityksille,
+jotka alkoivat tehdä omia muutoksiaan Unixiin ja jaella tai markkinoida niitä.
+Tunnetuin akateemisen maailman tuottama Unix-johdannainen on Berkeleyn yliopistoston tuottama BSD (Berkeley Software Distribution); 1BSD 1977 ja 3BSD 1979.
+Esimerkiksi Berkeleyn yliopiston kehittämä BSD, Microsoftin Xenix sekä Sun Microsystemsin SunOS. %XXX
+AT\&T:n puhelinverkkotoiminnan monopoliaseman purkaantuminen avasi yhtiölle tilaisuuden myydä Unixia kaupallisesti,
+joka julkaistiin Unix System V-nimellä vuonna 1983.
 Markkinoilla oli siis saatavilla useita periaatteessa Unix-pohjaisia käyttöjärjestelmiä mutta jotka kaikki käytännössä toimivat hieman eri tavalla.
 Sovellusohjelmoijan kannalta tämä hankaloitti huomattavasti monella eri Unix-järjestelmällä toivivien ohjelmien toteutusta.
 Tämän ratkaisemiseksi kehiteltiin POSIX-standardi~\cite{PosixSpec} yhtenäistämään eri Unix-toteutusten tarjoamat sovellusrajapinnat.
