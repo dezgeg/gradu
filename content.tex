@@ -47,7 +47,7 @@ tutustutaan ensin niiden periaatteisiin läheisemmin.
 Nykypäivän Unix-tyyppisten käyttöjärjestelmien tiedostojärjestelmärajapintoja yhdistää pääosin \emph{POSIX (Portable Operating System Interface for uniX)}-standardi~\cite{PosixSpec}.
 % FIXME: jatka tätä ihan vähäsen
 
-\subsection{POSIX}
+\subsection{Unixin lyhyt historia}
 
 Unix-käyttöjärjestelmän kehitys alkoi 60-luvun lopulla AT\&T:n Bell Labs-kehityslaboratoriassa.
 Ken Thompson ja Dennis Ritchie olivat olleet kehittämässa MULTICS-nimistä interaktiivista usean käyttäjän moniajokäyttöjärjestelmää yhdessä General Electricin ja MIT:n yliopiston kanssa.
@@ -56,6 +56,7 @@ Thompson ja Ritchie eivät olleet tyytyväisiä tilanteeseen vaan alkoivat kehit
 Unixia suunniteltiin ja käytettiin aluksi vain AT\&T:n sisäiseen käyttöön,
 kuten tekstidokumenttien käsittelyyn sekä latomiseen,
 kunnes vuonna 1974 Unix tuotiin akateemisen maailman tietoisuuteen Thompsonin ja Ritchien julkaisemalla artikkelilla ``The UNIX time-sharing system''~\cite{UnixPaper}
+% TODO tell what it supports and when it was rewritten to C
 Tämän seurauksena ulkopuolisetkin kiinnostuivat Unixista.
 Bell Labsin emoyhtiöllä oli kuitenkin tuohon aikoihin monopoliasema Yhdysvaltojen puhelinverkkotoimintoihin,
 joten kilpailuviraston kanssa tehdyn sopimuksen pohjalta sen oli kiellettyä alkaa tekemään liiketoimintaa muilla toimialueilla eikä voinut siten tuotteistaa Unixia.
@@ -294,9 +295,9 @@ Kyseisenkaltaisilla optimoinneilla on kuitenkin varjopuolensa,
 sillä ne hankaloittavat kaatumistilanteita kestävien sovellusten, kuten tietokantajärjestelmien toteuttamista.
 Tässä luvussa tarkastellaankin POSIXin tarjoamia rajapintoja tiedostojärjestelmän välimuistien hallintaan sekä muita sovellusohjelmoijan kannalta huomioonotettavia seikkoja.
 
-Unix-käyttöjärjestelmissä on tyypillisesti jo pitkään toteutettu välimuisti levylohkoille (buffer cache)~\cite{LinuxKernelBook}.
-% Not the best reference though.
-Tämänkaltainen pelkkiä levylukuja säilyttävä välimuisti ei näy sovellusohjelmoijalle mitenkään.
+Erinäiset levyvälimuistit olivat käytössä jo hyvin varhain Unixissa.
+Jo Ritchien ja Thompsonin alkuperäisestä ``The UNIX time-sharing system''-artikkelista vuodelta 1974 löytyy lyhyt selostus Unixin \emph{lohkovälimuistista} (\emph{buffer cache}).
+Tämänkaltainen pelkkiä levylukuja säilyttävä välimuisti ei näy sovellusohjelmoijalle mitenkään. % XXX
 Tästä looginen seuraus on kirjoitusten vieminen välimuistiin.
 Tämä voidaan tehdä sekä tiedoston metadatalle että varsinaiselle datalle.
 Siis sekä datan kirjoitus \texttt{write()}-funktiolla että
