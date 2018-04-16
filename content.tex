@@ -650,7 +650,7 @@ Tähän on useita mahdollisia tapoja, mutta ext2:n kehittäjät valitsivat kirja
 
 \subsection{Kirjauksen toimintaperiaate}
 
-Kirjauksen perusperiaate pohjautuu pääpiirteissään tietokantajärjestelmissä käytettyyn Write-Ahead Logging-menetelmään (tarttee lähteen).
+Kirjauksen perusperiaate pohjautuu pääpiirteissään tietokantajärjestelmissä käytettyyn Write-Ahead Logging-menetelmään~\cite{AriesWal}.
 Ennen metadatalohkojen kirjoitusta niiden varsinaisille paikalleen levyllä, kopio niistä kirjataan lokiin.
 Kirjauksen vaatima loki on kiinteän pituinen ja tila sille on varattu piilotetun, tiedostojärjestelmän käyttäjällä näkymättömän inoden avulla.
 
