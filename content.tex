@@ -229,14 +229,26 @@ int fstat(int fildes, struct stat *buf);
 % blkcnt_t st_blocks      Number of blocks allocated for this object.
 %
 
+Tiedoston tai hakemiston voi poistaa \texttt{unlink()}-funktiolla:
+\begin{verbatim}
+int unlink(const char *path);
+\end{verbatim}
 
+Hakemiston poistaminen onnistuu vain mikäli hakemisto on tyhjä.
+
+%%% % http://pubs.opengroup.org/onlinepubs/9699919799/functions/unlink.html#tag_16_635
 Tiedoston tai hakemiston voi uudelleennimetä \texttt{rename()}-funktiolla:
-% FIXME jatka
-
 % http://pubs.opengroup.org/onlinepubs/9699919799/functions/rename.html#tag_16_487
 \begin{verbatim}
 int rename(const char *old, const char *new);
 \end{verbatim}
+
+Uudelleennimeämisen ei tarvitse tapahtua saman hakemiston sisällä,
+vaan esimerkiksi \texttt{rename("/tmp/file.tmp", "/home/foo/file.txt")} on sallittua,
+mutta sekä lähde- että kohdepolun täytyy sijaita samalla tiedostojärjestelmällä.
+Kohdepolku voi viitata myös olemassaolevaan tiedostoon,
+jolloin kyseinen olemassaoleva tiedosto poistetaan operaation yhteydessä ikään kuin \texttt{unlink()}-kutsua olisi käytetty ennen uudelleennimeämistä.
+Kaikissa tapauksissa operaatio on atominen.
 
 %%% % FIXME: hard links
 %%%
@@ -402,15 +414,14 @@ Tässä kyseisessä käyttötapauksessa päästiin haluttuun lopputulokseen vars
 Muuntyyppisillä sovelluksilla voi olla huomattavastikin monimutkaisempia vaatimuksia.
 Esimerkiksi SQL-kyselykielen perustoiminnallisuuksiin kuuluvat transaktiot,
 joiden avulla relaatiotietokannassa voidaan atomisesti päivittää useita, mahdollisesti eri tauluihin kuuluvia rivejä atomisesti.
-Jo yksittäiset tietokannat voivat nykyään kuitenkin olla useiden teratavujen kokoisia (lähde?) ja käsitellä useita toisistaan riippumattomia kirjoitustransaktioita rinnakkain.
-% FIXME: lähde
+Jo yksittäiset tietokannat voivat nykyään kuitenkin olla useiden teratavujen kokoisia ja käsitellä useita toisistaan riippumattomia kirjoitustransaktioita rinnakkain~\cite{DatabaseFundamentals}.
 Selvästikin kelvollisen suorituskyvyn saavuttamiseksi koko tietokannan uudelleen kirjoitus joka transaktion yhteydessä ei tule kysymykseen tällaisessa käyttötapauksessa,
 vaan tietokannan ohjelmoijan täytyy itse suunnitella jokin mekanismi jolla kaatumistilanteessa voidaan palauttaa tietokannan tila konsistentiksi.
 Näitä sovellusten käyttämiä mekanismejä kutsutaan \emph{päivitysprotokolliksi} (\emph{update protocol})~\cite{PosixDataConsistency}.
-% FIXME: Continue...
 Erinäisten sovellusten päivitysprotokollien tutkimista varten kehitetty työkalu ALICE (\emph{Application-Level Intelligent Crash Explorer}) toimii samantyyppisellä periaatteella kuin aiemmin kuvattu BOB:
 testattavan sovelluksen tekemät tiedostojärjestelmäkutsut nauhoitetaan lokitiedostoon,
 joista voidaan jälkikäteen simuloida mahdollisia kaatumistilanteita.
+% FIXME: Continue...
 
 \section{ext2-tiedostojärjestelmä}
 Edellisissä kappaleissa nähtiin sovellusohjelmoijan näkökulmasta millaisia tiedostojärjestelmärajapintoja POSIX-spesifikaatio antaa sovellusten käytettäväksi sekä kuinka niitä täytyy käyttää oikein kaatumisturvallisuuden säilyttämiseksi.
