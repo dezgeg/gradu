@@ -373,6 +373,9 @@ close(dfd);
 \end{verbatim}
 
 \texttt{write()}-ja \texttt{rename()}-kutsujen väliin on siis lisätty yksi \texttt{fsync()}-kutsu takaamaan että näiden operaatioiden järjestys ei vaihdu levylle kirjoittaessa.
+Tämä lisätty \texttt{fsync(fd)} tekee tiedoston tallennusoperaatiosta atomisen mutta ei vielä takaa pysyvyyttä.
+Pysyvyyteen vaaditaan \texttt{fsync()}-operaation suoritus kohdetiedoston sisältävälle hakemistolle,
+mikä takaa että \texttt{rename()} kutsun tekemän muutokset itse hakemiston sisällölle ovat päätyneet levylle.
 
 Kuten tästä esimerkistä nähtiin, on yksinkertaisenkin koostetun operaation toteuttaminen kaatumisturvallisesti verrattaen haastavaa,
 mikäli kaikki POSIXin tarjomat vapaudet tiedostojärjestelmille otetaan huomioon.
