@@ -229,11 +229,16 @@ int fstat(int fildes, struct stat *buf);
 % blkcnt_t st_blocks      Number of blocks allocated for this object.
 %
 
-Tiedoston tai hakemiston voi poistaa \texttt{unlink()}-funktiolla:
+Tiedoston (mutta ei hakemistoa) voi poistaa \texttt{unlink()}-funktiolla:
 \begin{verbatim}
 int unlink(const char *path);
 \end{verbatim}
 
+Hakemiston poistamisille on oma funktio \texttt{rmdir()}:
+
+\begin{verbatim}
+int rmdir(const char *path);
+\end{verbatim}
 Hakemiston poistaminen onnistuu vain mikäli hakemisto on tyhjä.
 
 %%% % http://pubs.opengroup.org/onlinepubs/9699919799/functions/unlink.html#tag_16_635
