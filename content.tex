@@ -443,12 +443,11 @@ Tässä kappaleessa vastataan näihin kysymyksiin perehtymällä Linuxin \texttt
 
 \subsection{Historia}
 
-ext2 (``Second extended filesystem'') on tiedostojärjestelmä joka on luotu jo Linuxin varhaisina aikoina, vuonna 1993.
+ext2 (``Second extended filesystem'') on tiedostojärjestelmä joka on luotu jo Linuxin varhaisina aikoina, vuosina 1992--1993~\cite{Ext2Design}.
 Tätä ennen Linuxilla ei ollut omaa varta vasten suunniteltua tiedostojärjestelmää,
 vaan se käytti MINIX-käyttöjärjestelmän tiedostojärjestelmää vain koska Linuxin alkuperäinen kehitys oli tehty MINIXillä.
 MINIX-tiedostojärjestelmä kuitenkin sisälsi erinäisiä rajoitteita jotka alkoivat haittaamaan.
-Esimerkiksi tiedostonimen pituus oli rajoitettu 14 merkkiin ja tiedoston koko 64 megatavuun.
-% TODO: lähde
+Esimerkiksi tiedostonimen pituus oli rajoitettu 14 merkkiin ja tiedoston koko 64 megatavuun~\cite{Ext2Design}.
 \texttt{ext2} ei ainoastaan korjaa näitä puutteita,
 mutta on lisäksi suunniteltu siten että tiedostojärjelmän levyformaattia voidaan laajentaa taaksepäin yhteensopivasti.
 Ext2:lle onkin kehitetty seuraajat \texttt{ext3} ja \texttt{ext4} joissa olemassaoleva \texttt{ext2}- tai \texttt{ext3}-osio voidaan päivittää seuraavaan
