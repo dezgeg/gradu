@@ -47,7 +47,7 @@ tutustutaan ensin niiden periaatteisiin läheisemmin.
 Nykypäivän Unix-tyyppisten käyttöjärjestelmien tiedostojärjestelmärajapintoja yhdistää pääosin \emph{POSIX (Portable Operating System Interface for uniX)}-standardi~\cite{PosixSpec}.
 % FIXME: jatka tätä ihan vähäsen
 
-\subsection{Unixin lyhyt historia}
+\subsection{Unixin ja POSIX-standardin lyhyt historia}
 
 Unix-käyttöjärjestelmän kehitys alkoi 60-luvun lopulla AT\&T:n Bell Labs-kehityslaboratoriassa.
 Ken Thompson ja Dennis Ritchie olivat olleet kehittämässa MULTICS-nimistä interaktiivista usean käyttäjän moniajokäyttöjärjestelmää yhdessä General Electricin ja MIT:n yliopiston kanssa.
@@ -109,10 +109,12 @@ Nimi \texttt{..} taas viittaa ylempään tasoon hakemistorakenteessa,
 eli tiedostopolku \texttt{/home/tuomas/..} viittaa samaan hakemistoon kuin tiedostopolku \texttt{/home}.
 Juurihakemiston tapauksessa \texttt{..}-nimi vie takaisin juurihakemistoon itseensä, eli tiedostopolut \texttt{/..} ja \texttt{/} toimivat identtisesti.
 
-\subsection{Erityistiedostot}
-
-Tavallisten tiedostojen ja hakemistojen lisäksi POSIX-tiedostojärjestelmät tukevat muunkinlaisia erityistiedostoja.
+Tiedostot voidaan jaotella kahtia tavallisiin tiedostoihin ja erityistiedostoihin.
+Unixissa tavallisia tiedostoja voi käsitellä vain tavupohjaisina,
+eli mikäli sovellus tarvitsee esimerkiksi tietuepohjaista tiedostonkäsittelyä jää sen toteutus sovelluksen vastuulle.
+Erikoistiedostoja taas löytyy viittä eri tyyppiä.
 Merkittävin näistä on \emph{symbolinen linkki} (\emph{symbolic link}).
+TODO selitä...
 
 Muita tuettuja tiedostotyyppejä ovat \emph{nimetty putki} (\emph{named pipe}) ja \emph{paikallinen pistoke} (\emph{domain socket}).
 Kumpikaan näistä ei persistoi mitään dataa levylle,
