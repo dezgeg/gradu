@@ -410,20 +410,21 @@ jonka avulla voidaan jälkikäteen käydä kaikki mahdolliset levyn tilat (joist
 Nyt kaatumistilanteista voidaan etsiä vastaesimerkkejä joissa testattava persistenssiominaisuus ei päde.
 BOB:n voidaan siis vain todeta jonkin persistenssiominaisuuden paikkaansapitämättömyys, mutta ei toisinpäin.
 
-Ensimmäisiä testattuja persistenssiominaisuuksia on erinäisten operaatioiden atomisuus.
-Jo varsin yksinkertainen operaatio, tiedoston loppuun kirjoittaminen tuottaa erilaisia tuloksia eri tiedostojärjestelmäkonfiguraatioilla
-sekä myös kirjoitettavan datan määrä vaikuttaa tulokseen.
-Jo yhden sektorin (tai vähemmän) lisääminen tiedostoon ei ole atominen operaatio muutamalla tiedostojärjestelmällä: ext2 sekä
-ext3, ext4 ja reiserfs mikäli käytetään writeback-journalointitilaa.
+% TODO for next release
+% Ensimmäisiä testattuja persistenssiominaisuuksia on erinäisten operaatioiden atomisuus.
+% Jo varsin yksinkertainen operaatio, tiedoston loppuun kirjoittaminen tuottaa erilaisia tuloksia eri tiedostojärjestelmäkonfiguraatioilla
+% sekä myös kirjoitettavan datan määrä vaikuttaa tulokseen.
+% Jo yhden sektorin (tai vähemmän) lisääminen tiedostoon ei ole atominen operaatio muutamalla tiedostojärjestelmällä: ext2 sekä
+% ext3, ext4 ja reiserfs mikäli käytetään writeback-journalointitilaa.
 
-\subsection{Sovellusten käyttäytyminen kaatumistilanteessa}
+\section{Sovellusten käyttäytyminen kaatumistilanteessa}
 
 Toinen ``All File Systems Are Not Created Equal: On the Complexity of Crafting Crash-consistent Applications''-artikkelin tutkima aihe on erinäisten Linux-sovellusten ja tietokantojen käyttäytyminen kaatumistilanteessa.
 Aiemmin kappaleen alussa nähtiin miten tekstieditorin tiedoston tallennuksesta saatiin tehtyä kaatumisturvallinen POSIX-tiedostojärjestelmäoperaatioita koostamalla.
 Tässä kyseisessä käyttötapauksessa päästiin haluttuun lopputulokseen varsin suoraviivaisella toteutuksella, jossa yksinkertaisesti kirjoitettiin koko tiedosto uudestaan.
 Muuntyyppisillä sovelluksilla voi olla huomattavastikin monimutkaisempia vaatimuksia.
 Esimerkiksi SQL-kyselykielen perustoiminnallisuuksiin kuuluvat transaktiot,
-joiden avulla relaatiotietokannassa voidaan atomisesti päivittää useita, mahdollisesti eri tauluihin kuuluvia rivejä atomisesti.
+joiden avulla relaatiotietokannassa voidaan atomisesti päivittää useita, mahdollisesti eri tauluihin kuuluvia rivejä atomisesti~\cite{DatabaseFundamentals}.
 Jo yksittäiset tietokannat voivat nykyään kuitenkin olla useiden teratavujen kokoisia ja käsitellä useita toisistaan riippumattomia kirjoitustransaktioita rinnakkain~\cite{DatabaseFundamentals}.
 Selvästikin kelvollisen suorituskyvyn saavuttamiseksi koko tietokannan uudelleen kirjoitus joka transaktion yhteydessä ei tule kysymykseen tällaisessa käyttötapauksessa,
 vaan tietokannan ohjelmoijan täytyy itse suunnitella jokin mekanismi jolla kaatumistilanteessa voidaan palauttaa tietokannan tila konsistentiksi.
