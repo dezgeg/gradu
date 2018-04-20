@@ -451,13 +451,15 @@ Esimerkiksi tiedostonimen pituus oli rajoitettu 14 merkkiin ja tiedoston koko 64
 \texttt{ext2} ei ainoastaan korjaa näitä puutteita,
 mutta on lisäksi suunniteltu siten että tiedostojärjelmän levyformaattia voidaan laajentaa taaksepäin yhteensopivasti.
 Ext2:lle onkin kehitetty seuraajat \texttt{ext3} ja \texttt{ext4} joissa olemassaoleva \texttt{ext2}- tai \texttt{ext3}-osio voidaan päivittää seuraavaan
-ext:n versioon ilman tiedostojärjestelmän uudelleenformatointia~\cite{Ext4Status}.
+versioon ilman tiedostojärjestelmän uudelleenformatointia~\cite{Ext4Status}.
 Erityisesti mainittakoon \texttt{ext3}:n tuoma kirjaus, joka parantaa merkittävästi \texttt{ext2}:n kykyä säilyä konsistenttina kaatumistilanteessa.
-Kirjaavia tiedostojärjestelmiä käsitelläänkin myöhemmin \texttt{ext3}:n kautta luvussa~\ref{ChapJournallingFs}.
+Ext3:a ja kirjaavia tiedostojärjestelmiä yleisesti käsitelläänkin myöhemmin luvussa~\ref{ChapJournallingFs}.
 
-Tiedostojärjestelmän levyrakenne vaikuttaa olennaisesti siihen minkälaisia epäkonsistenttiuksia tiedostojärjestelmään voi syntyä virhetilanteissa.
-Siksi ymmärrys ext2:sta auttaa merkittävästi muidenkin tiedostojärjestelmien ymmärtämisessä.
-Yleisesti ottaen \texttt{ext2}:n rakenne on varsin suoraviivainen tapa toteuttaa Unix-tyylinen tiedostojärjestelmä ja se muistuttaakin hyvin pitkälti muita aikaisia Unix-tiedostojärjestelmätoteutuksia, kuten Berkeley Fast Filesystem.
+Tiedostojärjestelmän levyrakenne vaikuttaa olennaisesti siihen minkälaisia epäkonsistenttiuksia tiedostojärjestelmään voi syntyä virhetilanteissa,
+joten vahva ymmärrys ext2:n levyformaatista on tarpeen tutkittaessa ext2:n käyttäytymistä kaatumistilanteessa luvussa~\ref{ChapExt2Crash}.
+Lisäksi ext2:n levyrakenne on vahvasti BSD-käyttöjärjestelmän Berkeley Fast Filesystem-tiedostojärjestelmän inspiroima~\cite{Ext2Design},
+sekä yleisestikin ottaen on varsin suoraviivainen tapa toteuttaa Unix-tyylinen tiedostojärjestelmä,
+joten ext2:n ymmärrys auttaa merkittävästi muidenkin saman aikakauden Unix-tyylisten tiedostojärjestelmien ymmärtämisessä.
 
 \begin{figure}
     \label{FigExt2DiskFormat}
@@ -594,6 +596,7 @@ Nyt poistettaessa tiedosto \texttt{defghijklmn} muuttuu kolmannen hakemistoalkio
 Siis poistettavaa hakemistoalkiota edeltävän hakemistoalkion \texttt{rec\_len}-kenttää kasvatetään ``hyppäämään'' poistetun alkion yli.
 
 \section{ext2 kaatumistilanteissa}
+\label{ChapExt2Crash}
 
 Edellisessä luvussa käytiin lävitse ext2:n tärkeimpiä levyllä sijaitsevia tietorakenteita.
 Tarkastellaan nyt minkälaisia levykirjoituksia Linuxin ext2-tiedostojärjestelmäajuri käytännössä tekee kun suoritetaan joitakin POSIX-tiedostojärjestelmäoperaatioita.
