@@ -109,6 +109,12 @@ Nimi \texttt{..} taas viittaa ylempään tasoon hakemistorakenteessa,
 eli tiedostopolku \texttt{/home/tuomas/..} viittaa samaan hakemistoon kuin tiedostopolku \texttt{/home}.
 Juurihakemiston tapauksessa \texttt{..}-nimi vie takaisin juurihakemistoon itseensä, eli tiedostopolut \texttt{/..} ja \texttt{/} toimivat identtisesti.
 
+Nimen lisäksi kaikilla tiedostoilla ja hakemistoilla on jonkin verran metadataa tiedoston käyttöoikeuksille sekä valvomaan tiedoston käyttöä.
+Ensinnäkin jokaiselle tiedostolle tai hakemistolle on tallennettu sen omistavan käyttäjän tunnus (\emph{user id, UID}) sekä ryhmän tunnus (\emph{group id, GID}).
+Näiden lisäksi tiedostoilla on kolme käyttöoikeutta: luku-, kirjoitus- sekä suoritusoikeus jotka tiedoston omistaja voi erikseen määritellä tiedoston omistajalle, samaan ryhmään kuuluville käyttäjille sekä ulkopuolisille käyttäjille.
+Unix-tiedostojärjestelmä myös ylläpitää kolmea aikaleimaa eri tarkoituksiin:
+milloin tiedoston sisältöä on viimeksi luettu (last data access timestamp), milloin tiedoston sisältöä on viimeksi muokattu (last data modification timestamp) sekä milloin tiedostoa ylipäätään on muokattu (last status change timestamp).
+
 Tiedostot voidaan jaotella kahtia tavallisiin tiedostoihin ja erityistiedostoihin.
 Unixissa tavallisia tiedostoja voi käsitellä vain tavupohjaisina,
 eli mikäli sovellus tarvitsee esimerkiksi tietuepohjaista tiedostonkäsittelyä jää sen toteutus sovelluksen vastuulle.
