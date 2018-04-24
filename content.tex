@@ -449,7 +449,7 @@ joten ext2:n ymmärrys auttaa merkittävästi muidenkin saman aikakauden Unix-ty
 \subsection{Historia}
 
 ext2 (``Second extended filesystem'') on tiedostojärjestelmä joka on luotu jo Linuxin varhaisina aikoina, vuosina 1992--1993~\cite{Ext2Design}.
-Tätä ennen Linuxilla ei ollut omaa varta vasten suunniteltua tiedostojärjestelmää,
+Alunperin Linuxilla ei ollut omaa varta vasten suunniteltua tiedostojärjestelmää,
 vaan se käytti MINIX-käyttöjärjestelmän tiedostojärjestelmää vain koska Linuxin alkuperäinen kehitys oli tehty MINIXillä.
 MINIX-tiedostojärjestelmä kuitenkin sisälsi erinäisiä rajoitteita jotka alkoivat haittaamaan.
 Esimerkiksi tiedostonimen pituus oli rajoitettu 14 merkkiin ja tiedoston koko 64 megatavuun~\cite{Ext2Design}.
@@ -457,7 +457,8 @@ Esimerkiksi tiedostonimen pituus oli rajoitettu 14 merkkiin ja tiedoston koko 64
 mutta on lisäksi suunniteltu siten että tiedostojärjelmän levyformaattia voidaan laajentaa taaksepäin yhteensopivasti.
 Ext2:lle onkin kehitetty seuraajat \texttt{ext3} ja \texttt{ext4} joissa olemassaoleva \texttt{ext2}- tai \texttt{ext3}-osio voidaan päivittää seuraavaan
 versioon ilman tiedostojärjestelmän uudelleenformatointia~\cite{Ext4Status}.
-Erityisesti mainittakoon \texttt{ext3}:n tuoma kirjaus, joka parantaa merkittävästi \texttt{ext2}:n kykyä säilyä konsistenttina kaatumistilanteessa.
+Merkittävin näiden seuraajien tuoma parannus on \texttt{ext3}:n kirjaus,
+joka parantaa huomavattavasti tiedostojärjestelmän kykyä säilyä konsistenttina kaatumistilanteessa \texttt{ext2}:n verrattuna.
 Ext3:a ja kirjaavia tiedostojärjestelmiä yleisesti käsitelläänkin myöhemmin luvussa~\ref{ChapJournallingFs}.
 
 \begin{figure}
@@ -481,8 +482,7 @@ Jokainen ext2:n lohkoryhmä on puolestaan jaettu seuraaviin tietorakenteisiin:
 \emph{inodetauluun} (inode table) sekä datalohkoihin.
 Näistä superlohko ja lohkoryhmien kuvaajat ovat koko tiedostojärjestelmälle yhtenäistä metadataa,
 joiden periaatteessa riittäisi olla levyllä vain kerran,
-ja itse asiassa Linux-ajuri käyttääkin vain ensimmäisestä lohkoryhmästä löytyviä rakenteita.
-Ext2:ssa on kuitenkin molemmista tietorakenteista on kopio jokaisessa lohkoryhmässä korruptoitumisen varalta.
+mutta ext2 säilyttää kuitenkin kummastakin niistä useita kopioita siltä varalta että ensisijainen kopio näistä tietorakenteista korruptoituu.
 
 \subsection{Superlohkon sisältö}
 Superlohko sisältää muunmuassa seuraavanlaisia arvoja tiedostojärjestelmästä, enkoodattuna 32-bittisinä little-endian-kokonaislukuina:
