@@ -664,10 +664,11 @@ Ext2-tiedostojärjestelmän \emph{fsck}-pohjainen palautumismekanismi täyttää
 joten sen seuraajankin kuuluu täyttää tämä kriteeri.
 Atomisuuskriteeri vaatii että tietyt loogisesti yksittäiset tiedostojärjestelmäoperaatiot tapahtuvat
 joko kokonaan loppuun asti tai eivät ollenkaan.
-Kuten aiemmin nähtiin, tämä kriteeri ei täyty ext2:n kohdalla uudelleennimettäessä tiedostoa hakemistosta toiseen,
+Kuten aiemmin nähtiin, tämä kriteeri ei täyty \texttt{ext2}:n kohdalla uudelleennimettäessä tiedostoa hakemistosta toiseen,
 vaan fsck-ohjelman ajamisesta huolimatta voidaan päätyä joko tiedoston katoamiseen tai tilanteeseen jossa sekä uusi että tiedostonimi ovat olemassa.
 Ennakoitavuus tarkoittaa että kaikkien tilanteiden josta tiedostojärjestelmä joutuu palautumaan kaatumistilanteessa ovat ennakoitavissa.
-Nykyisen ext2:n kohdalla näin ei ole, sillä levyvälimuistien takia kaatumistilanteen aikana voi olla useita ...
+Perinteisen \texttt{ext2}:n kohdalla näin ei ole,
+sillä levyvälimuistien takia kaatumistilanteen aikana voi olla meneillään usean loogisen POSIX-tiedostojärjestelmäoperaation aiheuttamia päivityksiä moniin levytietorakenteisiin samanaikaisesti.
 
 Yksi tapa kaikkien näiden kriteereiden täyttämiseksi on suunnitella menetelmä jolla koko tiedostojärjestelmän metadatan voidaan tehdä päivityksiä atomisesti.
 Tähän on useita mahdollisia tapoja, mutta ext2:n kehittäjät valitsivat kirjauksen.
