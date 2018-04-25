@@ -328,25 +328,30 @@ Kaikissa tapauksissa operaatio on atominen.
 \section{POSIX kaatumistilanteessa}
 \label{ChapPosixDataConsistency}
 Tietokoneiden massamuistit ovat tyypillisesti keskusmuistia merkittävästi hitaampia lukea ja kirjoittaa.
-Tyypillinen tapa parantaa tiedostojärjestelmän suorituskykyä onkin käyttää osaa keskusmuistista välimuistina tiedostojärjestelmälle.
-POSIX-standardi antaakin tiedostojärjestelmätoteutuksille merkittäviä vapauksia erilaisten välimuistien käyttöön,
-joita muun muassa Linux hyödyntää merkittävissä määrin.
-Kyseisenkaltaisilla optimoinneilla on kuitenkin varjopuolensa,
+Tyypillinen tapa parantaa tiedostojärjestelmän suorituskykyä onkin käyttää osaa keskusmuistista välimuistina tiedostojärjestelmälle,
+ja POSIX-standardi antaakin tiedostojärjestelmätoteutuksille reilusti vapauksia erilaisten välimuistien käyttöön.
+Muun muassa Linux-tiedostojärjestelmät hyödyntävätkin levyvälimuisteja merkittävissä määrin,
+mikä nähdään myöhemmin luvussa~\ref{ChapExt2Crash}.
+Tämänkaltaisilla optimoinneilla on kuitenkin varjopuolensa,
 sillä ne hankaloittavat kaatumistilanteita kestävien sovellusten, kuten tietokantajärjestelmien toteuttamista.
 Tässä luvussa tarkastellaankin POSIXin tarjoamia rajapintoja tiedostojärjestelmän välimuistien hallintaan sekä muita sovellusohjelmoijan kannalta huomioonotettavia seikkoja.
 
 Erinäiset levyvälimuistit olivat käytössä jo hyvin varhain Unixissa.
-Jo Ritchien ja Thompsonin alkuperäisestä ``The UNIX time-sharing system''-artikkelista vuodelta 1974 löytyy lyhyt selostus Unixin \emph{lohkovälimuistista} (\emph{buffer cache}).
-Tämänkaltainen pelkkiä levylukuja säilyttävä välimuisti ei näy sovellusohjelmoijalle mitenkään. % XXX
-Tästä looginen seuraus on kirjoitusten vieminen välimuistiin.
-Tämä voidaan tehdä sekä tiedoston metadatalle että varsinaiselle datalle.
-Siis sekä datan kirjoitus \texttt{write()}-funktiolla että
-tiedoston metadataa muokkaavat operaatiot,
-mukaanlukien aikaleimojen päivitykset eivät välttämättä päädy levylle asti tiedostojärjestelmäkutsun palatessa.
-Levyvälimuistin hallintaan löytyy POSIXissa kaksi keskeistä funktiota~\cite{PosixSpec}:
+Jo Ritchien ja Thompsonin alkuperäisestä ``The UNIX time-sharing system''~\cite{UnixPaper}-artikkelista vuodelta 1974 löytyy lyhyt selostus Unixin \emph{lohkovälimuistista} (\emph{buffer cache}).
+Lohkovälimuistin toiminta levyltä luettaessa esimerkiksi \texttt{read()}-kutsun yhteydessä on yksinkertainen:
+välimuistista etsitään lohkonumerolla hakemalla lohkon sisältö.
+Pelkkien levylukujen vieminen välimuistin kautta ei vielä näy sovellusohjelmoijalle mitenkään,
+mutta lohkovälimuisti joka toimii myös levykirjoituksille tuottaa haasteita.
+Käytännössä tämä tarkoittaa että \texttt{write()}-kutsun yhteydessä tehty tiedostoon kirjoitus ei välttämättä päädy levylle asti,
+vaan sovellusohjelman kirjoittama data ainoastaan kopioidaan levyvälimuistin puskuriin sekä merkitään kyseinen puskuri kirjoitettavaksi myöhemmin levylle~\cite{UnixPaper}.
+Tällaisen kanssavälimuistin \texttt{write()} ei siis ole \emph{pysyvä} (\emph{durable}) operaatio.
+(todo jatkoa).
 
+%tiedoston metadataa muokkaavat operaatiot,
+%mukaanlukien aikaleimojen päivitykset eivät välttämättä päädy levylle asti tiedostojärjestelmäkutsun palatessa.
 % http://pubs.opengroup.org/onlinepubs/9699919799/functions/fsync.html
 % http://pubs.opengroup.org/onlinepubs/9699919799/functions/fdatasync.html
+Levyvälimuistin hallintaan löytyy POSIXissa kaksi keskeistä funktiota~\cite{PosixSpec}:
 \begin{verbatim}
 int fsync(int fildes);
 int fdatasync(int fildes);
