@@ -109,25 +109,28 @@ Nimi \texttt{..} taas viittaa ylempään tasoon hakemistorakenteessa,
 eli tiedostopolku \texttt{/home/tuomas/..} viittaa samaan hakemistoon kuin tiedostopolku \texttt{/home}.
 Juurihakemiston tapauksessa \texttt{..}-nimi vie takaisin juurihakemistoon itseensä, eli tiedostopolut \texttt{/..} ja \texttt{/} toimivat identtisesti.
 
-Nimen lisäksi kaikilla tiedostoilla ja hakemistoilla on jonkin verran metadataa tiedoston käyttöoikeuksille sekä valvomaan tiedoston käyttöä.
-Ensinnäkin jokaiselle tiedostolle tai hakemistolle on tallennettu sen omistavan käyttäjän tunnus (\emph{user id, UID}) sekä ryhmän tunnus (\emph{group id, GID}).
+Nimen lisäksi kaikilla tiedostoilla ja hakemistoilla on jonkin verran metadataa muun muassa käyttöoikeuksille sekä aikaleimoille.
+Koska tässä ja useissa muissakin yhteyksissä sekä tiedostot että hakemistot toimivat yhtenäisesti,
+on Unix-tiedostojärjestelmistä puhuttaessa yleisesti konventio sanoa että Unixissa hakemistotkin ovat tiedostoja,
+jolloin käytetään termiä \emph{tavallinen tiedosto} (\emph{regular file}) viittaamaan yleiskielen termiin ``tiedosto''.
+
+Jokaiselle tiedostolle on tallennettu sen omistavan käyttäjän tunnus (\emph{user id, UID}) sekä ryhmän tunnus (\emph{group id, GID}).
 Näiden lisäksi tiedostoilla on kolme käyttöoikeutta: luku-, kirjoitus- sekä suoritusoikeus jotka tiedoston omistaja voi erikseen määritellä tiedoston omistajalle, samaan ryhmään kuuluville käyttäjille sekä ulkopuolisille käyttäjille.
 Unix-tiedostojärjestelmä myös ylläpitää kolmea aikaleimaa eri tarkoituksiin:
 milloin tiedoston sisältöä on viimeksi luettu (last data access timestamp), milloin tiedoston sisältöä on viimeksi muokattu (last data modification timestamp) sekä milloin tiedostoa ylipäätään on muokattu (last status change timestamp).
 
-Tiedostot voidaan jaotella kahtia tavallisiin tiedostoihin ja erityistiedostoihin.
 Unixissa tavallisia tiedostoja voi käsitellä vain tavupohjaisina,
 eli mikäli sovellus tarvitsee esimerkiksi tietuepohjaista tiedostonkäsittelyä jää sen toteutus sovelluksen vastuulle.
-Erikoistiedostoja taas löytyy viittä eri tyyppiä.
-Merkittävin näistä on \emph{symbolinen linkki} (\emph{symbolic link}).
-TODO selitä...
+
+Tavallisten tiedostojen ja hakemistojen lisäksi Unix-tiedostojärjestelmä tukee viittä eri erikoistiedostotyyppiä.
+Merkittävin näistä on \emph{symbolinen linkki} (\emph{symbolic link}). (todo).
 
 Muita tuettuja tiedostotyyppejä ovat \emph{nimetty putki} (\emph{named pipe}) ja \emph{paikallinen pistoke} (\emph{domain socket}).
 Kumpikaan näistä ei persistoi mitään dataa levylle,
 vaan niitä käytetään Unix-sovellusohjelmoinnissa mekanismina \emph{prosessien väliseen kommunikointiin} (\emph{IPC}, \emph{Inter-Process Communication}).
 Periaatteessa siis vastaava toiminnallisuus voitaisiin toteuttaa käyttöjärjestelmään täysin tiedostojärjestelmästä riippumattomasti,
 mutta tämä Unixin tapa tuoda IPC-mekanismit ikään kun tiedostojärjestelmäobjekteiksi mahdollistaa niiden käsittelyn samoilla työkaluilla ja rajapinnoilla kuin tavallisia tiedostoja.
-Esimerkiksi myöhemmin esiteltävät tiedostojen käyttöoikeudet toimivat nimetyille putkille ja paikallisille pistokkeille samalla tavalla kuin ne toimivat tavallisille tiedostoille ja hakemistoille.
+Esimerkiksi aiemmin esitellyt tiedostojen käyttöoikeudet toimivat nimetyille putkille ja paikallisille pistokkeille täsmälleen samoilla tavoilla kuin muillekin tiedostoille.
 
 \subsection{Tiedoston avaus ja sulkeminen}
 Tiedoston avaus tapahtuu \texttt{open}-funktiolla:
@@ -250,7 +253,7 @@ int rmdir(const char *path);
 Hakemiston poistaminen onnistuu vain mikäli hakemisto on tyhjä.
 
 %%% % http://pubs.opengroup.org/onlinepubs/9699919799/functions/unlink.html#tag_16_635
-Tiedoston tai hakemiston voi uudelleennimetä \texttt{rename()}-funktiolla:
+Tiedoston voi uudelleennimetä \texttt{rename()}-funktiolla:
 % http://pubs.opengroup.org/onlinepubs/9699919799/functions/rename.html#tag_16_487
 \begin{verbatim}
 int rename(const char *old, const char *new);
