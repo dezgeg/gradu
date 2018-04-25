@@ -496,7 +496,7 @@ itse tiedostojärjestelmä ei käytä tätä tilaa mitenkään.
 Valtaosa ext2:n levynkäytöstä on lohkoryhmiä,
 joista jokainen lohkoryhmä viimeistä lukuunottamatta vie yhtä paljon tilaa levyltä.
 Jokainen ext2:n lohkoryhmä on puolestaan jaettu seuraaviin tietorakenteisiin:
-\emph{superlohkoon} (superblock), 
+\emph{superlohkoon} (superblock),
 \emph{lohkoryhmien kuvaajiin} (block group descriptors),
 \emph{lohkobittikarttoihin} (block bitmap),
 \emph{inodebittikarttoihin} (inode bitmap),
@@ -536,7 +536,7 @@ Lohkoryhmäkuvaajat on yksinkertaisesti taulukko seuraavista tietorakenteesta:
           Inodebittikartta kertoo mitkä kyseisen lohkoryhmän inodeista on käytössä.
           Samaan tapaan kuin lohkobittikartan kanssa, 1 tarkoittaa käytössä olevaa inodea ja 0 vapaata inodea.
     \item \texttt{bg\_free\_blocks\_count} ja \texttt{bg\_free\_inodes\_count} kertovat vapaiden lohkojen ja inodejen lukumäärän kyseisessä lohkoryhmässä.
-          % Koska nämä kentät ovat vain 16-bittisiä, yhden lohkoryhmän 
+          % Koska nämä kentät ovat vain 16-bittisiä, yhden lohkoryhmän
     \item \texttt{bg\_inode\_table} kertoo mistä lohkosta kyseisen lohkoryhmän inodetaulu alkaa. Lohkoryhmän datalohkot sijaitsevat heti lohkoryhmän inodetaulun jälkeen.
 \end{itemize}
 
