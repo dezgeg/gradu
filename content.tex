@@ -514,9 +514,9 @@ Superlohko sisältää muunmuassa seuraavanlaisia arvoja tiedostojärjestelmäst
 \begin{itemize}
     \item Tiedostojärjestelmän lohkon (block) koko \texttt{s\_log\_block\_size}. Yleisesti käytettyjä lohkon kokoja on 1, 2, ja 4 kilotavua.
           Mahdollisia tiedostojärjestelmän lohkokokoja rajoittaa se, että lohkon koon täytyy olla käytettävän levyn sektorin koon moninkerta.
-          Yleisimmät käytetyt sektorin koot nykypäivänä ovat 512 ja 4096 tavua.
-          Myöskin Linuxin ext2-ajurilla on lisärajoituksena että lohkon koko ei saa ylittää prosessoriarkkitehtuurin sivun kokoa,
-          mikä yleisemmin (muun muassa Intelin x86-arkkitehtuurissa) on 4096 tavua.
+          %Yleisimmät käytetyt sektorin koot nykypäivänä ovat 512 ja 4096 tavua.
+          %Myöskin Linuxin ext2-ajurilla on lisärajoituksena että lohkon koko ei saa ylittää prosessoriarkkitehtuurin sivun kokoa,
+          %mikä yleisemmin (muun muassa Intelin x86-arkkitehtuurissa) on 4096 tavua.
     \item Ominaisuusbitit \texttt{s\_feature\_compat}, \texttt{s\_feature\_incompat} ja \texttt{s\_feature\_ro\_compat} jotka kertovat mitä laajennoksia tiedostojärjestelmässä on käytössä.
           Nämä ovat jaettu kolmeen eri luokkaan mikä mahdollistaa sekä taaksepäin- että eteenpäinyhteensopivuuden tietyissä rajoissa.
     \item Lohkoryhmien koot, erikseen datalohkoille ja inodeille.
@@ -604,14 +604,15 @@ Linux-ajurin luoma rakenne on seuraavanlainen:
 
 \begin{tabular}{llll}
     \texttt{inode} & \texttt{rec\_len} & \texttt{name\_len} & tiedostonimi \\ \hline
-    12 & 12  & 1  & "."            sekä 3 0-tavua. \\
-    2  & 12  & 2  & ".."           sekä 2 0-tavua. \\
-    13 & 12  & 3  & "abc"          sekä 1 0-tavu. \\
-    14 & 20  & 11 & "defghijklmn"  sekä 1 0-tavu. \\
-    15 & 968 & 12 & "opqrstuvwxyz" sekä loput lohkosta ovat 0-tavuja. \\
+    12 & 12  & 1  & \texttt{"."}            sekä 3 0-tavua. \\
+    2  & 12  & 2  & \texttt{".."}           sekä 2 0-tavua. \\
+    13 & 12  & 3  & \texttt{"abc"}          sekä 1 0-tavu. \\
+    14 & 20  & 11 & \texttt{"defghijklmn"}  sekä 1 0-tavu. \\
+    15 & 968 & 12 & \texttt{"opqrstuvwxyz"} sekä loput alkiosta ovat 0-tavuja. \\
 \end{tabular}
 
 Nyt poistettaessa tiedosto \texttt{defghijklmn} muuttuu kolmannen hakemistoalkion (nimen \texttt{abc}) sisällöksi:
+
 \begin{tabular}{llll}
     \texttt{inode} & \texttt{rec\_len} & \texttt{name\_len} & tiedostonimi \\ \hline
     13 & 20  & 3  & "abc"\\
