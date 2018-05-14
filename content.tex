@@ -483,6 +483,25 @@ Näitä sovellusten käyttämiä mekanismejä kutsutaan \emph{päivitysprotokoll
 %%% joista voidaan jälkikäteen simuloida mahdollisia kaatumistilanteita.
 %%% Big FIXME...
 
+Tarkastellaan nyt lähemmin ALICEn löytämää haavoittuvuutta SQLite-tietokantakirjastosta.
+SQLite on laajasti käytetty SQL-kyselykieleen pohjautuva tietokanta joka tarjoaa täyden tuen SQL-kielen transaktioille.
+Transaktionaalisten päivitysten tekemiseen SQLite käyttää sisäisesti joko historiallista rollback journal-menetelmää tai uudempaa Write-Ahead Logging-menetelmää~\cite{SqliteAnalysis},
+missä käytettävä menetelmä on käyttäjän valittavissa.
+ALICEn löytävä haavoittuvuus koskee yksinomaan rollback journal-tilaa,
+jonka päivitysprotokolla on seuraavanlainen~\cite{PosixDataConsistency}:
+% Fig 4(F)
+
+% creat(journal)
+% N x append(journal)
+% fsync(journal)
+% fsync(parent-dir)
+% write(journal)
+% fsync(journal)
+% write(db)
+% fsync(db)
+% unlink(journal)
+% stdout(done)
+
 \section{ext2-tiedostojärjestelmä}
 Edellisissä kappaleissa nähtiin sovellusohjelmoijan näkökulmasta millaisia tiedostojärjestelmärajapintoja POSIX-spesifikaatio antaa sovellusten käytettäväksi sekä kuinka niitä täytyy käyttää oikein kaatumisturvallisuuden säilyttämiseksi.
 Nyt siirrytään tarkastelemaan miten itse tiedostojärjestelmän pitää toimia jotta kaatumisturvallisuus säilyy koko kokonaisuuden kannalta.
