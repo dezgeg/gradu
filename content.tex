@@ -435,8 +435,21 @@ jonka avulla voidaan jälkikäteen käydä kaikki mahdolliset levyn tilat (joist
 Nyt kaatumistilanteista voidaan etsiä vastaesimerkkejä joissa testattava persistenssiominaisuus ei päde.
 BOB:n voidaan siis vain todeta jonkin persistenssiominaisuuden paikkaansapitämättömyys, mutta ei toisinpäin.
 
+\subsection{Testattuja tiedostojärjestelmien persistenssiominaisuuksia}
+
+Ensimmäisiä testattuja persistenssiominaisuuksia on erinäisten operaatioiden atomisuus itsessään.
+Jo pelkän tiedostoon kirjoittamiseen \texttt{write()}-kutsulla liittyy useita seikkoja jotka saattavat vaikuttaa lopputulokseen.
+Ensimmäinen seikka on että käytetäänkö \texttt{write()}-kutsua ylikirjoittamaan olemassaoleva tiedoston sisältöä vaiko kirjoitetaanko sillä tiedoston loppuun siten että sen koko kasvaa.
+Toinen on kirjoitettavan datan määrä, jossa ``mielenkiintoisia'' määriä ovat yhden levylohkon verran,
+yhden tiedostojärjestelmälohkon verran sekä tätä suuremmat määrät.
+Yhteensä näistä saadaan kuusi tapausta joita tarkastella.
+Myöskin hakemisto-operaatioiden,
+kuten \texttt{link()}, \texttt{unlink()} ja \texttt{rename()} atomisuutta on testattu.
+
+Toinen tutkittu persistenssiominaisuus on mahdollinen tiedostojärjestelmäoperaatioiden järjestyksen vaihtuminen levylle kirjoittaessa.
+
+
 % TODO for next release
-% Ensimmäisiä testattuja persistenssiominaisuuksia on erinäisten operaatioiden atomisuus.
 % Jo varsin yksinkertainen operaatio, tiedoston loppuun kirjoittaminen tuottaa erilaisia tuloksia eri tiedostojärjestelmäkonfiguraatioilla
 % sekä myös kirjoitettavan datan määrä vaikuttaa tulokseen.
 % Jo yhden sektorin (tai vähemmän) lisääminen tiedostoon ei ole atominen operaatio muutamalla tiedostojärjestelmällä: ext2 sekä
