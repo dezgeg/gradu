@@ -502,6 +502,17 @@ jonka päivitysprotokolla on seuraavanlainen~\cite{PosixDataConsistency}:
 % unlink(journal)
 % stdout(done)
 
+Transaktion alkaessa luodaan kohdassa 1. tietokantatiedostosta erillinen tiedosto rollback journalille.
+Ennen varsinaisen tietokantatiedoston päivitystä kirjoitetaan kohdassa 2 rollback journaliin tieto siitä mitä tietokantasivuja transaktiossa ollaan muokkaamassa sekä kunkin muokatun sivun alkuperäinen sisältö.
+Kohdissa 3 ja 4 pakotetaan rollback journalin kirjoitus levylle ja että sen hakemistoalkio on pakotettu levylle.
+Kohdat 4--5 päivittävät rollback journalin otsakkeeseen, että sen kirjoitus on suoritettu loppuun.
+Kohdassa 6 tehdään muutokset itse tietokantaan.
+
+Mahdollisissa kaatumistilanteissa perusajatuksena on,
+että mikäli rollback journal-tiedostoa ei ole tai sen otsakkeen perusteella sitä ei ole kirjoitettu kokonaan loppuun,
+on itse tietokanta konsistentissa tilassa ja palautumiseen riittää ainoastaan poistaa mahdollinen osittain kirjoitettu rollback journal.
+Muuten palautetaan tietokanta
+
 \section{ext2-tiedostojärjestelmä}
 Edellisissä kappaleissa nähtiin sovellusohjelmoijan näkökulmasta millaisia tiedostojärjestelmärajapintoja POSIX-spesifikaatio antaa sovellusten käytettäväksi sekä kuinka niitä täytyy käyttää oikein kaatumisturvallisuuden säilyttämiseksi.
 Nyt siirrytään tarkastelemaan miten itse tiedostojärjestelmän pitää toimia jotta kaatumisturvallisuus säilyy koko kokonaisuuden kannalta.
