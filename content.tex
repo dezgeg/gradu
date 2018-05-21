@@ -681,7 +681,19 @@ Edellisessä luvussa käytiin lävitse ext2:n tärkeimpiä levyllä sijaitsevia 
 Tarkastellaan nyt minkälaisia levykirjoituksia Linuxin ext2-tiedostojärjestelmäajuri käytännössä tekee kun suoritetaan joitakin POSIX-tiedostojärjestelmäoperaatioita.
 Lisäksi tutkitaan mitä epäkonsistenssiuksia tiedostojärjestelmään voi aiheutua kaatumistilanteen sattuessa ja kuinka ext2:n tarkastusohjelma \texttt{e2fsck} suhtautuu niihin.
 
+Tutkittavana kohteena on Linuxin versio 4.14 ja se on tehty ajamalla Linuxia QEMU-virtuaalikoneessa,
+jota on laajennettu kirjoittamaan lokitiedostoa jokaisesta levykirjoituksesta jota virtualisoidulle levylle on tehty.
+Teknisesti tämä on toteutettu lisäämällä QEMUun uusi lohkolaitetyyppi joka muuten ohjaa kaikki luku- ja kirjoitusoperaatiot jollekin toiselle QEMUun konfiguroidulle lohkolaitteelle,
+mutta kirjoitusoperaation yhteydessä tekee myös lokimerkinnän joka sisältää aikaleiman, muokattavan sektorin numeron sekä kirjoitettavan sisällön.
+Linux-virtuaalikoneelle annetaan etukäteen alustettu ext2-tiedostojärjestelmä kyseisen lokittavan lohkolaitteen läpi,
+ja virtuaalikoneen käynnistyttyä liitetään testattava tiedostojärjestelmä,
+suoritetaan testattavat operaatiot lyhyellä C-ohjelmalla,
+ja sammutetaan virtuaalikone.
+Ennen sammuttamista odotetaan X minuuttia,
+jotta voidaan selkeästi nähdä levyvälimuistien vaikutus useissa tilanteissa.
+
 \subsection{Tiedoston luominen}
+Luotaessa tyhjän ext2-tiedostojärjestelmän juurihakemistoon uusi tyhjä tiedosto kutsulla \texttt{creat("new", 0755)} tapahtuu seuraavasti:
 % Tarkastellaan Linuxin ext2-ajurin tekemiä levykirjoituksia luotaessa tyhjän ext2-tiedostojärjestelmän juurihakemistoon uusi tyhjä tiedosto komennolla \texttt{touch new}.
 % Havaittiin seuraavat operaatiot:
 %
