@@ -694,17 +694,14 @@ jotta voidaan selkeästi nähdä levyvälimuistien vaikutus useissa tilanteissa.
 
 \subsection{Tiedoston luominen}
 Luotaessa tyhjän ext2-tiedostojärjestelmän juurihakemistoon uusi tyhjä tiedosto kutsulla \texttt{creat("new", 0755)} tapahtuu seuraavasti:
-% Tarkastellaan Linuxin ext2-ajurin tekemiä levykirjoituksia luotaessa tyhjän ext2-tiedostojärjestelmän juurihakemistoon uusi tyhjä tiedosto komennolla \texttt{touch new}.
-% Havaittiin seuraavat operaatiot:
-%
-% \begin{enumerate}
-%     \item{Juurihakemistoon luodaan uusi hakemistoalkio nimelle \texttt{new} osoittamaan inodeen 13.}
-%     \item{Inode 13 merkitään varatuksi inodebittikarttaan.}
-%     \item{Juurihakemiston inoden aikaleimaa (\texttt{i\_mtime}) päivitetään.}
-%     \item{Inoden rakenne inodetaulussa täytetään.}
-%     \item{Superlohkon vapaiden inodejen määrää vähennetään yhdellä.}
-%     \item{Lohkoryhmän 0 vapaiden inodejen määrää vähennetään yhdellä.}
-% \end{enumerate}
+\begin{enumerate}
+    \item{Juurihakemistoon luodaan uusi hakemistoalkio nimelle \texttt{new} osoittamaan inodeen 13.}
+    \item{Inode 13 merkitään varatuksi inodebittikarttaan.}
+    \item{Juurihakemiston inoden aikaleimaa (\texttt{i\_mtime}) päivitetään.}
+    \item{Inoden rakenne inodetaulussa täytetään.}
+    \item{Superlohkon vapaiden inodejen määrää vähennetään yhdellä.}
+    \item{Lohkoryhmän 0 vapaiden inodejen määrää vähennetään yhdellä.}
+\end{enumerate}
 %
 % Yhteensä siis koko operaation suorittamiseen vaaditaan kuusi levykirjoitusta viiteen eri tietorakenteeseen levyllä.
 % Nyt kaatumistilanteessa tämän operaation aikana voi olla seuraavia vaikutuksia.
