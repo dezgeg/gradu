@@ -201,17 +201,15 @@ Sallittuja arvoja ovat vakiot \texttt{SEEK\_SET}, \texttt{SEEK\_CUR} ja \texttt{
 jotka tarkoittavat vastaavasti että tiedostokahvan sijainniksi asetetaan \texttt{offset},
 että tiedostokahvan sijaintia siirretään eteenpäin \texttt{offset} tavua ja
 että tiedostokahvan sijainniksi asetetaan \texttt{offset} tavua eteenpäin laskien tiedoston lopusta.
-
 Onnistuessaan \texttt{lseek()}-kutsu palauttaa sijainnin johon siirryttiin.
 Sijainnin voi siis selvittää siirtymättä tiedostossa kutsulla \texttt{lseek(fd, 0, SEEK\_CUR)}.
 
-%
-% \begin{itemize}
-%     \item Arvo \texttt{SEEK\_SET} asettaa kahvan sijainniksi \texttt{offset}.
-%     \item Arvo \texttt{SEEK\_CUR} siirtää kahvaa eteenpäin \texttt{offset} tavua.
-%     \item Arvo \texttt{SEEK\_END} siirtää kahvan \texttt{offset} tavua eteenpäin laskien tiedoston lopusta.
-% \end{itemize}
-%
+Unix-tiedostojärjestelmät tukevat \emph{harvoja} (\emph{sparse}) tiedostoja,
+eli tiedostoissa voi olla kohtia jossa niille ei ole varattu levytilaa mutta niistä lukeminen onnistuu ja palauttaa nollatavuja.
+Harvojen tiedostojen tekeminen onnistuu \texttt{lseek()}-funktion avulla siirtymällä tiedostossa eteenpäin kohtaan johon ei ole kirjoitettu mitään.
+Esimerkiksi kirjoittamalla ensin 32 kilotavua,
+siirtymällä eteenpäin 32 kilotavua kutsulla \texttt{lseek(fd, 32768, SEEK\_CUR)},
+ja kirjoittamalla toiset 32 kilotavua pitäisi lopputuloksena olla tiedosto jonka koko on 96 kilotavua mutta vie vain 64 kilotavua levytilaa.
 
 Tiedoston metadatan voi lukea \texttt{fstat()}- tai \texttt{stat()}-funktioilla.
 
@@ -228,6 +226,7 @@ josta löytyy muun muassa seuraavia kenttiä:
 \begin{itemize}
     \item Kenttä \texttt{mode\_t st\_mode} kertoo tiedoston tyypin (tavallinen tiedosto, hakemisto, yms.) ja käyttöoikeudet.
     \item Kenttä \texttt{size\_t st\_size} kertoo tiedoston koon.
+    \item Kenttä \texttt{blckcnt\_t st\_size} kertoo tiedoston viemän tilan 512 tavun sektoreissa.
     \item Kentät \texttt{uid\_t st\_uid} ja \texttt{gid\_t st\_gid} kertovat tiedoston omistavan käyttäjän sekä ryhmän tunnuksen numeerisen arvon.
     \item ...
 \end{itemize}
