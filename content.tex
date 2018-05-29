@@ -696,32 +696,41 @@ Luotaessa tyhjän ext2-tiedostojärjestelmän juurihakemistoon uusi tyhjä tiedo
 
 \begin{table}
 \begin{tabular}{l | l | l | l | l}
-   & 0.000    &    &    & msg:before\_mount \\ \hline
-1  & 0.074    & 2  & 3  & superblock \\ \hline
-   & 0.053    &    &    & msg:after\_mount \\ \hline
-   & 64.343   &    &    & msg:before\_creat \\ \hline
-   & 0.001    &    &    & msg:after\_creat \\ \hline
-2  & 31.101   & 4  & 5  & bg\_table \\ \hline
-3  & 0.000    & 8  & 9  & group\_0\_inode\_bitmap \\ \hline
-4  & 0.000    & 74 & 75 & root\_dir\_blocks \\ \hline
-5  & 30.720   & 10 & 13 & group\_0\_inode\_table \\ \hline
-   & 118.274  &    &    & msg:before\_umount \\ \hline
-6  & 0.126    & 2  & 3  & superblock \\ \hline
-7  & 0.000    & 2  & 3  & superblock \\ \hline
-8  & 0.000    & 2  & 3  & superblock \\ \hline
-   & 0.059    &    &    & msg:before\_umount \\ \hline
+1  & 0.000    &      &      & msg:before\_mount              \\ \hline %
+2  & 0.051    & 0    & 7    & superblock                     \\ \hline % 1
+3  & 0.027    &      &      & msg:after\_mount               \\ \hline %
+4  & 61.857   &      &      & msg:before\_creat              \\ \hline %
+5  & 0.003    &      &      & msg:after\_creat               \\ \hline %
+6  & 30.985   & 8    & 15   & bg\_table                      \\ \hline % 2
+7  & 0.000    & 24   & 31   & group\_0\_inode\_bitmap        \\ \hline % 3
+8  & 0.000    & 4128 & 4135 & root\_dir\_blocks              \\ \hline % 4
+9  & 30.720   & 32   & 39   & group\_0\_inode\_table         \\ \hline % 5
+10 & 118.337  &      &      & msg:before\_umount             \\ \hline %
+11 & 0.052    & 0    & 7    & superblock                     \\ \hline % 6
+12 & 0.000    & 0    & 7    & superblock                     \\ \hline % 7
+13 & 0.000    & 0    & 7    & superblock                     \\ \hline % 8
+14 & 0.028    &      &      & msg:before\_umount             \\ \hline %
 \end{tabular}
 \end{table}
 
+Levyn liittämisen yhteydessä tehdään yksi levykirjoitus superlohkoon, jossa asetetaan lippu että tiedostojärjestelmä on käytössä.
+Tämä kertoo että kaatumistilanteessa tiedostojärjestelmän tila on epäkonsistentti ja on tarpeen ajaa e2fsck ennen tiedostojärjestelmän liittämistä.
+Linuxin tapa käyttää levyvälimuisteja aggressiivisesti näkyy jo näinkin yksinkertaisella testitapauksella,
+sillä itse \texttt{creat()}-kutsu ei tee mitään levykirjoituksia vaan palaa heti sovellusohjelmalle.
+Vasta noin 30 sekunnin jälkeen aletaan tehdä muutoksia levylle.
+Kohdassa 6 päivitään lohkoryhmän vapaiden inodejen määrää, kohdassa 7 merkitään uudelle tiedostolle varattu inode käytössä olevaksi inodebittikarttaan
+ja kohdassa 8 lisätään juurihakemistoon hakemistoalkio viittaamaan uuden tiedoston inodeen.
+Edelleen 30 sekuntia myöhemmin muokataan inodetaulua, missä samalla alustetaan uuden inoden sisältö sekä päivitetään juurihakemiston aikaleimoja.
 
-\begin{enumerate}
-    \item{Juurihakemistoon luodaan uusi hakemistoalkio nimelle \texttt{new} osoittamaan inodeen 13.}
-    \item{Inode 13 merkitään varatuksi inodebittikarttaan.}
-    \item{Juurihakemiston inoden aikaleimaa (\texttt{i\_mtime}) päivitetään.}
-    \item{Inoden rakenne inodetaulussa täytetään.}
-    \item{Superlohkon vapaiden inodejen määrää vähennetään yhdellä.}
-    \item{Lohkoryhmän 0 vapaiden inodejen määrää vähennetään yhdellä.}
-\end{enumerate}
+%\begin{enumerate}
+%    \item{Juurihakemistoon luodaan uusi hakemistoalkio nimelle \texttt{new} osoittamaan inodeen 13.}
+%    \item{Inode 13 merkitään varatuksi inodebittikarttaan.}
+%    \item{Juurihakemiston inoden aikaleimaa (\texttt{i\_mtime}) päivitetään.}
+%    \item{Inoden rakenne inodetaulussa täytetään.}
+%    \item{Superlohkon vapaiden inodejen määrää vähennetään yhdellä.}
+%    \item{Lohkoryhmän 0 vapaiden inodejen määrää vähennetään yhdellä.}
+%\end{enumerate}
+
 %
 % Yhteensä siis koko operaation suorittamiseen vaaditaan kuusi levykirjoitusta viiteen eri tietorakenteeseen levyllä.
 % Nyt kaatumistilanteessa tämän operaation aikana voi olla seuraavia vaikutuksia.
