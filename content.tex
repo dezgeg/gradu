@@ -680,6 +680,26 @@ Edellisessä luvussa käytiin lävitse ext2:n tärkeimpiä levyllä sijaitsevia 
 Tarkastellaan nyt minkälaisia levykirjoituksia Linuxin ext2-tiedostojärjestelmäajuri käytännössä tekee kun suoritetaan joitakin POSIX-tiedostojärjestelmäoperaatioita.
 Lisäksi tutkitaan mitä epäkonsistenssiuksia tiedostojärjestelmään voi aiheutua kaatumistilanteen sattuessa ja kuinka ext2:n tarkastusohjelma \texttt{e2fsck} suhtautuu niihin.
 
+\subsection{Tiedostojärjestelmän tarkistusohjelma \emph{fsck}}
+Tiedostojärjestelmän mukana jaellaan tyypillisesti \emph{fsck (file system check)}-niminen tarkastusohjelma joka pyrkii tarkistamaan tiedostojärjestelmän metadatan oikeellisuuden ja tarvittaessa korjaamaan kohdattuja ongelmia.
+Ext2:n mukana tuleekin \texttt{e2fsck}-niminen tarkistustyökalu jonka toimintaa kuvaillaan tässä luvussa.
+
+\subsubsection{Toiminta}
+
+Tyypillinen vaatimus tiedostojärjestelmän tarkistusohjelmilta on että niiden kuuluu toimia monentyyppisten korruptioiden kanssa.
+Kaatumistilanteiden lisäksi korruptioita voi aiheutua tiedostojärjestelmäajurin ohjelmointivirheistä tai laitteiston aiheuttamista ongelmista.
+Koska \texttt{e2fsck}:n täytyy käydä koko tiedostojärjestelmän metadata läpi,
+pitää jo koko metadatan paikantamisessa olla varovainen,
+koska johonkin muuhun metadataan viittaava kenttä itsessään voi olla korruptoitunut.
+Myöskin metadataan tehtävät korjaukset on tärkeä tehdä tietyssä järjestyksessä.
+
+\texttt{e2fsck} käy tiedostojärjestelmän läpi kuudessa vaiheessa:
+\begin{enumerate}
+    \item{Superlohko}
+\end{enumerate}
+
+\subsection{Kaatumistilanteiden tutkiminen käytännössä}
+
 Tutkittavana kohteena on Linuxin versio 4.14 ja se on tehty ajamalla Linuxia QEMU-virtuaalikoneessa,
 jota on laajennettu kirjoittamaan lokitiedostoa jokaisesta levykirjoituksesta jota virtualisoidulle levylle on tehty.
 Teknisesti tämä on toteutettu lisäämällä QEMUun uusi lohkolaitetyyppi joka muuten ohjaa kaikki luku- ja kirjoitusoperaatiot jollekin toiselle QEMUun konfiguroidulle lohkolaitteelle,
@@ -691,7 +711,7 @@ ja sammutetaan virtuaalikone.
 Ennen sammuttamista odotetaan X minuuttia,
 jotta voidaan selkeästi nähdä levyvälimuistien vaikutus useissa tilanteissa.
 
-\subsection{Tiedoston luominen}
+\subsubsection{Tiedoston luominen}
 Luotaessa tyhjän ext2-tiedostojärjestelmän juurihakemistoon uusi tyhjä tiedosto kutsulla \texttt{creat("new", 0755)} tapahtuu seuraavasti:
 
 \begin{table}
@@ -728,26 +748,6 @@ Kohdassa 11 vähennetään tiedostojärjestelmän vapaiden inodejen määrää (
 % Last write time:*
 Kohdan 12 levykirjoituksen tarkoitus on tuntematon, sillä se ei muuta levyn sisältöä mitenkään.
 Kohta 13 päivittää tiedostojärjestelmän tilan puhtaaksi.
-
-\subsection{Tiedostojärjestelmän tarkistusohjelma \emph{fsck}}
-(TODO: pitäisi siirtää johonkin toiseen kohtaan)
-
-Tiedostojärjestelmän mukana jaellaan tyypillisesti \emph{fsck (file system check)}-niminen tarkastusohjelma joka pyrkii tarkistamaan tiedostojärjestelmän metadatan oikeellisuuden ja tarvittaessa korjaamaan kohdattuja ongelmia.
-Ext2:n mukana tuleekin \texttt{e2fsck}-niminen tarkistustyökalu jonka toimintaa kuvaillaan tässä luvussa.
-
-\subsubsection{Toiminta}
-
-Tyypillinen vaatimus tiedostojärjestelmän tarkistusohjelmilta on että niiden kuuluu toimia monentyyppisten korruptioiden kanssa.
-Kaatumistilanteiden lisäksi korruptioita voi aiheutua tiedostojärjestelmäajurin ohjelmointivirheistä tai laitteiston aiheuttamista ongelmista.
-Koska \texttt{e2fsck}:n täytyy käydä koko tiedostojärjestelmän metadata läpi,
-pitää jo koko metadatan paikantamisessa olla varovainen,
-koska johonkin muuhun metadataan viittaava kenttä itsessään voi olla korruptoitunut.
-Myöskin metadataan tehtävät korjaukset on tärkeä tehdä tietyssä järjestyksessä.
-
-\texttt{e2fsck} käy tiedostojärjestelmän läpi kuudessa vaiheessa:
-\begin{enumerate}
-    \item{Superlohko}
-\end{enumerate}
 
 \section{Kirjaavat tiedostojärjestelmät}
 \label{ChapJournallingFs}
