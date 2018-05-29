@@ -693,6 +693,27 @@ jotta voidaan selkeästi nähdä levyvälimuistien vaikutus useissa tilanteissa.
 
 \subsection{Tiedoston luominen}
 Luotaessa tyhjän ext2-tiedostojärjestelmän juurihakemistoon uusi tyhjä tiedosto kutsulla \texttt{creat("new", 0755)} tapahtuu seuraavasti:
+
+\begin{table}
+\begin{tabular}{l | l | l | l | l}
+   & 0.000    &    &    & msg:before\_mount \\ \hline
+1  & 0.074    & 2  & 3  & superblock \\ \hline
+   & 0.053    &    &    & msg:after\_mount \\ \hline
+   & 64.343   &    &    & msg:before\_creat \\ \hline
+   & 0.001    &    &    & msg:after\_creat \\ \hline
+2  & 31.101   & 4  & 5  & bg\_table \\ \hline
+3  & 0.000    & 8  & 9  & group\_0\_inode\_bitmap \\ \hline
+4  & 0.000    & 74 & 75 & root\_dir\_blocks \\ \hline
+5  & 30.720   & 10 & 13 & group\_0\_inode\_table \\ \hline
+   & 118.274  &    &    & msg:before\_umount \\ \hline
+6  & 0.126    & 2  & 3  & superblock \\ \hline
+7  & 0.000    & 2  & 3  & superblock \\ \hline
+8  & 0.000    & 2  & 3  & superblock \\ \hline
+   & 0.059    &    &    & msg:before\_umount \\ \hline
+\end{tabular}
+\end{table}
+
+
 \begin{enumerate}
     \item{Juurihakemistoon luodaan uusi hakemistoalkio nimelle \texttt{new} osoittamaan inodeen 13.}
     \item{Inode 13 merkitään varatuksi inodebittikarttaan.}
