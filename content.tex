@@ -714,31 +714,20 @@ Luotaessa tyhjän ext2-tiedostojärjestelmän juurihakemistoon uusi tyhjä tiedo
 \end{table}
 
 Levyn liittämisen yhteydessä tehdään yksi levykirjoitus superlohkoon, jossa asetetaan lippu että tiedostojärjestelmä on käytössä.
+%  Filesystem state: clean -> not clean, Mount count: 1 -> 2, Last mount time: *
 Tämä kertoo että kaatumistilanteessa tiedostojärjestelmän tila on epäkonsistentti ja on tarpeen ajaa e2fsck ennen tiedostojärjestelmän liittämistä.
 Linuxin tapa käyttää levyvälimuisteja aggressiivisesti näkyy jo näinkin yksinkertaisella testitapauksella,
 sillä itse \texttt{creat()}-kutsu ei tee mitään levykirjoituksia vaan palaa heti sovellusohjelmalle.
 Vasta noin 30 sekunnin jälkeen aletaan tehdä muutoksia levylle.
-Kohdassa 6 päivitään lohkoryhmän vapaiden inodejen määrää, kohdassa 7 merkitään uudelle tiedostolle varattu inode käytössä olevaksi inodebittikarttaan
+Kohdassa 6 päivitään lohkoryhmän vapaiden inodejen määrää yhdellä (8181 -> 8180), kohdassa 7 merkitään uudelle tiedostolle varattu inode käytössä olevaksi inodebittikarttaan
 ja kohdassa 8 lisätään juurihakemistoon hakemistoalkio viittaamaan uuden tiedoston inodeen.
 Edelleen 30 sekuntia myöhemmin muokataan inodetaulua, missä samalla alustetaan uuden inoden sisältö sekä päivitetään juurihakemiston aikaleimoja.
 
-%\begin{enumerate}
-%    \item{Juurihakemistoon luodaan uusi hakemistoalkio nimelle \texttt{new} osoittamaan inodeen 13.}
-%    \item{Inode 13 merkitään varatuksi inodebittikarttaan.}
-%    \item{Juurihakemiston inoden aikaleimaa (\texttt{i\_mtime}) päivitetään.}
-%    \item{Inoden rakenne inodetaulussa täytetään.}
-%    \item{Superlohkon vapaiden inodejen määrää vähennetään yhdellä.}
-%    \item{Lohkoryhmän 0 vapaiden inodejen määrää vähennetään yhdellä.}
-%\end{enumerate}
-
-%
-% Yhteensä siis koko operaation suorittamiseen vaaditaan kuusi levykirjoitusta viiteen eri tietorakenteeseen levyllä.
-% Nyt kaatumistilanteessa tämän operaation aikana voi olla seuraavia vaikutuksia.
-% Mikäli kaatuminen tapahtuu levykirjoitusten 4--5 tai 5--6 välissä,
-% ovat vain vapaiden inodejen laskurit epäkonsistentteja itse levyn kanssa.
-% Tällä ei sinänsä pitäisi olla muuta merkitystä tiedostojärjestelmälle kuin että käyttäjä näkee vapaiden inodejen määrän (komennolla \texttt{df -i}) väärin.
-% Sen sijaan kaatuminen kirjoitusten 1--2, 2--3 tai 3--4 välillä johtaa hakemistoalkioon mikä osoittaa alustamattomaan inodeen.
-% Lisäksi kaatuminen kirjoitusten 1--2 välissä johtaa edellisten ongelmien lisäksi uuteen ongelmatilanteeseen jossa hakemistoalkio viittaa inodeen jota ei ole varattu inodebittikartassa.
+Nähtävästi superlohkon metadata kirjoitetaan vasta unmountin yhteydessä, käyttäen kolmea kirjoitusta peräkkäin.
+Kohdassa 11 vähennetään tiedostojärjestelmän vapaiden inodejen määrää (65525 -> 65524).
+% Last write time:*
+Kohdan 12 levykirjoituksen tarkoitus on tuntematon, sillä se ei muuta levyn sisältöä mitenkään.
+Kohta 13 päivittää tiedostojärjestelmän tilan puhtaaksi.
 
 \subsection{Tiedostojärjestelmän tarkistusohjelma \emph{fsck}}
 (TODO: pitäisi siirtää johonkin toiseen kohtaan)
