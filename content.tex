@@ -680,17 +680,17 @@ Edellisessä luvussa käytiin lävitse \texttt{ext2}:n levyllä sijaitsevia tiet
 Selvitetään nyt käytännössä kuinka Linuxin ext2-tiedostojärjestelmäajuri toimii tarkastelemalla ajurin tekemiä levykirjoituksia tehdessä joitakin POSIX-tiedostojärjestelmäoperaatioita.
 Lisäksi tutkitaan minkälaisia epäkonsistenssiuksia tiedostojärjestelmään voi aiheutua kaatumistilanteen sattuessa.
 
-Koska jokaisella tiedostojärjestelmällä on oma levyformaattinsa jotka voivat korruptoitua eri tavoilla,
-tarvitaan jokaiselle niistä oma työkalu tiedostojärjestelmän konsistenssiuden tarkistamiselle.
-Tiedostojärjestelmätoteutukseen kuuluukin tyypillisesti \emph{fsck (file system check)}-niminen tarkastusohjelma joka pyrkii tarkistamaan tiedostojärjestelmän metadatan oikeellisuuden ja tarvittaessa korjaamaan kohdattuja ongelmia.
+Tiedostojärjestelmien korruptoitumiselle on muitakin mahdollisia syitä kuin kaatumistilanteet.
+Laitteisto, kuten levyt tai keskusmuisti eivät ole täydellisiä vaan tilastollisesti bittivirheitä tulee tapahtumaan ennen pitkää varsinkin suurissa järjestelmissä.
+Myöskin ohjelmointivirheet tiedostojärjestelmäajureissa on mahdollinen ongelmien lähde.
+Tällaisia tilanteita varten lähes jokaiseen tiedostojärjestelmätoteutukseen kuuluukin tyypillisesti \emph{fsck (file system check)}-niminen tarkastusohjelma joka pyrkii tarkistamaan koko tiedostojärjestelmän metadatan oikeellisuuden ja tarvittaessa korjaamaan kohdattuja ongelmia.
+Ext2:n mukana tuleekin \texttt{e2fsck}-niminen tarkistustyökalu jonka toimintaa tarkastellaan seuraavassa luvussa.
 
 \subsection{\texttt{ext2}-tiedostojärjestelmän tarkistusohjelma \emph{e2fsck}}
-Ext2:n mukana tuleekin \texttt{e2fsck}-niminen tarkistustyökalu jonka toimintaa kuvaillaan tässä luvussa.
 
-\subsubsection{Toiminta}
+Koska jokaisella tiedostojärjestelmällä on oma levyformaattinsa jotka voivat korruptoitua eri tavoilla,
+tarvitaan jokaiselle niistä oma työkalu tiedostojärjestelmän konsistenssiuden tarkistamiselle.
 
-Tyypillinen vaatimus tiedostojärjestelmän tarkistusohjelmilta on että niiden kuuluu toimia monentyyppisten korruptioiden kanssa.
-Kaatumistilanteiden lisäksi korruptioita voi aiheutua tiedostojärjestelmäajurin ohjelmointivirheistä tai laitteiston aiheuttamista ongelmista.
 Koska \texttt{e2fsck}:n täytyy käydä koko tiedostojärjestelmän metadata läpi,
 pitää jo koko metadatan paikantamisessa olla varovainen,
 koska johonkin muuhun metadataan viittaava kenttä itsessään voi olla korruptoitunut.
