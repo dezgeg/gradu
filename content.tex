@@ -118,6 +118,15 @@ Näiden lisäksi tiedostoilla on kolme käyttöoikeutta: luku-, kirjoitus- sekä
 Unix-tiedostojärjestelmä myös ylläpitää kolmea aikaleimaa eri tarkoituksiin:
 milloin tiedoston sisältöä on viimeksi luettu (last data access timestamp), milloin tiedoston sisältöä on viimeksi muokattu (last data modification timestamp) sekä milloin tiedostoa ylipäätään on muokattu (last status change timestamp).
 
+Eräs varsin erikoinen ominaisuus on \emph{kovat linkit} (\emph{hard link}), mikä käytännössä tarkoittaa että tiedostolla (mutta ei hakemistolle) voi olla useita nimiä tiedostojärjestelmässä.
+Kovan linkin luominen tehdään olemassaolevalle tiedostolle jonka jälkeen kyseistä tiedostoa voi käsitellä täysin identtisesti sekä alkuperäisellä nimellä että linkin nimellä;
+jälkikäteen ei ole edes mahdollista erottaa kumpi tiedoston nimistä oli se jolla tiedosto oli alunperin luotu.
+Yhden samaan tiedostoon viittaavan nimen poistaminen ei vaikuta muihin nimiin mitenkään.
+Sanotaankin, että Unix-tiedostojärjestelmässä tiedostojen ja hakemistojen nimi on erillään niiden \emph{inodesta}, joka sisältää kaiken informaation kuten sisällön ja attribuutit.
+Hakemistot sen sijaan sisältävät vain viitteen nimestä inodeen.
+Jokaisella inodella on yksilöivä numero jolla inodeen viitataan.
+Sovellusohjelmoijan tai käyttäjän kannalta inoden numerolla ei tosin ole muuta käyttöä kuin että sillä voidaan selvittää viittaavatko kaksi eri tiedostonimeä samaan inodeen.
+
 Unixissa tavallisia tiedostoja voi käsitellä vain tavupohjaisina,
 eli mikäli sovellus tarvitsee esimerkiksi tietuepohjaista tiedostonkäsittelyä jää sen toteutus sovelluksen vastuulle.
 
