@@ -811,8 +811,15 @@ Esimerkiksi aiemmin ext3:n yhteydessä nähtiin kuinka olemassaolevaa tiedostoa 
 alkuperäisen tiedostonimen hakemistoalkion sisältävä sektorilta poistetaan vanha hakemistoalkio
 ja vastaavasti kohdehakemistossa lisätätään uusi hakemistoalkio.
 Mutta koska kahden eri levylohkon päivitys atomisesti ei ole mahdollista,
-kirjoittaa ext3 myös kopiot lohkoista journaliin josta molemmat varsinaiset hakemistolohkot voidaan tarvittaessa palauttaa kaatumistilanteen sattuessa.
-Siis yleisesti ottaen ext3 kirjoittaa kaiken metadatan kahdesti.
+täytyy \texttt{ext3}:n kirjoittaa kopiot molemmista levylohkoista journaliin kaatumistilanteen varalta.
+Lokipohjaiset tiedostojärjestelmät sen sijaan kääntävät tämän tilanteen päälaelleen - muutokset metadataan kirjoitetaan edeleen lokiin,
+mutta tästä lokiin kirjoitetusta lohkosta tuleekin uusi sijainti kyseiselle metadatalle.
+
+Tässä kappaleessa tutkitaan ensimmäistä toteutettua lokipohjaista tiedostojärjestelmää, Sprite LFS:ää.
+
+\subsection{Sprite LFS}
+Sprite LFS on vuosina 1989--1990 kehitelty tiedostojärjestelmä Berkeleyn yliopiston kokeelliseen Sprite-käyttöjärjestelmään.
+Motivaatio uuden tiedostojärjestelmän kehittämiseen oli sekä parempi kaatumisturvallisuus että suorituskyky.
 
 \section{Kirjoittaessa kopioivat tiedostojärjestelmät}
 \label{ChapCopyOnWrite}
