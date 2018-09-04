@@ -821,7 +821,11 @@ Tässä kappaleessa tutkitaan ensimmäistä toteutettua lokipohjaista tiedostoj�
 
 \subsection{Sprite LFS}
 Sprite LFS on vuosina 1989--1990 kehitelty tiedostojärjestelmä Berkeleyn yliopiston kokeelliseen Sprite-käyttöjärjestelmään.
-Motivaatio uuden tiedostojärjestelmän kehittämiseen oli sekä parempi kaatumisturvallisuus että suorituskyky.
+Motivaatio uuden tiedostojärjestelmän kehittämiseen oli sekä parempi kaatumisturvallisuus että suorituskyky levylle kirjoittaessa.
+Perinteisiä mekaanisia kiintolevyjä käytettäessä suorituskyvyn kannalta huomioonotettavaa on niille ominainen \emph{hakuaika},
+mikä tarkoittaa että levyltä useiden lohkojen lukeminen tai kirjoittaminen vie enemmän aikaa mikäli lohkot eivät sijaitse levyllä peräkkäin.
+Tämän johdosta lokipohjaisten tiedostojärjestelmien levyformaatit ovatkin suunniteltu siten,
+että kaikki kirjoitukset levylle pyritään tekemään mahdollisimman pitkinä ja perättäisinä kirjoituksina.
 
 \section{Kirjoittaessa kopioivat tiedostojärjestelmät}
 \label{ChapCopyOnWrite}
