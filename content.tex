@@ -499,27 +499,29 @@ ALICEn löytävä haavoittuvuus koskee yksinomaan rollback journal-tilaa,
 jonka päivitysprotokolla on seuraavanlainen~\cite{PosixDataConsistency}:
 % Fig 4(F)
 
-% creat(journal)
-% N x append(journal)
-% fsync(journal)
-% fsync(parent-dir)
-% write(journal)
-% fsync(journal)
-% write(db)
-% fsync(db)
-% unlink(journal)
-% stdout(done)
+\begin{enumerate}
+    \item{\texttt{creat(journal)}}
+    \item{$n \times \texttt{append(journal)}$}
+    \item{\texttt{fsync(journal)}}
+    \item{\texttt{fsync(parent-dir)}}
+    \item{\texttt{write(journal)}}
+    \item{\texttt{fsync(journal)}}
+    \item{\texttt{write(db)}}
+    \item{\texttt{fsync(db)}}
+    \item{\texttt{unlink(journal)}}
+    \item{\texttt{stdout(done)}}
+\end{enumerate}
 
 Transaktion alkaessa luodaan kohdassa 1. tietokantatiedostosta erillinen tiedosto rollback journalille.
 Ennen varsinaisen tietokantatiedoston päivitystä kirjoitetaan kohdassa 2 rollback journaliin tieto siitä mitä tietokantasivuja transaktiossa ollaan muokkaamassa sekä kunkin muokatun sivun alkuperäinen sisältö.
 Kohdissa 3 ja 4 pakotetaan rollback journalin kirjoitus levylle ja että sen hakemistoalkio on pakotettu levylle.
-Kohdat 4--5 päivittävät rollback journalin otsakkeeseen, että sen kirjoitus on suoritettu loppuun.
-Kohdassa 6 tehdään muutokset itse tietokantaan.
+Kohdat 5--6 päivittävät rollback journalin otsakkeeseen, että sen kirjoitus on suoritettu loppuun.
+Kohdassa 7 tehdään muutokset itse tietokantaan, ja pakotetaan tietokannan muutosten kirjoitus levylle kohdassa 8.
 
 Mahdollisissa kaatumistilanteissa perusajatuksena on,
 että mikäli rollback journal-tiedostoa ei ole tai sen otsakkeen perusteella sitä ei ole kirjoitettu kokonaan loppuun,
 on itse tietokanta konsistentissa tilassa ja palautumiseen riittää ainoastaan poistaa mahdollinen osittain kirjoitettu rollback journal.
-Muuten palautetaan tietokanta
+Muuten palautetaan tietokanta konsistentiksi peruuttamalla rollback journalin 
 
 \section{ext2-tiedostojärjestelmä}
 Edellisissä kappaleissa nähtiin sovellusohjelmoijan näkökulmasta millaisia tiedostojärjestelmärajapintoja POSIX-spesifikaatio antaa sovellusten käytettäväksi sekä kuinka niitä täytyy käyttää oikein kaatumisturvallisuuden säilyttämiseksi.
