@@ -825,7 +825,15 @@ Motivaatio uuden tiedostojärjestelmän kehittämiseen oli sekä parempi kaatumi
 Perinteisiä mekaanisia kiintolevyjä käytettäessä suorituskyvyn kannalta huomioonotettavaa on niille ominainen \emph{hakuaika},
 mikä tarkoittaa että levyltä useiden lohkojen lukeminen tai kirjoittaminen vie enemmän aikaa mikäli lohkot eivät sijaitse levyllä peräkkäin.
 Tämän johdosta lokipohjaisten tiedostojärjestelmien levyformaatit ovatkin suunniteltu siten,
-että kaikki kirjoitukset levylle pyritään tekemään mahdollisimman pitkinä ja perättäisinä kirjoituksina.
+että valtaosa levykirjoituksista tehdään kirjoittamalla mahdollisimman pitkinä ja perättäisinä kirjoituksina tiedostojärjestelmän \emph{lokin} loppuun.
+Erityisesti lokin 'keskellä' olevien lohkojen sisältöä ei koskaan muokata.
+
+\subsection{Sprinte LFS:n levyrakenne}
+Sprite LFS:sä seuraavat tietorakenteet sijaitsevat lokissa:
+\begin{itemize}
+    \item{inodelohko: samoin kuten ext2:ssa}
+    \item{epäsuora lohko: samoin kuten ext2:ssa}
+\end{itemize}
 
 \section{Kirjoittaessa kopioivat tiedostojärjestelmät}
 \label{ChapCopyOnWrite}
