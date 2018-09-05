@@ -524,6 +524,7 @@ on itse tietokanta konsistentissa tilassa ja palautumiseen riittää ainoastaan 
 Muuten palautetaan tietokanta konsistentiksi peruuttamalla rollback journalin 
 
 \section{ext2-tiedostojärjestelmä}
+\label{ChapExt2Fs}
 Edellisissä kappaleissa nähtiin sovellusohjelmoijan näkökulmasta millaisia tiedostojärjestelmärajapintoja POSIX-spesifikaatio antaa sovellusten käytettäväksi sekä kuinka niitä täytyy käyttää oikein kaatumisturvallisuuden säilyttämiseksi.
 Nyt siirrytään tarkastelemaan miten itse tiedostojärjestelmän pitää toimia jotta kaatumisturvallisuus säilyy koko kokonaisuuden kannalta.
 Esimerkiksi aiemmin nähdyn tekstieditoriesimerkin toiminnan kannalta on kriittistä että \texttt{rename()}-kutsu toimii atomisesti,
@@ -826,14 +827,45 @@ Perinteisiä mekaanisia kiintolevyjä käytettäessä suorituskyvyn kannalta huo
 mikä tarkoittaa että levyltä useiden lohkojen lukeminen tai kirjoittaminen vie enemmän aikaa mikäli lohkot eivät sijaitse levyllä peräkkäin.
 Tämän johdosta lokipohjaisten tiedostojärjestelmien levyformaatit ovatkin suunniteltu siten,
 että valtaosa levykirjoituksista tehdään kirjoittamalla mahdollisimman pitkinä ja perättäisinä kirjoituksina tiedostojärjestelmän \emph{lokin} loppuun.
-Erityisesti lokin 'keskellä' olevien lohkojen sisältöä ei koskaan muokata.
+Erityisesti lokin 'keskellä' olevien lohkojen sisältöä ei koskaan käydä uudelleenkirjoittamassa,
+vaan Sprite LFS ottaa eriläisen lähestymistavan tilanteisiin jossa jotain olemassaolevaa levytietorakennetta täytyy päivittää.
+Olemassaolevan levytietorakenteen sisältävän levylohkon muokkaamisen sijaan kirjoitetaan lokin loppuun uusi lohko johon haluttu muokkaus on tehty,
+ja tästä uudesta lohkosta tulee uusi sijainti kyseiselle levytietorakenteelle.
 
-\subsection{Sprinte LFS:n levyrakenne}
-Sprite LFS:sä seuraavat tietorakenteet sijaitsevat lokissa:
+\subsection{Sprite LFS:n levyrakenne}
+
+Sprite LFS:llä on merkittävästi yhtenäisyyksiä perinteisen Berkeley Fast Filesystem-tiedostojärjestelmän kanssa ja siten myös ext2:n kanssa.
+Tässä kappaleessa selitetään pelkät eroavaisuudet kappaleessa~\ref{ChapExt2Fs} esiteltyihin ext2:n levytietorakenteisiin.
+%Seuraavilta osin Sprite LFS toimii samoin kuin aiemmin kappaleessa~\ref{ChapExt2Fs} esitelty ext2:
+%\begin{itemize}
+%    \item{osoitus datalohkoihin: Kuten ext2:ssa, Sprite LFS:n inode pystyy viittaamaan suoraan kymmeneen datalohkoon ja tätä suuremmilla tiedostoilla käytetään epäsuorien lohkojen muodostamaa lohkopuuta.}
+%    \item{hakemistojen sisältö: Kuten ext2:ssa, hakemistoalkiot ...}
+%\end{itemize}
+
+Valtaosa tiedostojärjestelmän sisällöstä sijaitsee lokissa (\emph{log}), joka on jaettu joko 512 kilotavun tai 1 megatavun kokoisiin \emph{segmentteihin} (\emph{segment}).
+Tiedostojärjestelmän lokialueelle kirjoitetaan seuraavanlaista dataa:
+
 \begin{itemize}
-    \item{inodelohko: samoin kuten ext2:ssa}
-    \item{epäsuora lohko: samoin kuten ext2:ssa}
+    \item{Datalohkot: tavallisten tiedostojen tai hakemistojen sisältämä data.
+          Hakemistot toimivat samalla periaatteella kuin ext2:ssa, eli hakemistoinoden datalohkot sisältävät hakemistoalkioita peräkkäismuodossa.}
+    \item{Epäsuora lohko: toimivat samalla lailla kuin ext2:ssa, suurien tiedostojen datalohkoihin viitataan epäsuorien lohkojen muodostamalla lohkopuulla.}
+    \item{Inode: sisältö pääosin samanlainen kuin ext2:n inode. Suurimpana erona on että Sprite LFS:n inoden sijaintia levyllä ei voi laskea pelkän inodenumeron avulla.}
+    \item{Inodekartta (\emph{inode map}): tietorakenne jonka avulla voidaan paikantaa inoden sijainti levyllä inodenumeron perusteella.}
+    \item{Segmentin käyttöastetaulu (\emph{segment usage table}): ylläpitää tietoa kunkin segmentin vapaasta tilasta.}
+    \item{Segmentin yhteenveto (\emph{segment summary}): TODO}
+    \item{Hakemistojen muutosloki (\emph{directory change log}): käytetään kaatumistilanteesta palautumiseen.}
 \end{itemize}
+
+% Huomioitavaa on että ext2:een verrattuna Sprite LFS:stä puuttuu lohkobittikartta ja inodebittikartta. Vapaiden levylohkojen ... TODO
+
+Lisäksi kaksi levytietorakennetta sijaitsevat kiinteillä sijainneilla levyllä: superlohko (\emph{superblock}) sekä kaksi \emph{tarkistuspistealuetta} (\emph{checkpoint region}).
+Superlohko sisältää staattista tietoa tiedostojärjestelmästä,
+kuten segmentin koko ja niiden lukumäärä, eikä siihen kohdistu kirjoituksia tiedostojärjestelmän luomisen jälkeen.
+Tarkistuspistealue taas kertoo miten tiedostojärjestelmän muiden tietorakenteiden senhetkiset versiot voidaan paikantaa.
+Tähän sisältyy tiedostojärjestelmän inodekarttalohkojen sijainnit, segmentin käyttöastetaulun sisältävien lohkojen sisällöt sekä segmentin numeron johon lokin kirjoitus jatkuu seuraavaksi.
+Koska tarkistuspistealueen koko on useita lohkoja, on tilaa varattu kahdelle tarkistuspistealueelle joihin kirjoitetaan vuorotellen.
+Mikäli kaatumistilanne tapahtuu kesken tarkistuspisteen kirjoittamista, voidaan tiedostojärjestelmää liittäessä keskeneräinen tarkistuspiste havaita ja käyttää toista tarkistuspistettä.
+Mikäli molemmat tarkistuspisteet ovat konsistentisti kirjoitettuja, valitaan näistä kahdesta se kumpi on uudempi.
 
 \section{Kirjoittaessa kopioivat tiedostojärjestelmät}
 \label{ChapCopyOnWrite}
