@@ -820,7 +820,7 @@ mutta tästä lokiin kirjoitetusta lohkosta tuleekin uusi sijainti kyseiselle me
 
 Tässä kappaleessa tutkitaan ensimmäistä toteutettua lokipohjaista tiedostojärjestelmää, Sprite LFS:ää.
 
-\subsection{Sprite LFS}
+\subsection{Sprite LFS:n periaate}
 Sprite LFS on vuosina 1989--1990 kehitelty tiedostojärjestelmä Berkeleyn yliopiston kokeelliseen Sprite-käyttöjärjestelmään.
 Motivaatio uuden tiedostojärjestelmän kehittämiseen oli sekä parempi kaatumisturvallisuus että suorituskyky levylle kirjoittaessa.
 Perinteisiä mekaanisia kiintolevyjä käytettäessä suorituskyvyn kannalta huomioonotettavaa on niille ominainen \emph{hakuaika},
@@ -831,6 +831,9 @@ Erityisesti lokin 'keskellä' olevien lohkojen sisältöä ei koskaan käydä uu
 vaan Sprite LFS ottaa eriläisen lähestymistavan tilanteisiin jossa jotain olemassaolevaa levytietorakennetta täytyy päivittää.
 Olemassaolevan levytietorakenteen sisältävän levylohkon muokkaamisen sijaan kirjoitetaan lokin loppuun uusi lohko johon haluttu muokkaus on tehty,
 ja tästä uudesta lohkosta tulee uusi sijainti kyseiselle levytietorakenteelle.
+Tämän mekanismin varjopuolena on tietysti että jokaisen muokkausoperaation jälkeen vanha versio levytietorakenteen sisältäneestä lohkosta jää 'kuolleeksi' viemään tilaa levyltä.
+Ennen pitkää tämä kuolleiden lohkojen käyttämä tila täytyy vapauttaa takaisin tiedostojärjestelmän käyttöön,
+mikä tapahtuu \emph{segmentin puhdistuksella} (\emph{segment cleaning}).
 
 \subsection{Sprite LFS:n levyrakenne}
 
@@ -849,11 +852,11 @@ Tiedostojärjestelmän lokialueelle kirjoitetaan seuraavanlaista dataa:
     \item{Datalohkot: tavallisten tiedostojen tai hakemistojen sisältämä data.
           Hakemistot toimivat samalla periaatteella kuin ext2:ssa, eli hakemistoinoden datalohkot sisältävät hakemistoalkioita peräkkäismuodossa.}
     \item{Epäsuora lohko: toimivat samalla lailla kuin ext2:ssa, suurien tiedostojen datalohkoihin viitataan epäsuorien lohkojen muodostamalla lohkopuulla.}
-    \item{Inode: sisältö pääosin samanlainen kuin ext2:n inode. Suurimpana erona on että Sprite LFS:n inoden sijaintia levyllä ei voi laskea pelkän inodenumeron avulla.}
-    \item{Inodekartta (\emph{inode map}): tietorakenne jonka avulla voidaan paikantaa inoden sijainti levyllä inodenumeron perusteella.}
-    \item{Segmentin käyttöastetaulu (\emph{segment usage table}): ylläpitää tietoa kunkin segmentin vapaasta tilasta.}
-    \item{Segmentin yhteenveto (\emph{segment summary}): TODO}
-    \item{Hakemistojen muutosloki (\emph{directory change log}): käytetään kaatumistilanteesta palautumiseen.}
+    \item{Inodelohkot: sisältö pääosin samanlainen kuin ext2:n inode. Suurimpana erona on että Sprite LFS:n inoden sijaintia levyllä ei voi laskea pelkän inodenumeron avulla.}
+    \item{Inodekarttan lohkot (\emph{inode map}): tietorakenne jonka avulla voidaan paikantaa inoden sijainti levyllä inodenumeron perusteella.}
+    \item{Segmentin käyttöastetaulun lohkot (\emph{segment usage table}): ylläpitää tietoa kunkin segmentin vapaasta tilasta.}
+    \item{Segmentin yhteenvetolohko (\emph{segment summary block}): TODO}
+    \item{Hakemistojen muutoslokilohko (\emph{directory change log block}): käytetään kaatumistilanteesta palautumiseen.}
 \end{itemize}
 
 % Huomioitavaa on että ext2:een verrattuna Sprite LFS:stä puuttuu lohkobittikartta ja inodebittikartta. Vapaiden levylohkojen ... TODO
@@ -866,6 +869,58 @@ Tähän sisältyy tiedostojärjestelmän inodekarttalohkojen sijainnit, segmenti
 Koska tarkistuspistealueen koko on useita lohkoja, on tilaa varattu kahdelle tarkistuspistealueelle joihin kirjoitetaan vuorotellen.
 Mikäli kaatumistilanne tapahtuu kesken tarkistuspisteen kirjoittamista, voidaan tiedostojärjestelmää liittäessä keskeneräinen tarkistuspiste havaita ja käyttää toista tarkistuspistettä.
 Mikäli molemmat tarkistuspisteet ovat konsistentisti kirjoitettuja, valitaan näistä kahdesta se kumpi on uudempi.
+
+\subsection{Esimerkki ja kaatumistilanteista palautuminen}
+
+Tarkastellaan esimerkkinä tilannetta jossa luodaan tiedostojärjestelmän alihakemistoon \texttt{testdir} tiedosto \texttt{newfile} ja kirjoitetaan sinne yhden lohkon verran dataa.
+Kokonaisuutena tiedostojärjestelmälle tehdään seuraavat operaatiot:
+
+\begin{enumerate}
+    \item{Hakemiston muutoslokilohko joka kertoo \texttt{testdir}:iin tapahtuvan hakemistoalkion luomisen kirjoitetaan lokiin.}
+    \item{Uuden tiedoston \texttt{newfile} datalohko kirjoitetaan lokiin.}
+    \item{Uuden tiedoston \texttt{newfile} inode kirjoitetaan lokiin.}
+    \item{Hakemiston \texttt{testdir} datalohkosta kirjoitetaan uusi versio lokiin johon on lisätty hakemistoalkio \texttt{newfile}.}
+    \item{Hakemiston \texttt{testdir} inodesta kirjoitetaan uusi versio lokiin jossa datalohkoksi on vaihtunut edellisessä kohdassa kirjoitettu lohko.}
+    \item{Inodekartan lohkoista kirjoitetaan uudet versiot lokiin joissa kerrotaan \texttt{newfile}:n ja \texttt{testdir}:n inodejen uudet sijainnit levyllä.}
+    \item{Segmentin käyttöastetaulun lohkoista kirjoitetaan uudet versiot lokiin, koska kohdissa 4.--6. tehdyt päivitykset aiheuttivat kuolleita lohkoja aiempiin lokisegmentteihin.}
+    \item{Segmentin yhteenveto kirjoitetaan lokiin.}
+    \item{Uusi tarkistuspiste kirjoitetaan, joka viittaa kohdissa 6. ja 7. kirjoitettuun inodekarttaan ja segmentin käyttöastetauluun.}
+\end{enumerate}
+
+Lokipohjaiselle tiedostojärjestelmälle on kaksi mahdollista tekniikkaa jota käyttää kaatumistilanteista palautumiseen.
+Yksinkertaisempi tekniikka on käyttää pelkkää tarkistuspisteitä palautumiseen ja monimutkaisempi mutta suorituskyvyltään parempi tekniikka on lisäksi käyttää \emph{eteenkiertoa} (\emph{roll-forward recovery}).
+
+Pelkkää tarkistuspistettä käytettäessä ei palautumisen yhteydessä tarvitse tehdä mitään tavallisesta tiedostojärjestelmän liittämisestä poikkeavaa,
+eli yksinkertaisesti jatketaan tiedostojärjestelmän käyttöä uusimman kokonaan kirjoitetun tarkistuspisteen perusteella.
+Mikäli kaatuminen tapahtuu ennen uuden tarkistuspisteen kirjoittamisen aloittamista eli kohtien 1.--9. välissä,
+ei kyseisillä kirjoituksilla ole mitään vaikutusta sillä viimeisimmän kirjoituksia edeltäneen tarkistuspisteen näkökulmasta kyseiset kirjoitukset ovat kohdistuneet tiedostojärjestelmän vapaaseen tilaan.
+Mikäli taas kaatuminen tapahtuu tarkistuspisteen kirjoittamisen aikana,
+voidaan keskeneräisesti kirjoitettu tarkistuspiste tunnistaa ja samalla tavoin käyttää viimeisimmän kirjoituksia edeltänyttä tarkistuspistettä.
+
+\subsection{Eteenkiertopalautus}
+
+Edellisessä kappaleessa nähtiin kuinka tiedostojärjestelmään voidaan tehdä muutoksia kaatumisturvallisesti ja atomisesti kirjoittamalla uusi tarkistuspiste.
+Kokonaisen tarkistuspisteen luominen vaatii kuitenkin suhteellisen monta levykirjoitusta,
+joten Sprite LFS käyttää lisäksi monimutkaisempaa \emph{eteenkiertopalautusta} (\emph{roll forward recovery}) joka tuo samantasoisen kaatumisturvallisuuden mutta pienemmällä määrällä levykirjoituksia.
+
+Eteenkiertopalautuksen perusajatuksena on lähteä liikkeelle viimeisimmästä tarkistuspisteestä samoin kuin aiemmin,
+mutta tämän jälkeen aletaan lukemaan lokia eteenpäin tarkistuspisteen osoittamasta kohdasta.
+Tavoitteena on viedä tiedostojärjestelmä viimeisimmästä tarkistuspisteestä tilaan jossa mahdollisimman paljon viimeisen tarkistuspisteen luomisen jälkeenkin tehdyistä muutoksista on toteutunut.
+Tekniikan selkeänä etuna on että kaatumistilanteen aikana katoaa vähemmän meneillään olevia tiedostojärjestelmämuutoksia,
+mutta myös esimerkiksi \texttt{fsync()}-operaatio voidaan nyt toteuttaa tehokkaammin.
+Ilman eteenkiertoa \texttt{fsync()} vaatisi koko tarkistuspisteoperaation tekemistä,
+mutta eteenkierron kanssa riittää että pelkästään tarvittavat lokikirjoitukset päätyvät levylle.
+Tarvittavia levykirjoituksia voidaan vähentää vielä lisää huomioimalla että kahta Sprite LFS:n levytietorakennetta,
+inodekarttaa ja segmentin käyttöastetaulua ei tarvitse kirjoittaa levylle muuten kuin tarkistuspisteen luonnin yhteydessä
+sillä niihin tehtävät muutokset voidaan aina johtaa muista lokikirjoituksista eteenkiertopalautuksen aikana.
+
+\subsection{Eteenkiertopalautuksen toiminta}
+Eteenkiertopalautuksen aikana käydään kahdesti läpi kaikki viimeisimmän tarkistuspisteen jälkeen tehdyt lokikirjoitukset~\cite{SpriteThesis}.
+Ensimmäisellä läpikäynnillä tuodaan inodekartta ja segmentin käyttöastetaulu ajan tasalle.
+Lokin läpikäynti tapahtuu segmentin yhteenvetolohkojen avulla.
+Jokainen yhteenvetolohko sisältää edellisen kirjoitetun yhteenvetolohkon levyosoitteen sekä levyosoitteen johon seuraava yhteenvetolohko tullaan kirjoittamaan,
+joiden avulla lokin sisältössä voidaan liikkua eteen- ja taaksepäin sekä tunnistaa lokin loppupää.
+
 
 \section{Kirjoittaessa kopioivat tiedostojärjestelmät}
 \label{ChapCopyOnWrite}
