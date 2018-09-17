@@ -846,7 +846,7 @@ Tässä kappaleessa selitetään pelkät eroavaisuudet kappaleessa~\ref{ChapExt2
 %\end{itemize}
 
 Valtaosa tiedostojärjestelmän sisällöstä sijaitsee lokissa (\emph{log}), joka on jaettu joko 512 kilotavun tai 1 megatavun kokoisiin \emph{segmentteihin} (\emph{segment}).
-Tiedostojärjestelmän lokialueelle kirjoitetaan seuraavanlaista dataa:
+Tiedostojärjestelmän lokialueelle kirjoitetaan seitsemää erityypisiä lohkoja:
 
 \begin{itemize}
     \item{Datalohkot: tavallisten tiedostojen tai hakemistojen sisältämä data.
@@ -871,6 +871,7 @@ Mikäli kaatumistilanne tapahtuu kesken tarkistuspisteen kirjoittamista, voidaan
 Mikäli molemmat tarkistuspisteet ovat konsistentisti kirjoitettuja, valitaan näistä kahdesta se kumpi on uudempi.
 
 \subsection{Esimerkki ja kaatumistilanteista palautuminen}
+\label{SubsectSpriteLfsExample}
 
 Tarkastellaan esimerkkinä tilannetta jossa luodaan tiedostojärjestelmän alihakemistoon \texttt{testdir} tiedosto \texttt{newfile} ja kirjoitetaan sinne yhden lohkon verran dataa.
 Kokonaisuutena tiedostojärjestelmälle tehdään seuraavat operaatiot:
@@ -878,13 +879,12 @@ Kokonaisuutena tiedostojärjestelmälle tehdään seuraavat operaatiot:
 \begin{enumerate}
     \item{Hakemiston muutoslokilohko joka kertoo \texttt{testdir}:iin tapahtuvan hakemistoalkion luomisen kirjoitetaan lokiin.}
     \item{Uuden tiedoston \texttt{newfile} datalohko kirjoitetaan lokiin.}
-    \item{Uuden tiedoston \texttt{newfile} inode kirjoitetaan lokiin.}
     \item{Hakemiston \texttt{testdir} datalohkosta kirjoitetaan uusi versio lokiin johon on lisätty hakemistoalkio \texttt{newfile}.}
-    \item{Hakemiston \texttt{testdir} inodesta kirjoitetaan uusi versio lokiin jossa datalohkoksi on vaihtunut edellisessä kohdassa kirjoitettu lohko.}
+    \item{Uuden tiedoston \texttt{newfile} inode ja hakemiston \texttt{testdir} inodesta kirjoitetaan uusi versio jossa datalohkoksi on vaihtunut edellisessä kohdassa kirjoitettu lohko. Molemmat}
     \item{Inodekartan lohkoista kirjoitetaan uudet versiot lokiin joissa kerrotaan \texttt{newfile}:n ja \texttt{testdir}:n inodejen uudet sijainnit levyllä.}
-    \item{Segmentin käyttöastetaulun lohkoista kirjoitetaan uudet versiot lokiin, koska kohdissa 4.--6. tehdyt päivitykset aiheuttivat kuolleita lohkoja aiempiin lokisegmentteihin.}
+    \item{Segmentin käyttöastetaulun lohkoista kirjoitetaan uudet versiot lokiin, koska kohdissa 3.--5. tehdyt päivitykset aiheuttivat kuolleita lohkoja aiempiin lokisegmentteihin.}
     \item{Segmentin yhteenveto kirjoitetaan lokiin.}
-    \item{Uusi tarkistuspiste kirjoitetaan, joka viittaa kohdissa 6. ja 7. kirjoitettuun inodekarttaan ja segmentin käyttöastetauluun.}
+    \item{Uusi tarkistuspiste kirjoitetaan, joka viittaa kohdissa 5. ja 6. kirjoitettuun inodekarttaan ja segmentin käyttöastetauluun.}
 \end{enumerate}
 
 Lokipohjaiselle tiedostojärjestelmälle on kaksi mahdollista tekniikkaa jota käyttää kaatumistilanteista palautumiseen.
@@ -892,7 +892,7 @@ Yksinkertaisempi tekniikka on käyttää pelkkää tarkistuspisteitä palautumis
 
 Pelkkää tarkistuspistettä käytettäessä ei palautumisen yhteydessä tarvitse tehdä mitään tavallisesta tiedostojärjestelmän liittämisestä poikkeavaa,
 eli yksinkertaisesti jatketaan tiedostojärjestelmän käyttöä uusimman kokonaan kirjoitetun tarkistuspisteen perusteella.
-Mikäli kaatuminen tapahtuu ennen uuden tarkistuspisteen kirjoittamisen aloittamista eli kohtien 1.--9. välissä,
+Mikäli kaatuminen tapahtuu ennen uuden tarkistuspisteen kirjoittamisen aloittamista eli kohtien 1.--8. välissä,
 ei kyseisillä kirjoituksilla ole mitään vaikutusta sillä viimeisimmän kirjoituksia edeltäneen tarkistuspisteen näkökulmasta kyseiset kirjoitukset ovat kohdistuneet tiedostojärjestelmän vapaaseen tilaan.
 Mikäli taas kaatuminen tapahtuu tarkistuspisteen kirjoittamisen aikana,
 voidaan keskeneräisesti kirjoitettu tarkistuspiste tunnistaa ja samalla tavoin käyttää viimeisimmän kirjoituksia edeltänyttä tarkistuspistettä.
@@ -902,10 +902,10 @@ voidaan keskeneräisesti kirjoitettu tarkistuspiste tunnistaa ja samalla tavoin 
 Edellisessä kappaleessa nähtiin kuinka tiedostojärjestelmään voidaan tehdä muutoksia kaatumisturvallisesti ja atomisesti kirjoittamalla uusi tarkistuspiste.
 Kokonaisen tarkistuspisteen luominen vaatii kuitenkin suhteellisen monta levykirjoitusta,
 joten Sprite LFS käyttää lisäksi monimutkaisempaa \emph{eteenkiertopalautusta} (\emph{roll forward recovery}) joka tuo samantasoisen kaatumisturvallisuuden mutta pienemmällä määrällä levykirjoituksia.
-
 Eteenkiertopalautuksen perusajatuksena on lähteä liikkeelle viimeisimmästä tarkistuspisteestä samoin kuin aiemmin,
 mutta tämän jälkeen aletaan lukemaan lokia eteenpäin tarkistuspisteen osoittamasta kohdasta.
 Tavoitteena on viedä tiedostojärjestelmä viimeisimmästä tarkistuspisteestä tilaan jossa mahdollisimman paljon viimeisen tarkistuspisteen luomisen jälkeenkin tehdyistä muutoksista on toteutunut.
+
 Tekniikan selkeänä etuna on että kaatumistilanteen aikana katoaa vähemmän meneillään olevia tiedostojärjestelmämuutoksia,
 mutta myös esimerkiksi \texttt{fsync()}-operaatio voidaan nyt toteuttaa tehokkaammin.
 Ilman eteenkiertoa \texttt{fsync()} vaatisi koko tarkistuspisteoperaation tekemistä,
@@ -913,14 +913,34 @@ mutta eteenkierron kanssa riittää että pelkästään tarvittavat lokikirjoitu
 Tarvittavia levykirjoituksia voidaan vähentää vielä lisää huomioimalla että kahta Sprite LFS:n levytietorakennetta,
 inodekarttaa ja segmentin käyttöastetaulua ei tarvitse kirjoittaa levylle muuten kuin tarkistuspisteen luonnin yhteydessä
 sillä niihin tehtävät muutokset voidaan aina johtaa muista lokikirjoituksista eteenkiertopalautuksen aikana.
+Eli esimerkiksi edellisen aliluvun \ref{SubsectSpriteLfsExample} esimerkistä voidaan kohdat 5, 6, ja 8 lykätä tehtäväksi myöhemmin. 
 
 \subsection{Eteenkiertopalautuksen toiminta}
-Eteenkiertopalautuksen aikana käydään kahdesti läpi kaikki viimeisimmän tarkistuspisteen jälkeen tehdyt lokikirjoitukset~\cite{SpriteThesis}.
+Eteenkiertopalautuksen aikana käydään kahdesti läpi kaikki viimeisimmän tarkistuspisteen jälkeen tehdyt lokikirjoitukset~\cite{SpriteRosenblumThesis}.
 Ensimmäisellä läpikäynnillä tuodaan inodekartta ja segmentin käyttöastetaulu ajan tasalle.
 Lokin läpikäynti tapahtuu segmentin yhteenvetolohkojen avulla.
 Jokainen yhteenvetolohko sisältää edellisen kirjoitetun yhteenvetolohkon levyosoitteen sekä levyosoitteen johon seuraava yhteenvetolohko tullaan kirjoittamaan,
-joiden avulla lokin sisältössä voidaan liikkua eteen- ja taaksepäin sekä tunnistaa lokin loppupää.
+joiden avulla lokin sisältössä voidaan liikkua eteen- ja taaksepäin, tunnistaa osittain kirjoitetun segmentit sekä tunnistaa lokin loppukohta.
+Lisäksi segmentin yhteenvetolohkot sisältävät viittauksen kaikkiin kyseiseen segmenttiin kirjoitettuihin inodelohkoihin,
+jonka perusteella eteenkiertopalautus pystyy tekemään vastaavat päivitykset inodekarttaan.
+Inodelohkojen perusteella taas voidaan johtaa tarvittavat muutokset segmentin käyttöastetauluun.
+Kunkin inodelohkon sisältämän inoden uuden version lohkoviittauksia verrataan saman inoden vanhan version lohkoviittauksiin,
+ja kaikki eroavaisuudet kertovat mihin segmentteihin kuolleita sivujen määrä muuttuu.
 
+Eteenkiertopalautuksen toisella läpikäynnillä käydään lapi segmenttien sisältämät hakemistojen muutoslokilohkot.
+Erillinen muutosloki tarvitaan varmistamaan että samaan aikaan kahteen eri tiedostojärjestelmän levytietorakenteeseen kohdistuvat muutokset tapahtuvat atomisesti.
+Esimerkiksi uuden kovan linkin luominen vaatii vähintään kolmen tietorakenteen uuden version kirjoituksen: linkitettävän inoden kovien linkkien määrää kasvatetaan,
+kohdehakemiston datalohkoihin lisätään uusi hakemistoalkio sekä kohdehakemiston inode päivitetään osoittamaan edellä mainittuun uuteen datalohkoon.
+Sprite LFS ei sisällä mekanismiä joka varmistaisi että kaikki vaadittavat kirjoitukset pystyttäisiin sisällyttämään osaksi samaa segmenttiä,
+joten erillistä muutoslokia on käytetty tämän ongelman ratkaisemiseen.
+Muutoslokiin kirjataan kaikki hakemisto-operaatiot eli tiedoston luominen, kovan linkin luominen tai poistaminen sekä uudelleennimeäminen,
+ja muutoslokilohko kirjoittaan aina lokiin ennen itse inodejen ja hakemistojen datalohkojen muutoksia.
+Tästä seuraa sääntö jonka perusteella eteenkiertopalautus voi tunnistaa kesken jääneet hakemisto-operaatiot.
+Jos hakemistojen muutoslokissa esiintyvän hakemisto-operaation osallisena olleet inodet on kirjoitettu lokiin
+vastaavan hakemiston muutoslokilohkon jälkeen,
+on koko operaatio suoritettu loppuun.
+Muussa tapauksessa operaatio on toteutunut joko vain osittain tai ei ollenkaan,
+ja tilanteesta riippuen koko hakemisto-operaatio saatetaan loppuun tai perutaan osittain tapahtuneet muutokset.
 
 \section{Kirjoittaessa kopioivat tiedostojärjestelmät}
 \label{ChapCopyOnWrite}

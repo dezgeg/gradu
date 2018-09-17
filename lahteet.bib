@@ -124,13 +124,24 @@
 }
 
 % Sprite LFS authors' Ph.D thesis
-@phdthesis{SpriteThesis,
+@phdthesis{SpriteSeltzerThesis,
  author = {Seltzer, Margo Ilene},
  title = {File System Performance and Transaction Support},
  year = {1992},
  note = {UMI Order No. GAX93-30724},
  publisher = {University of California at Berkeley},
  address = {Berkeley, CA, USA},
+}
+
+@phdthesis{SpriteRosenblumThesis,
+    Author = {Rosenblum, Mendel},
+    Title = {The Design and Implementation of a Log-structured File System},
+    School = {EECS Department, University of California, Berkeley},
+    Year = {1992},
+    Month = {Jun},
+    URL = {http://www2.eecs.berkeley.edu/Pubs/TechRpts/1992/6267.html},
+    Number = {UCB/CSD-92-696},
+    Abstract = {This dissertation presents a new technique for disk storage management called a log-structured file system. The technique writes all file system changes in large sequential transfers to a log-like structure on disk. The key benefit is a high write performance that is independent of the workload. The large transfers also enable the efficient use of large disk arrays such as RAIDs. The technique minimizes the overhead of computing the redundancy information required by large RAIDs.   <p>A log-structured file system achieves high write rates without sacrificing file retrieval performance. Files are read back from the log efficiently due to the indexing information that is maintained. The log structure also permits fast recovery from system crashes. Using a recovery system based on checkpoints and roll-forward the log-structured file system can quickly restore the disk to a consistent state.   <p>An important focus of this dissertation is the technique used for free space management in a log--structured file system. The approach taken was to divide the disk into large segments to which the log was written. A segment cleaner mechanism exists to compress the live information from heavily fragmented segments. The mechanism reads in the fragmented segments, compacts the live data, and writes the data back to segments on disk. The dissertation includes a series of simulations that demonstrate the efficiency of a simple segment cleaning policy based on cost and benefit. The segment cleaner decides which segments to clean based on a function of the fraction alive in the segment and the age of the data in the segment.   <p>I have implemented a prototype log-structured file system called Sprite LFS; it outperforms current Unix file systems by an order of magnitude for small-file writes and matches or exceeds Unix performance for reads and large writes. Even when the overhead for cleaning is included, Sprite LFS can use 70% of the disk bandwidth for writing. Unix file systems typically can use only 5-10%.}
 }
 
 % App / POSIX data consistency
