@@ -854,12 +854,13 @@ Tiedostojärjestelmän lokialueelle kirjoitetaan seitsemää erityypisiä lohkoj
     \item{Epäsuora lohko: toimivat samalla lailla kuin ext2:ssa, suurien tiedostojen datalohkoihin viitataan epäsuorien lohkojen muodostamalla lohkopuulla.}
     \item{Inodelohkot: sisältö pääosin samanlainen kuin ext2:n inode. Suurimpana erona on että Sprite LFS:n inoden sijaintia levyllä ei voi laskea pelkän inodenumeron avulla.}
     \item{Inodekarttan lohkot (\emph{inode map}): tietorakenne jonka avulla voidaan paikantaa inoden sijainti levyllä inodenumeron perusteella.}
-    \item{Segmentin käyttöastetaulun lohkot (\emph{segment usage table}): ylläpitää tietoa kunkin segmentin vapaasta tilasta.}
+    \item{Segmentin käyttöastetaulun lohkot (\emph{segment usage table}): ylläpitää tietoa kunkin segmentin vapaiden lohkojen määrästä.}
     \item{Segmentin yhteenvetolohko (\emph{segment summary block}): TODO}
     \item{Hakemistojen muutoslokilohko (\emph{directory change log block}): käytetään kaatumistilanteesta palautumiseen.}
 \end{itemize}
-
-% Huomioitavaa on että ext2:een verrattuna Sprite LFS:stä puuttuu lohkobittikartta ja inodebittikartta. Vapaiden levylohkojen ... TODO
+Huomioitavaa on että ext2:een verrattuna inodebittikarttaa eikä lohkobittikarttaa ole.
+Sprite LFS:sä inodeille ei ole erikseen varattu tilaa vaan ne sijaitsevat lokissa datalohkojen lailla
+ja vapaiden lohkojen määrää ylläpidetään segmentin käyttöastetaulussa bittikartan sijaan.
 
 Lisäksi kaksi levytietorakennetta sijaitsevat kiinteillä sijainneilla levyllä: superlohko (\emph{superblock}) sekä kaksi \emph{tarkistuspistealuetta} (\emph{checkpoint region}).
 Superlohko sisältää staattista tietoa tiedostojärjestelmästä,
