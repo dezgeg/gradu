@@ -792,7 +792,7 @@ Ennakoitavuus tarkoittaa että kaikkien tilanteiden josta tiedostojärjestelmä 
 Perinteisen \texttt{ext2}:n kohdalla näin ei ole,
 sillä levyvälimuistien takia kaatumistilanteen aikana voi olla meneillään usean loogisen POSIX-tiedostojärjestelmäoperaation aiheuttamia päivityksiä moniin levytietorakenteisiin samanaikaisesti.
 
-Yksi tapa kaikkien näiden kriteereiden täyttämiseksi on suunnitella menetelmä jolla koko tiedostojärjestelmän metadatan voidaan tehdä päivityksiä atomisesti.
+Yksi keino kaikkien näiden kriteereiden täyttämiseksi on suunnitella jokin menetelmä jolla koko tiedostojärjestelmän metadatan voidaan tehdä päivityksiä atomisesti.
 Tähän on useita mahdollisia tapoja, mutta ext2:n kehittäjät valitsivat kirjauksen.
 
 \subsection{Kirjauksen toimintaperiaate}
@@ -800,6 +800,14 @@ Tähän on useita mahdollisia tapoja, mutta ext2:n kehittäjät valitsivat kirja
 Kirjauksen perusperiaate pohjautuu pääpiirteissään tietokantajärjestelmissä käytettyyn Write-Ahead Logging-menetelmään~\cite{AriesWal}.
 Ennen metadatalohkojen kirjoitusta niiden varsinaisille paikalleen levyllä, kopio niistä kirjataan lokiin.
 Kirjauksen vaatima loki on kiinteän pituinen ja tila sille on varattu piilotetun, tiedostojärjestelmän käyttäjällä näkymättömän inoden avulla.
+
+\subsection{Kirjauksen toteutus ext3:ssa}
+Aiemmin luvussa \ref{ChapExt2Fs} nähtiin miten \texttt{ext2}:n levyformaattia voidaan laajentaa tulevaisuudessa ominaisuusbiteillä.
+Vaikka useassa yhteydessä \texttt{ext3}:sta puhutaan ikään kuin se olisi oma erillinen tiedostojärjestelmänsä,
+on se levyformaatin näkökulmasta edelleen \texttt{ext2}-tiedostojärjestelmä mutta varustettuna lisäominaisuuksilla.
+Relevantteja ominaisuusbittejä ovat `taaksepäin yhteensopivat' ominaisuudet \texttt{has\_journal} ja \texttt{dir\_index} sekä `ei-taaksepäin yhteensopiva` ominaisuus \texttt{needs\_recovery}.
+Ominaisuus \texttt{dir\_index} tuo hakemistoihin hajautukseen pohjautuvan indeksirakenteen nopeuttamaan hakemistosta hakua tiedostonimen perusteella ja voidaan sivuuttaa kaatumisturvallisuuden tutkimisen kannalta.
+Ominaisuus \texttt{journal} tarkoittaa että journalille on varattu tila levyltä kun taas \texttt{needs\_recovery} asetetaan ilmaisemaan että journalin läpikäynti tarvitaan konsistenssin palautumiseen.
 
 \section{Kirjoitusjärjestyksen hallintaan perustuvat tiedostojärjestelmät (``soft updates'')}
 \label{ChapSoftUpdates}
