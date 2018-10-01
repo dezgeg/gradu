@@ -811,25 +811,32 @@ Relevantteja ominaisuusbittejä ovat `taaksepäin yhteensopivat' ominaisuudet \t
 Ominaisuus \texttt{dir\_index} tuo hakemistoihin hajautukseen pohjautuvan indeksirakenteen nopeuttamaan hakemistosta hakua tiedostonimen perusteella ja voidaan sivuuttaa kaatumisturvallisuuden tutkimisen kannalta.
 
 %Ominaisuus \texttt{journal} tarkoittaa että journalille on varattu tila levyltä kun taas \texttt{needs\_recovery} asetetaan ilmaisemaan että journalin läpikäynti tarvitaan konsistenssin palautumiseen.
-Toisin kuin monille muille ext2:n levytietorakenteille, journalin sijaintia levyllä ei ole ennalta määrätty vaan tila sille varataan erityisen inoden avulla data-alueelta samaan tapaan kuin muille tiedostoille.
+Toisin kuin monille muille ext2:n levytietorakenteille, journalin sijaintia levyllä ei ole ennalta määrätty vaan tila sille varataan erityisen inoden avulla data-alueelta samaan tapaan kuin muille tiedostoille~\cite{Ext2Journal}.
 Muista inodeista poiketen journalin inode ei ole paikannettavissa normaalisti hakemistorakenteen kautta vaan se paikannetaan \texttt{journal}-laajennoksen tuomasta uudesta superlohkon kentästä.
 Inoden käyttö journalin lohkojen paikantamiseen mahdollistaa journalin lisäämisen olemassaolevaan \texttt{ext2}-tiedostojärjestelmään helposti kunhan tiedostojärjestelmässä on vapaata tilaa.
 ilman että koko tiedostojärjestelmää täytyy alustaa uudelleen.
 
 Itse journalin levyformaatti alkaa \emph{otsakelohkolla} (\emph{header block}) joka kertoo journalin alkukohdan,
-eli mistä lohkosta eteenpäin journalia aletaan lukemaan kaatumistilanteesta palautuessa.
+eli mistä lohkosta eteenpäin journalia aletaan lukemaan kaatumistilanteesta palautuessa~\cite{JournalingAnalysis}.
 Journaliin kirjoitettu kokonainen transaktio koostuu \emph{kuvaajalohkosta} (\emph{journal descriptor block}),
 jota seuraa joukko metadatalohkoja,
-ja jonka päättää \emph{sitoutumislohko} (\emph{journal commit block})~\cite{JournalingAnalysis}.
+ja jonka päättää \emph{sitoutumislohko} (\emph{journal commit block}).
 Kuvaajalohko aloittaa transaktion kertomalla mitä lohkoja transaktion aikana tullaan muokkaamaan,
 eli muokattavien lohkojen lukumäärä $n$ ja lista lohkonumeroita.
 Kuvaajalohkoa seuraa kunkin muokattavan lohkon sisältö, eli yhteensä $n$ sisältölohkoa.
-Transaktion päättää sitoutumislohko.
+Transaktion päättää sitoutumislohko,
+jonka olemassaololla voidaan tunnistaa journaliin keskeneräisesti kirjoitetut transaktiot.
+
+Kaatumisesta palautuminen tämän pohjalta on varsin yksinkertaista.
+Journalia aletaan lukea otsakelohkon ilmaisemasta kohdasta eteenpäin,
+ja jokaisen kokonaan lokiin kirjoitetun transaktion sisältölohkot kirjoitetaan kuvaajalohkon osoittamiin paikkoihin levyllä.
 
 \subsection{Esimerkki}
 \texttt{ext3}:n tekemiä levykirjoituksia tutkittiin QEMU-virtuaalikoneella samanlaisella testiasetelmalla kuin aiemmin \texttt{ext2}:n kohdalla tehtiin luvussa \ref{ChapExt2Fs}.
 1 gigatavun levylle \texttt{mkfs.ext3} loi rakenteeltaan muuten samanlaisen tiedostojärjestelmän kuin \texttt{ext2}:n tapauksessa,
 paitsi että lohkoryhmä 0 sisältää 32 megatavun kokoisen journalin.
+Testiohjelmana käytetään seuraavaa koodinpätkää,
+joka luo tiedostojärjestelmään uuden tiedoston \texttt{new} ja kirjoittaa sinne 64 kilotavua dataa:
 
 \begin{verbatim}
     int fd = creat("/mnt/fs/new", 0644);
@@ -837,20 +844,25 @@ paitsi että lohkoryhmä 0 sisältää 32 megatavun kokoisen journalin.
     close(fd);
 \end{verbatim}
 
+Molemmat testiohjelman tekemät tiedostojärjestelmäkutsut valmistuvat aiheuttamatta yhtään levykirjoituksia,
+eli \texttt{ext2}:n tapaan operaation tehdään ensin pelkästään muistissa ja kirjoitetaan vasta myöhemmin taustalla levylle:
+
 \begin{enumerate}
-    \item{Testiohjelma suoritetaan.}
     \item{Noin 5.4 sekunnin jälkeen journalin lohkoon 0 eli otsakelohkoon päivitetään kertomaan että palautuminen on tarpeen alkaen journalin lohkosta 1.}
     \item{64 kilotavun edestä datalohkot kirjoitetaan data-alueelle.}
     \item{Journalin lohkoihin 1--8 kirjoitetaan yksi kuvaajalohko sekä 7 sisältölohkoa. Päivitettävät lohkot ovat 3, 1, 4, 516, 0, 2, 8722.}
     \item{Journalin lohkoon 9 kirjoitetaan sitoutumislohko.}
     \item{Vasta 30 sekuntia myöhemmin aletaan päivittämään varsinaisia levytietorakenteita:}
-        % 0: superlohko
-        % 1: lohkoryhmien kuvaajasta vähennetään vapaiden inodejen ja lohkojen määrää
-        % 2: lohkobittikarttaan merkitään newfile:en kirjoitetut datalohkot 9216--9231 sekä epäsuora lohko 8722 varatuksi
-        % 3: inodebittikarttaan merkitään newfile:lle varattu inode käytössä olevaksi
-        % 4: inodetaulu
-        % 516: juurihakemiston datalohkoon lisätään uusi hakemistoalkio newfile:lle
-        % 8722: epäsuora lohko
+    \begin{enumerate}
+        \item{0: superlohko}
+        \item{1: lohkoryhmien kuvaajasta vähennetään vapaiden inodejen ja lohkojen määrää}
+        \item{2: lohkobittikarttaan merkitään \texttt{new}:n kirjoitetut datalohkot 9216--9231 sekä epäsuora lohko 8722 varatuksi}
+        \item{3: inodebittikarttaan merkitään \texttt{new}:lle varattu inode käytössä olevaksi}
+        \item{4: inodetaulu}
+        \item{516: juurihakemiston datalohkoon lisätään uusi hakemistoalkio \texttt{new}:lle}
+        \item{8722: epäsuora lohko}
+    \end{enumerate}
+    \item{...}
 \end{enumerate}
 
 \section{Lokipohjaiset (``log-structured'') tiedostojärjestelmät}
