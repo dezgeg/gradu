@@ -819,7 +819,11 @@ Itse journalin levyformaatti alkaa \emph{otsakelohkolla} (\emph{header block}) j
 eli mistä lohkosta eteenpäin journalia aletaan lukemaan kaatumistilanteesta palautuessa.
 Journaliin kirjoitettu kokonainen transaktio koostuu \emph{kuvaajalohkosta} (\emph{journal descriptor block}),
 jota seuraa joukko metadatalohkoja,
-ja jonka päättää \emph{sitoutumislohko} (\emph{journal commit block}).
+ja jonka päättää \emph{sitoutumislohko} (\emph{journal commit block})~\cite{JournalingAnalysis}.
+Kuvaajalohko aloittaa transaktion kertomalla mitä lohkoja transaktion aikana tullaan muokkaamaan,
+eli muokattavien lohkojen lukumäärä $n$ ja lista lohkonumeroita.
+Kuvaajalohkoa seuraa kunkin muokattavan lohkon sisältö, eli yhteensä $n$ sisältölohkoa.
+Transaktion päättää sitoutumislohko.
 
 \section{Kirjoitusjärjestyksen hallintaan perustuvat tiedostojärjestelmät (``soft updates'')}
 \label{ChapSoftUpdates}
