@@ -825,6 +825,33 @@ eli muokattavien lohkojen lukumäärä $n$ ja lista lohkonumeroita.
 Kuvaajalohkoa seuraa kunkin muokattavan lohkon sisältö, eli yhteensä $n$ sisältölohkoa.
 Transaktion päättää sitoutumislohko.
 
+\subsection{Esimerkki}
+\texttt{ext3}:n tekemiä levykirjoituksia tutkittiin QEMU-virtuaalikoneella samanlaisella testiasetelmalla kuin aiemmin \texttt{ext2}:n kohdalla tehtiin luvussa \ref{ChapExt2Fs}.
+1 gigatavun levylle \texttt{mkfs.ext3} loi rakenteeltaan muuten samanlaisen tiedostojärjestelmän kuin \texttt{ext2}:n tapauksessa,
+paitsi että lohkoryhmä 0 sisältää 32 megatavun kokoisen journalin.
+
+\begin{verbatim}
+    int fd = creat("/mnt/fs/new", 0644);
+    write(fd, "XXX...XXX", 64 * 1024);
+    close(fd);
+\end{verbatim}
+
+\begin{enumerate}
+    \item{Testiohjelma suoritetaan.}
+    \item{Noin 5.4 sekunnin jälkeen journalin lohkoon 0 eli otsakelohkoon päivitetään kertomaan että palautuminen on tarpeen alkaen journalin lohkosta 1.}
+    \item{64 kilotavun edestä datalohkot kirjoitetaan data-alueelle.}
+    \item{Journalin lohkoihin 1--8 kirjoitetaan yksi kuvaajalohko sekä 7 sisältölohkoa. Päivitettävät lohkot ovat 3, 1, 4, 516, 0, 2, 8722.}
+    \item{Journalin lohkoon 9 kirjoitetaan sitoutumislohko.}
+    \item{Vasta 30 sekuntia myöhemmin aletaan päivittämään varsinaisia levytietorakenteita:}
+        % 0: superlohko
+        % 1: lohkoryhmien kuvaajasta vähennetään vapaiden inodejen ja lohkojen määrää
+        % 2: lohkobittikarttaan merkitään newfile:en kirjoitetut datalohkot 9216--9231 sekä epäsuora lohko 8722 varatuksi
+        % 3: inodebittikarttaan merkitään newfile:lle varattu inode käytössä olevaksi
+        % 4: inodetaulu
+        % 516: juurihakemiston datalohkoon lisätään uusi hakemistoalkio newfile:lle
+        % 8722: epäsuora lohko
+\end{enumerate}
+
 \section{Kirjoitusjärjestyksen hallintaan perustuvat tiedostojärjestelmät (``soft updates'')}
 \label{ChapSoftUpdates}
 Tässä kappaleessa tarkastellaan Berkeley Fast Filesystem (FFS)-tiedostojärjestelmään toteutettua soft updates-mekanismiä~\cite{SoftUpdatesFfs}.
