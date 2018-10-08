@@ -727,6 +727,7 @@ Ennen sammuttamista odotetaan X minuuttia,
 jotta voidaan selkeästi nähdä levyvälimuistien vaikutus useissa tilanteissa.
 
 \subsubsection{Tiedoston luominen}
+\label{ChapExt2FileCreation}
 Luotaessa tyhjän ext2-tiedostojärjestelmän juurihakemistoon uusi tyhjä tiedosto kutsulla \texttt{creat("new", 0755)} tapahtuu seuraavasti:
 
 \begin{table}
@@ -851,12 +852,6 @@ paitsi että lohkoryhmä 0 sisältää 32 megatavun kokoisen journalin.
         % 516: juurihakemiston datalohkoon lisätään uusi hakemistoalkio newfile:lle
         % 8722: epäsuora lohko
 \end{enumerate}
-
-\section{Kirjoitusjärjestyksen hallintaan perustuvat tiedostojärjestelmät (``soft updates'')}
-\label{ChapSoftUpdates}
-Tässä kappaleessa tarkastellaan Berkeley Fast Filesystem (FFS)-tiedostojärjestelmään toteutettua soft updates-mekanismiä~\cite{SoftUpdatesFfs}.
-Ext2:sta poiketen FFS-tiedostojärjestelmälle ei löydy tukea Linuxista,
-vaan tarkasteltavana on toteutus 90-luvun BSD 4.4-käyttöjärjestelmästä.
 
 \section{Lokipohjaiset (``log-structured'') tiedostojärjestelmät}
 \label{ChapLogStructured}
@@ -998,6 +993,44 @@ ja tilanteesta riippuen koko hakemisto-operaatio saatetaan loppuun tai perutaan 
 \label{ChapCopyOnWrite}
 Kolmas yleinen tiedostojärjestelmien variaatio päälle kirjottavien ja lokipohjaisten tiedostojärjestelmien lisäksi on kirjoittaessa kopioivat (``CoW, Copy-on-Write'') tiedostojärjestelmät.
 Tässä kappaleessa tarkastellaan tähän tekniikkaan perustuvaa Linuxin \texttt{btrfs}-tiedostojärjestelmää~\cite{Btrfs}.
+
+\section{Kirjoitusjärjestyksen hallintaan perustuvat tiedostojärjestelmät (``soft updates'')}
+\label{ChapSoftUpdates}
+Edellisissä kappaleissa esiteltiin tekniikoita jossa tiedostojärjestelmän konsistenssiuden säilyminen kaatumistilanteessa toteutettiin tuomalla tiedostojärjestelmään menetelmä atomisten päivitysten tekemiseen.
+Tässä kappaleessa tarkastellaan vaihtoehtoista \emph{pehmeät päivitykset} (\emph{soft updates})-tekniikkaa,
+ja erityisesti sen toteutusta Berkeley Fast Filesystem (FFS)-tiedostojärjestelmään~\cite{SoftUpdatesFfs}.
+Pehmeiden päivitysten pääperiaatteena on käyttää edelleen FFS:n levyformaattia,
+mutta tehdä päivitykset levytietorakenteisiin järjestyksessä jossa tiedostojärjestelmä säilyy mahdollisimman konsistenttina.
+%Ext2:sta poiketen FFS-tiedostojärjestelmälle ei löydy tukea Linuxista, vaan tarkasteltavana on toteutus 90-luvun BSD 4.4-käyttöjärjestelmästä.
+
+\subsection{Johdanto FFS:ään}
+Aiemmin nähty \texttt{ext2} on vahvasti FFS-tiedostojärjestelmän inspiroima
+ja yleisellä tasolla lähes jokaiselle FFS:n levytietorakenteelle löytyy \texttt{ext2}:sta identtinen vastine.
+FFS-tiedostojärjestelmä on jaettu \emph{sylinteriryhmiin} (\emph{cylinder group}) joka vastaa \texttt{ext2}:n lohkoryhmää.
+Kukin sylinteriryhmä sisältää \texttt{ext2}:n tapaan erillisen alueen inodelohkoille, inodebittikartan, lohkobittikartan sekä varsinaisen data-alueen.
+Samaan tapaan FFS:n inodet viittaavat datalohkoihin käyttäen lohkopuuta ja hakemistojen sisältö säilytetään hakemistoinoden data-alueella.
+Analyysi FFS:n käyttäytymisestä kaatumistilanteissa voidaan siis tehdä luvun~\ref{ChapExt2Fs} tiedoilla \texttt{ext2}:sta.
+
+Aiemmin aliluvussa~\ref{ChapExt2FileCreation} nähtiin \texttt{ext2}:n tekemät muutokset uutta tiedostoa luodessa.
+FFS-tiedostojärjestelmän tapauksessa muokataan samoja levytietorakenteita,
+mutta pehmeitä päivityksiä käytettäessä levykirjoitusten järjestys voisi olla seuraava:
+\begin{enumerate}
+    \item{Lohkoryhmän inodebittikartta}
+    \item{Inodetaulu}
+    \item{Hakemistoalkio}
+    % sylinteriryhmä?
+    % superlohko?
+\end{enumerate}
+
+Tässä järjestyksessä tehtynä kaatuminen ei milloinkaan johda tilanteeseen jossa tiedostojärjestelmän käytön jatkaminen ei olisi turvallista.
+Ainoastaan kohtien 1--2 tai 2--3 välissä tapahtunut kaatuminen johtaa yhden inoden vuotamiseen.
+Sallittuja kirjoitusjärjestyksiä on yleensä useita, tässä esimerkissä kohdat 1. ja 2. voisivat vaihtaa paikkaa ilman ongelmia.
+Kriittisintä on, että uuteen inodeen viittaavaa tietorakennetta (eli tässä tapauksessa hakemistoalkiota) ei kirjoiteta levylle ennen kuin itse inoden tietorakenne on alustettu ja merkattu käytössäolevaksi bittikarttaan.
+Yleistämällä tämä periaate saadaan joukko sääntöjä:
+
+\begin{itemize}
+\end{itemize}
+
 
 \section{Tiedostojärjestelmätoteutusten luotettavuuden testaus}
 
