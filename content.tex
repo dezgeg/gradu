@@ -1028,8 +1028,48 @@ Sallittuja kirjoitusjärjestyksiä on yleensä useita, tässä esimerkissä kohd
 Kriittisintä on, että uuteen inodeen viittaavaa tietorakennetta (eli tässä tapauksessa hakemistoalkiota) ei kirjoiteta levylle ennen kuin itse inoden tietorakenne on alustettu ja merkattu käytössäolevaksi bittikarttaan.
 Yleistämällä tämä periaate saadaan joukko sääntöjä:
 
+\subsection{Päivitysriippuvuudet}
+
+Ennen kuin lohkoon lisätään viittaus joko epäsuoran lohkoon tai inoden kautta on 
+Datalohkon sisällön kirjoitus täytyy tapahtua ennen kuin viittaus kyseiseen lohkoon lisätään joko epäsuoraan lohkoon tai inodeen.
+
+\subsection{Sykliset riippuvuudet}
+Pehmeiden päivitysten ja levyvälimuistien yhdistelmällä voidaan joutua tilanteeseen jossa tietorakenteiden väliset riippuvuudet muodostavat syklin.
+Otetaan esimerkiksi lähtötilanne jossa muuten tyhjässä tiedostojärjestelmässä on pelkästään yksi tyhjä tiedosto \texttt{/oldfile} ja sille tehdään operaatiot \texttt{creat("/newfile", 0644); unlink("/oldfile");}.
+Nyt tiedostojärjestelmän osalta ovat voimassa seuraavat päivitysriippuvuudet:
 \begin{itemize}
+    \item{\texttt{newfile}:n inode täytyy kirjoittaa ennen juurihakemiston lohkoa, jotta hakemistoalkio \texttt{newfile} ei osoita vapaaseen inodeen.}
+    \item{inodebittikartta täytyy kirjoittaa ennen juurihakemiston lohkoa, jotta hakemistoalkio \texttt{newfile} ei osoita bittikartassa varaamattomaan inodeen.}
+    \item{juurihakemiston lohko täytyy kirjoittaa ennen \texttt{oldfile}:n inodea, jotta hakemistoalkio \texttt{oldfile} ei osoita vapautettuun inodeen.}
+    \item{juurihakemiston lohko täytyy kirjoittaa ennen inodebittikarttaa, jotta hakemistoalkio \texttt{oldfile} ei osoita bittikartassa vapautettuun inodeen.}
 \end{itemize}
+% init state: /oldfile
+% - creat(/newfile)
+% - unlink(/oldfile)
+% dirty:
+% - / dirents
+% - inode bitmap (+newfile -oldfile)
+% deps:
+% - dirents before oldfile
+% - newfile inode before dirents
+% - inode bitmap before dirents
+% - dirents before inode bitmap
+
+% init state: /oldfile[oldblk1]
+% - creat(/newfile)
+% - write(/newfile[newblk2])
+% - unlink(/oldfile)
+% dirty:
+% - / dirents
+% - inode bitmap (+newfile -oldfile)
+% - block bitmap (+newblk1 -oldblk1)
+% - newfile inode
+% - oldfile inode
+% deps:
+% oldfile inode before block bitmap
+% dirents before oldfile inode
+% newfile inode before dirents
+% block bitmap before newfile inode
 
 
 \section{Tiedostojärjestelmätoteutusten luotettavuuden testaus}
