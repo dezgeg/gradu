@@ -1095,10 +1095,14 @@ Otetaan esimerkiksi lähtötilanne jossa muuten tyhjässä tiedostojärjestelmä
 Oletetaan lisäksi että sekä \texttt{newfile}:n että \texttt{oldfile}:n inodet päätyvät samalle inodelohkolle ja hakemistoalkiot samalle hakemiston lohkolle.
 Nyt tiedostojärjestelmän osalta ovat voimassa seuraavat päivitysriippuvuudet:
 \begin{enumerate}
+    % inode <- dir
     \item{inodelohko täytyy kirjoittaa ennen hakemistolohkoa, jotta \texttt{newfile}:n hakemistoalkio ei osoita vapaaseen inodeen.}
-    \item{inodebittikartan lohko täytyy kirjoittaa ennen hakemistolohkoa, jotta \texttt{newfile}:n hakemistoalkio ei osoita bittikartassa vapaaksi merkittyyn inodeen.}
+    % bitmap <- inode
+    \item{inodebittikartan lohko täytyy kirjoittaa ennen inodelohkoa, jotta \texttt{newfile}:n inode ei osoita bittikartassa vapaaksi merkittyyn inodeen XXX.}
+    % dir <- inode
     \item{hakemistolohko täytyy kirjoittaa ennen inodelohkoa, jotta \texttt{oldfile}:n hakemistoalkio ei osoita vapautettuun inodeen.}
-    \item{hakemistolohko täytyy kirjoittaa ennen inodebittikartan lohkoa, jotta \texttt{oldfile}:n hakemistoalkio ei osoita bittikartassa vapaaksi merkittyyn inodeen.}
+    % inode <- bitmap
+    \item{inodelohko täytyy kirjoittaa ennen inodebittikartan lohkoa, jotta \texttt{oldfile}:n inode ei osoita bittikartassa vapaaksi merkittyyn inodeen XXX.}
 \end{enumerate}
 Näistä päivitysriippuvuuksista 1. ja 3. muodostavat syklisen riippuvuuden inodelohkon ja hakemistolohkon välillä ja päivitysriippuvuudet 2. ja 4. muodostavat syklin inodelohkon ja inodebittikarttalohkon välillä.
 On siis päädytty tilanteeseen, jossa mitään metadatalohkoa ei voida sellaisenaan kirjoittaa levylle ilman että jokin päivitysriippuvuus jää täyttämättä.
