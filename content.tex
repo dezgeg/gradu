@@ -1015,7 +1015,7 @@ Pehmeiden päivitysten pääperiaatteena on käyttää edelleen FFS:n levyformaa
 mutta tehdä päivitykset levytietorakenteisiin järjestyksessä jossa tiedostojärjestelmä säilyy mahdollisimman konsistenttina.
 %Ext2:sta poiketen FFS-tiedostojärjestelmälle ei löydy tukea Linuxista, vaan tarkasteltavana on toteutus 90-luvun BSD 4.4-käyttöjärjestelmästä.
 
-\subsection{Johdanto FFS:ään}
+\subsection{Johdanto pehmeisiin päivityksiin FFS-tiedostojärjestelmässä}
 Aiemmin nähty \texttt{ext2} on vahvasti FFS-tiedostojärjestelmän inspiroima
 ja yleisellä tasolla lähes jokaiselle FFS:n levytietorakenteelle löytyy \texttt{ext2}:sta identtinen vastine.
 FFS-tiedostojärjestelmä on jaettu \emph{sylinteriryhmiin} (\emph{cylinder group}) joka vastaa \texttt{ext2}:n lohkoryhmää.
@@ -1038,23 +1038,85 @@ Tässä järjestyksessä tehtynä kaatuminen ei milloinkaan johda tilanteeseen j
 Ainoastaan kohtien 1--2 tai 2--3 välissä tapahtunut kaatuminen johtaa yhden inoden vuotamiseen.
 Sallittuja kirjoitusjärjestyksiä on yleensä useita, tässä esimerkissä kohdat 1. ja 2. voisivat vaihtaa paikkaa ilman ongelmia.
 Kriittisintä on, että uuteen inodeen viittaavaa tietorakennetta (eli tässä tapauksessa hakemistoalkiota) ei kirjoiteta levylle ennen kuin itse inoden tietorakenne on alustettu ja merkattu käytössäolevaksi bittikarttaan.
-Yleistämällä tämä periaate saadaan joukko sääntöjä:
+Tämäntyyppisiä kirjoitusjärjestystä koskevia rajoituksia (``päivitys metadatalohkoon tyyppiä $x$ täytyy kirjoittaa levylle ennen päivitystämetadatalohkoon tyyppiä $y$'') kutsutaan \emph{päivitysriippuvuuksiksi} (\emph{update dependency}).
+Niin kauan kuin muokkaukset tiedostojärjestelmän levytietorakenteisiin tehdään päivitysriippuvuuksien sallimassa järjestyksessä,
+eivät kaatumistilanteet aiheuta pahoja epäkonsistenssiuksia.
 
 \subsection{Päivitysriippuvuudet}
+% FFS-tiedostojärjestelmän päivitysriippuvuudet voidaan johtaa muutamasta perusperiaatteesta.
+% FFS-tiedostojärjestelmän tapauksessa resursseja ovat inodet ja datalohkot.
+% Viittauksia inodeihin syntyy hakemisto
+% Datalohkon sisältö täytyy kirjoittaa levylle ennen kuin inodelohkoon tai epäsuoraan lohkoon lisätään viittaus datalohkoon.
 
-Ennen kuin lohkoon lisätään viittaus joko epäsuoran lohkoon tai inoden kautta on 
-Datalohkon sisällön kirjoitus täytyy tapahtua ennen kuin viittaus kyseiseen lohkoon lisätään joko epäsuoraan lohkoon tai inodeen.
+% Yleistämällä tämä periaate saadaan joukko sääntöjä:
+    %\item{Uutta resurssia (joko inode tai datalohko) varattaessa resurssi täytyy alustaa ennen kuin resurssiin lisätään viittaus.}
+    %\item{Uutta resurssia (joko inode tai datalohko) varattaessa resurssi täytyy merkitä varatuksi bittikartassa ennen kuin resurssiin lisätään viittaus.}
+    %\item{Uutta resurssia (joko inode tai datalohko) varattaessa resurssi täytyy merkitä varatuksi bittikartassa ennen kuin resurssiin lisätään viittaus.}
+
+Uutta tiedostoa luodessa:
+\begin{itemize}
+    \item{Inode täytyy merkitä varatuksi inodebittikartassa ennen kuin hakemistolohkoon lisätään hakemistoalkio viittaamaan uuden tiedoston inodeen.}
+    \item{Inoden levytietorakenne täytyy alustaa ennen kuin hakemistolohkoon lisätään hakemistoalkio viittaamaan uuden tiedoston inodeen.}
+    \item{Uutta hakemistoa luodessa täytyy lisäksi varata ja alustaa datalohko hakemiston sisällölle.}
+\end{itemize}
+Uutta kovaa linkkiä luodessa:
+\begin{itemize}
+    \item{Inodeen viittaavien nimien lukumäärää täytyy kasvattaa inodessa ennen kuin hakemistolohkoon lisätään uusi hakemistoalkio inodelle.}
+\end{itemize}
+Tiedostoon lohkoja lisättäessä:
+\begin{itemize}
+    \item{Datalohkon sisältö täytyy kirjoittaa levylle ennen kuin epäsuoraan lohkoon tai inodeen lisätään viittaus datalohkoon.}
+    \item{Datalohko täytyy merkitä varatuksi lohkobittikartassa ennen kuin epäsuoraan lohkoon tai inodeen lisätään viittaus datalohkoon.}
+    \item{Mikäli lohkojen lisääminen vaatii uuden epäsuoran lohkon varaamista, samat säännöt pätevät.}
+\end{itemize}
+Kovaa linkkiä poistaessa:
+\begin{itemize}
+    \item{Hakemistoalkio täytyy poistaa hakemistolohkosta ennen kuin inodeen viittaavien nimien lukumäärää vähennetään inodessa.}
+\end{itemize}
+Lohkojen poistaminen tiedostosta:
+\begin{itemize}
+    \item{Lohkoja ei voida vapauttaa lohkobittikartasta ennen kuin viittaukset datalohkoihin ovat nollattu inoderakenteesta tai epäsuorasta lohkosta.}
+    \item{Lohkoja ei voida uudelleenkäyttää ennen kuin viittaukset datalohkoihin ovat nollattu inoderakenteesta tai epäsuorasta lohkosta.}
+\end{itemize}
+Tiedostoa poistettaessa:
+\begin{itemize}
+    \item{Hakemistoalkio täytyy poistaa hakemistolohkosta ennen kuin inoden rakenne nollataan.}
+    \item{Hakemistoalkio täytyy poistaa hakemistolohkosta ennen kuin inode merkitään vapautetuksi inodebittikartassa.}
+    \item{Poistetun tiedoston inodea ei voida vapauttaa inodebittikartasta ennen kuin inoden rakenne on nollattu.}
+    \item{Poistetun tiedoston inodea ei voida uudelleenkäyttää ennen kuin olemassaolevat hakemistoalkiot on poistettu.}
+\end{itemize}
+
+% Ennen kuin lohkoon lisätään viittaus joko epäsuoran lohkoon tai inoden kautta on 
+% Datalohkon sisällön kirjoitus täytyy tapahtua ennen kuin viittaus kyseiseen lohkoon lisätään joko epäsuoraan lohkoon tai inodeen.
 
 \subsection{Sykliset riippuvuudet}
 Pehmeiden päivitysten ja levyvälimuistien yhdistelmällä voidaan joutua tilanteeseen jossa tietorakenteiden väliset riippuvuudet muodostavat syklin.
 Otetaan esimerkiksi lähtötilanne jossa muuten tyhjässä tiedostojärjestelmässä on pelkästään yksi tyhjä tiedosto \texttt{/oldfile} ja sille tehdään operaatiot \texttt{creat("/newfile", 0644); unlink("/oldfile");}.
+Oletetaan lisäksi että sekä \texttt{newfile}:n että \texttt{oldfile}:n inodet päätyvät samalle inodelohkolle ja hakemistoalkiot samalle hakemiston lohkolle.
 Nyt tiedostojärjestelmän osalta ovat voimassa seuraavat päivitysriippuvuudet:
-\begin{itemize}
-    \item{\texttt{newfile}:n inode täytyy kirjoittaa ennen juurihakemiston lohkoa, jotta hakemistoalkio \texttt{newfile} ei osoita vapaaseen inodeen.}
-    \item{inodebittikartta täytyy kirjoittaa ennen juurihakemiston lohkoa, jotta hakemistoalkio \texttt{newfile} ei osoita bittikartassa varaamattomaan inodeen.}
-    \item{juurihakemiston lohko täytyy kirjoittaa ennen \texttt{oldfile}:n inodea, jotta hakemistoalkio \texttt{oldfile} ei osoita vapautettuun inodeen.}
-    \item{juurihakemiston lohko täytyy kirjoittaa ennen inodebittikarttaa, jotta hakemistoalkio \texttt{oldfile} ei osoita bittikartassa vapautettuun inodeen.}
-\end{itemize}
+\begin{enumerate}
+    \item{inodelohko täytyy kirjoittaa ennen hakemistolohkoa, jotta \texttt{newfile}:n hakemistoalkio ei osoita vapaaseen inodeen.}
+    \item{inodebittikartan lohko täytyy kirjoittaa ennen hakemistolohkoa, jotta \texttt{newfile}:n hakemistoalkio ei osoita bittikartassa vapaaksi merkittyyn inodeen.}
+    \item{hakemistolohko täytyy kirjoittaa ennen inodelohkoa, jotta \texttt{oldfile}:n hakemistoalkio ei osoita vapautettuun inodeen.}
+    \item{hakemistolohko täytyy kirjoittaa ennen inodebittikartan lohkoa, jotta \texttt{oldfile}:n hakemistoalkio ei osoita bittikartassa vapaaksi merkittyyn inodeen.}
+\end{enumerate}
+Näistä päivitysriippuvuuksista 1. ja 3. muodostavat syklisen riippuvuuden inodelohkon ja hakemistolohkon välillä ja päivitysriippuvuudet 2. ja 4. muodostavat syklin inodelohkon ja inodebittikarttalohkon välillä.
+On siis päädytty tilanteeseen, jossa mitään metadatalohkoa ei voida sellaisenaan kirjoittaa levylle ilman että jokin päivitysriippuvuus jää täyttämättä.
+
+Pehmeiden päivitysten ratkaisu sykleihin on väliaikaisesti perua päivitysriippuvuuden aiheuttanut muutos metadatalohkoon ennen sen kirjoittamista levylle.
+Siis käyttöjärjestelmä voi kirjoittaa levylle minkä tahansa muokatun metadatalohkon,
+mutta täyttämättömien päivitysriippuvuuksien tapauksessa perutaan muutos väliaikaisesti.
+Esimerkiksi edellä nähdyistä päivitysriippuvuuksista kukin voidaan perua seuraavasti:
+% XXX
+Käyttäen perumisinformaatiota metadatapäivitykset voidaan viedä esimerkiksi seuraavassa järjestyksessä:
+\begin{enumerate}
+    \item{inodelohkosta kirjoitetaan versio jossa \texttt{oldfile}:n inoden poistaminen on kumottu.}
+    \item{inodebittikartan lohkosta kirjoitetaan versio jossa \texttt{oldfile}:n inoden vapautus on kumottu.}
+    \item{hakemistolohkon lopullinen versio kirjoitetaan.}
+    \item{inodelohkon lopullinen versio kirjoitetaan.}
+    \item{inodebittikartan lohkon lopullinen versio kirjoitetaan.}
+\end{enumerate}
+
 % init state: /oldfile
 % - creat(/newfile)
 % - unlink(/oldfile)
