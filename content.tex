@@ -731,32 +731,34 @@ jotta voidaan selkeästi nähdä levyvälimuistien vaikutus useissa tilanteissa.
 Luotaessa tyhjän ext2-tiedostojärjestelmän juurihakemistoon uusi tyhjä tiedosto kutsulla \texttt{creat("new", 0755)} tapahtuu seuraavasti:
 
 \begin{table}
-\begin{tabular}{l | l | l | l | l | l}
-# & aika (s) & erotus edelliseen & lohkonumero & lukumäärä & kuvaus \\ \hline
-1  & 0.000    &          &      &      & \texttt{creat()}-kutsu alkaa   \\ \hline %
-2  & 0.001    & +0.001   &      &      & \texttt{creat()}-kutsu loppuu  \\ \hline %
-3  & 30.847   & +30.846  & 1    & 1    & Lohkoryhmien kuvaajat          \\ \hline % 3
-4  & 30.847   & +0.000   & 3    & 1    & Lohkoryhmän 0 inodebittikartta \\ \hline % 2
-5  & 30.847   & +0.000   & 516  & 1    & Juurihakemisto                 \\ \hline % 1
-6  & 61.567   & +30.721  & 4    & 1    & Lohkoryhmän 0 inodetaulu      \\ \hline % 4
+\begin{tabular}{l | l | l | l | l | p{7cm}}
+    \# & aika (s) & $\Delta t$ & lohko & lkm & kuvaus \\ \hline \hline
+    1  & 0.000    &          &      &      & \texttt{creat()}-kutsu alkaa   \\ \hline %
+    2  & 0.001    & +0.001   &      &      & \texttt{creat()}-kutsu loppuu  \\ \hline %
+    3  & 30.847   & +30.846  & 1    & 1    & Lohkoryhmien kuvaajat: vähennetään vapaiden inodejen määrää (8181 -> 8180)         \\ \hline % 3
+    4  & 30.847   & +0.000   & 3    & 1    & Lohkoryhmän 0 inodebittikartta: merkitään inode \texttt{new} varatuksi \\ \hline % 2
+    5  & 30.847   & +0.000   & 516  & 1    & Juurihakemisto: lisätään hakemistoalkio \texttt{new}                 \\ \hline % 1
+    6  & 61.567   & +30.721  & 4    & 1    & Lohkoryhmän 0 inodetaulu: alustetaan inoden \texttt{new} attribuutit \\        % 4
 \end{tabular}
 \end{table}
 
-Levyn liittämisen yhteydessä tehdään yksi levykirjoitus superlohkoon, jossa asetetaan lippu että tiedostojärjestelmä on käytössä.
-%  Filesystem state: clean -> not clean, Mount count: 1 -> 2, Last mount time: *
-Tämä kertoo että kaatumistilanteessa tiedostojärjestelmän tila on epäkonsistentti ja on tarpeen ajaa e2fsck ennen tiedostojärjestelmän liittämistä.
-Linuxin tapa käyttää levyvälimuisteja aggressiivisesti näkyy jo näinkin yksinkertaisella testitapauksella,
-sillä itse \texttt{creat()}-kutsu ei tee mitään levykirjoituksia vaan palaa heti sovellusohjelmalle.
-Vasta noin 30 sekunnin jälkeen aletaan tehdä muutoksia levylle.
-Kohdassa 6 päivitään lohkoryhmän vapaiden inodejen määrää yhdellä (8181 -> 8180), kohdassa 7 merkitään uudelle tiedostolle varattu inode käytössä olevaksi inodebittikarttaan
-ja kohdassa 8 lisätään juurihakemistoon hakemistoalkio viittaamaan uuden tiedoston inodeen.
-Edelleen 30 sekuntia myöhemmin muokataan inodetaulua, missä samalla alustetaan uuden inoden sisältö sekä päivitetään juurihakemiston aikaleimoja.
+...kuvaus em. taulukosta tähän...
 
-Nähtävästi superlohkon metadata kirjoitetaan vasta unmountin yhteydessä, käyttäen kolmea kirjoitusta peräkkäin.
-Kohdassa 11 vähennetään tiedostojärjestelmän vapaiden inodejen määrää (65525 -> 65524).
-% Last write time:*
-Kohdan 12 levykirjoituksen tarkoitus on tuntematon, sillä se ei muuta levyn sisältöä mitenkään.
-Kohta 13 päivittää tiedostojärjestelmän tilan puhtaaksi.
+%%%%% Levyn liittämisen yhteydessä tehdään yksi levykirjoitus superlohkoon, jossa asetetaan lippu että tiedostojärjestelmä on käytössä.
+%%%%% %  Filesystem state: clean -> not clean, Mount count: 1 -> 2, Last mount time: *
+%%%%% Tämä kertoo että kaatumistilanteessa tiedostojärjestelmän tila on epäkonsistentti ja on tarpeen ajaa e2fsck ennen tiedostojärjestelmän liittämistä.
+%%%%% Linuxin tapa käyttää levyvälimuisteja aggressiivisesti näkyy jo näinkin yksinkertaisella testitapauksella,
+%%%%% sillä itse \texttt{creat()}-kutsu ei tee mitään levykirjoituksia vaan palaa heti sovellusohjelmalle.
+%%%%% Vasta noin 30 sekunnin jälkeen aletaan tehdä muutoksia levylle.
+%%%%% Kohdassa 6 päivitään lohkoryhmän vapaiden inodejen määrää yhdellä (8181 -> 8180), kohdassa 7 merkitään uudelle tiedostolle varattu inode käytössä olevaksi inodebittikarttaan
+%%%%% ja kohdassa 8 lisätään juurihakemistoon hakemistoalkio viittaamaan uuden tiedoston inodeen.
+%%%%% Edelleen 30 sekuntia myöhemmin muokataan inodetaulua, missä samalla alustetaan uuden inoden sisältö sekä päivitetään juurihakemiston aikaleimoja.
+%%%%% 
+%%%%% Nähtävästi superlohkon metadata kirjoitetaan vasta unmountin yhteydessä, käyttäen kolmea kirjoitusta peräkkäin.
+%%%%% Kohdassa 11 vähennetään tiedostojärjestelmän vapaiden inodejen määrää (65525 -> 65524).
+%%%%% % Last write time:*
+%%%%% Kohdan 12 levykirjoituksen tarkoitus on tuntematon, sillä se ei muuta levyn sisältöä mitenkään.
+%%%%% Kohta 13 päivittää tiedostojärjestelmän tilan puhtaaksi.
 
 \section{Kirjaavat tiedostojärjestelmät}
 \label{ChapJournallingFs}
