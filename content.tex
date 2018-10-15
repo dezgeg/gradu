@@ -1149,6 +1149,22 @@ Käyttäen perumisinformaatiota metadatapäivitykset voidaan viedä esimerkiksi 
 % newfile inode before dirents
 % block bitmap before newfile inode
 
+\subsection{Kaatumistilanteesta palautuminen}
+Pehmeiden päivityksiä käyttäessä palautumista ei tarvitse tehdä ennen tiedostojärjestelmän liittämistä,
+sillä kaikki metadatakirjoitukset on tehty järjestyksessä jossa levyrakenteisiin ei synny kriittisiä epäkonsistenssiuksia.
+Kaatumistilanteen seurauksena tiedostojärjestelmään voi kuitenkin aiheutua seuraavia ei-kriittisiä ongelmia:
+\begin{itemize}
+    \item{Datalohkoja jotka on merkitty varatuksi lohkobittikartassa, mutta joihin ei ole viittausta mistään inodesta.}
+    \item{Käytössä olevia inodeja jotka eivät ole yhteydessä hakemistorakenteeseen.}
+    \item{Käytössä olevia inodeja joihin on todellisuudessa vähemmän viittauksia hakemistoalkioiden kautta kuin mitä inodetietorakenteen laskuri osoittaa.}
+\end{itemize}
+Mikään näistä ei estä tiedostojärjestelmän käytön jatkamista turvallisesti vaan näkyy käyttäjälle pääasiassa ``vuotaneina'' resursseina,
+eli tiedostojärjestelmässä on näennäisesti vähemmän vapaata tilaa tai inodeja kuin siellä pitäisi olla.
+Ennen pitkää tämä ongelma täytyy kuitenkin korjata,
+jotta vuotaneen levytilan osuus ei kasva suuremmaksi jokaisen kaatumistilanteen seurauksena.
+BSD-käyttöjärjestelmän tarjoama ratkaisu tähän on taustalla toimiva tiedostojärjestelmän tarkastusohjelma.
+
+...
 
 \section{Tiedostojärjestelmätoteutusten luotettavuuden testaus}
 
