@@ -861,6 +861,28 @@ joka luo tiedostojärjestelmään uuden tiedoston \texttt{new} ja kirjoittaa sin
 Molemmat testiohjelman tekemät tiedostojärjestelmäkutsut valmistuvat aiheuttamatta yhtään levykirjoituksia,
 eli \texttt{ext2}:n tapaan operaation tehdään ensin pelkästään muistissa ja kirjoitetaan vasta myöhemmin taustalla levylle:
 
+\begin{table}[H]
+\begin{tabular}{l | l | l | l | l | p{7cm}}
+    \# & aika (s) & $\Delta t$ & lohko & lkm & kuvaus \\ \hline \hline
+    1  & 0.000    & +0.000   &      &      & \texttt{creat()}-kutsu alkaa   \\ \hline %
+    2  & 0.001    & +0.001   &      &      & \texttt{creat()}-kutsu loppuu  \\ \hline %
+    3  & 0.002    & +0.000   &      &      & \texttt{write()}-kutsu alkaa   \\ \hline %
+    4  & 0.002    & +0.001   &      &      & \texttt{write()}-kutsu loppuu  \\ \hline %
+    5  & 5.411    & +5.408   & 521  & 1    & Journali                       \\ \hline % 3
+    6  & 5.411    & +0.000   & 9216 & 16   &                                \\ \hline % 2
+    7  & 5.411    & +0.000   & 522  & 8    & Journali                       \\ \hline % 4
+    8  & 5.411    & +0.000   & 530  & 1    & Journali                       \\ \hline % 6
+    9  & 36.131   & +30.720  & 0    & 5    & Superlohko                     \\ \hline % 10
+    10 & 36.131   & +0.000   & 516  & 1    & Juurihakemisto                 \\ \hline % 9
+    11 & 36.131   & +0.000   & 8722 & 1    &                                \\ \hline % 8
+    12 & 180.038  & +143.907 &      &      & msg:before\_umount             \\ \hline %
+    13 & 180.084  & +0.046   & 521  & 1    & Journali                       \\ \hline % 12
+    14 & 180.085  & +0.000   & 521  & 1    & Journali                       \\ \hline % 14
+    15 & 180.085  & +0.000   & 0    & 1    & Superlohko                     \\ \hline % 16
+    16 & 180.106  & +0.021   &      &      & msg:after\_umount              \\ \hline %
+\end{tabular}
+\end{table}
+
 \begin{enumerate}
     \item{Noin 5.4 sekunnin jälkeen journalin lohkoon 0 eli otsakelohkoon päivitetään kertomaan että palautuminen on tarpeen alkaen journalin lohkosta 1.}
     \item{64 kilotavun edestä datalohkot kirjoitetaan data-alueelle.}
