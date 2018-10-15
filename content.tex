@@ -731,21 +731,14 @@ jotta voidaan selkeästi nähdä levyvälimuistien vaikutus useissa tilanteissa.
 Luotaessa tyhjän ext2-tiedostojärjestelmän juurihakemistoon uusi tyhjä tiedosto kutsulla \texttt{creat("new", 0755)} tapahtuu seuraavasti:
 
 \begin{table}
-\begin{tabular}{l | l | l | l | l}
-1  & 0.000    &      &      & msg:before\_mount              \\ \hline %
-2  & 0.051    & 0    & 7    & superblock                     \\ \hline % 1
-3  & 0.027    &      &      & msg:after\_mount               \\ \hline %
-4  & 61.857   &      &      & msg:before\_creat              \\ \hline %
-5  & 0.003    &      &      & msg:after\_creat               \\ \hline %
-6  & 30.985   & 8    & 15   & bg\_table                      \\ \hline % 2
-7  & 0.000    & 24   & 31   & group\_0\_inode\_bitmap        \\ \hline % 3
-8  & 0.000    & 4128 & 4135 & root\_dir\_blocks              \\ \hline % 4
-9  & 30.720   & 32   & 39   & group\_0\_inode\_table         \\ \hline % 5
-10 & 118.337  &      &      & msg:before\_umount             \\ \hline %
-11 & 0.052    & 0    & 7    & superblock                     \\ \hline % 6
-12 & 0.000    & 0    & 7    & superblock                     \\ \hline % 7
-13 & 0.000    & 0    & 7    & superblock                     \\ \hline % 8
-14 & 0.028    &      &      & msg:before\_umount             \\ \hline %
+\begin{tabular}{l | l | l | l | l | l}
+# & aika (s) & erotus edelliseen & lohkonumero & lukumäärä & kuvaus \\ \hline
+1  & 0.000    &          &      &      & \texttt{creat()}-kutsu alkaa   \\ \hline %
+2  & 0.001    & +0.001   &      &      & \texttt{creat()}-kutsu loppuu  \\ \hline %
+3  & 30.847   & +30.846  & 1    & 1    & Lohkoryhmien kuvaajat          \\ \hline % 3
+4  & 30.847   & +0.000   & 3    & 1    & Lohkoryhmän 0 inodebittikartta \\ \hline % 2
+5  & 30.847   & +0.000   & 516  & 1    & Juurihakemisto                 \\ \hline % 1
+6  & 61.567   & +30.721  & 4    & 1    & Lohkoryhmän 0 inodetaulu      \\ \hline % 4
 \end{tabular}
 \end{table}
 
