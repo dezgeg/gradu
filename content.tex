@@ -730,7 +730,7 @@ jotta voidaan selkeästi nähdä levyvälimuistien vaikutus useissa tilanteissa.
 \label{ChapExt2FileCreation}
 Luotaessa tyhjän ext2-tiedostojärjestelmän juurihakemistoon uusi tyhjä tiedosto kutsulla \texttt{creat("new", 0755)} tapahtuu seuraavasti:
 
-\begin{table}
+\begin{table}[H]
 \begin{tabular}{l | l | l | l | l | p{7cm}}
     \# & aika (s) & $\Delta t$ & lohko & lkm & kuvaus \\ \hline \hline
     1  & 0.000    &          &      &      & \texttt{creat()}-kutsu alkaa   \\ \hline %
@@ -762,18 +762,18 @@ Luotaessa tyhjän ext2-tiedostojärjestelmän juurihakemistoon uusi tyhjä tiedo
 
 \subsubsection{Tiedostoon kirjoitus}
 \label{ChapExt2FileWrite}
-Jatketaan edellisen kohdan tiedostojärjestelmästä ja kirjoitetaan \texttt{new}-tiedostoon 64 kilotavun verran dataa:
+Jatketaan edellisen kohdan tiedostojärjestelmästä ja kirjoitetaan \texttt{new}-tiedostoon 64 kilotavun eli 16 lohkon verran dataa:
 % \texttt{creat("new", 0755)} tapahtuu seuraavasti:
-\begin{table}
+\begin{table}[H]
 \begin{tabular}{l | l | l | l | l | p{7cm}}
     \# & aika (s) & $\Delta t$ & lohko & lkm & kuvaus \\ \hline \hline
     1  & 0.000    & +0.000   &      &      & \texttt{open()}-kutsu alkaa    \\ \hline %
     2  & 0.028    & +0.028   &      &      & \texttt{open()}-kutsu loppuu   \\ \hline %
     3  & 0.028    & +0.000   &      &      & \texttt{write()}-kutsu alkaa   \\ \hline %
     4  & 0.028    & +0.000   &      &      & \texttt{write()}-kutsu loppuu  \\ \hline %
-    5  & 5.226    & +5.198   & 1    & 2    & Lohkoryhmien kuvaajat          \\ \hline % 1
-    6  & 5.226    & +0.000   & 4    & 1    & Lohkoryhmän 0 inodetaulu      \\ \hline % 2
-    7  & 5.226    & +0.000   & 8192 & 17   &                                \\ \hline % 3
+    5  & 5.226    & +5.198   & 1    & 2    & Lohkoryhmien kuvaajat: vapaiden lohkojen määrää vähennetään          \\ \hline % 1
+    6  & 5.226    & +0.000   & 4    & 1    & Lohkoryhmän 0 inodetaulu: inoden \texttt{new} attribuutit päivitetään ...      \\ \hline % 2
+    7  & 5.226    & +0.000   & 8192 & 17   & Tiedoston \texttt{new} datalohkot sekä yksi epäsuora lohko                               \\        % 3
 \end{tabular}
 \end{table}
 
