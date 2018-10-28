@@ -1038,8 +1038,14 @@ ja tilanteesta riippuen koko hakemisto-operaatio saatetaan loppuun tai perutaan 
 
 \section{Kirjoittaessa kopioivat tiedostojärjestelmät}
 \label{ChapCopyOnWrite}
-Kolmas yleinen tiedostojärjestelmien variaatio päälle kirjottavien ja lokipohjaisten tiedostojärjestelmien lisäksi on kirjoittaessa kopioivat (``CoW, Copy-on-Write'') tiedostojärjestelmät.
-Tässä kappaleessa tarkastellaan tähän tekniikkaan perustuvaa Linuxin \texttt{btrfs}-tiedostojärjestelmää~\cite{Btrfs}.
+\subsection{Motivaatio}
+Eräs uudempi, niinikään perinteisistä päälle kirjoittavista tiedostojärjestelmistä poikkeava tekniikka on \emph{kirjoittaessa kopioivat} (\emph{CoW, Copy-on-Write}) tiedostojärjestelmät.
+Merkittävimpiä kirjoittaessa kopioivia tiedostojärjestelmiä on Solaris-käyttöjärjestelmää varten suunniteltu ZFS vuodelta 2005,
+sekä Linuxiin vuodesta 2007 lähtien kehityksen alla ollut Btrfs~\cite{Btrfs} johon tutustutaan tässä kappeleessa.
+
+Btrfs:n tavoitteena on olla seuraava uuden sukupolven yleiskäyttöinen tiedostojärjestelmä jota voitaisiin käyttää kaikkialla matalatehoisista laitteista, kuten älypuhelimista palvelinsaleihin.
+Verrattuna Linuxin aiempaan vakiintuneeseen \texttt{ext4}-tiedostojärjestmään Btrfs kilpailee pääasiassa uusilla ominaisuuksilla,
+joista merkittävimmät ovat tarkistussummat sekä datalle että metadatalle, \emph{tilannevedokset} (\emph{snapshot}), tiedostojen pakkaus ja usean levyn tuki.
 
 \section{Kirjoitusjärjestyksen hallintaan perustuvat tiedostojärjestelmät (``soft updates'')}
 \label{ChapSoftUpdates}
