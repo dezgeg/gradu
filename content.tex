@@ -1047,6 +1047,14 @@ Btrfs:n tavoitteena on olla seuraava uuden sukupolven yleiskäyttöinen tiedosto
 Verrattuna Linuxin aiempaan vakiintuneeseen \texttt{ext4}-tiedostojärjestmään Btrfs kilpailee pääasiassa uusilla ominaisuuksilla,
 joista merkittävimmät ovat tarkistussummat sekä datalle että metadatalle, \emph{tilannevedokset} (\emph{snapshot}), tiedostojen pakkaus ja usean levyn tuki.
 
+Btrfs:n levytietorakenteet poikkeavat merkittävästi perinteisistä Unix-tiedostojärjestelmistä.
+Lähes kaikki Btrfs-tiedostojärjestelmän metadata sijaitsee B-puihin pohjautuvissa tietorakenteissa.
+Btrfs:n kaikkien B-puiden avaimien koko on kiinteä 17 tavun kokoinen tietorakenne \texttt{btrfs\_key} kun taas arvon koko voi muuten vaihdella,
+mutta arvon on mahduttava yhden B-puun lehtisivun sisälle.
+
+Suurin osa perinteisistä tiedostojärjestelmän tietorakenteista sijaitsee \emph{alitiedostojärjestelmäpuussa FIXME} (\emph{subvolume tree}).
+Tiedostojärjestelmän inodet sijaitsevat puussa 
+
 \section{Kirjoitusjärjestyksen hallintaan perustuvat tiedostojärjestelmät (``soft updates'')}
 \label{ChapSoftUpdates}
 Edellisissä kappaleissa esiteltiin tekniikoita jossa tiedostojärjestelmän konsistenssiuden säilyminen kaatumistilanteessa toteutettiin tuomalla tiedostojärjestelmään menetelmä atomisten päivitysten tekemiseen.
