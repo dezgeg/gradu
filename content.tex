@@ -1052,8 +1052,11 @@ Lähes kaikki Btrfs-tiedostojärjestelmän metadata sijaitsee B-puihin pohjautuv
 Btrfs:n kaikkien B-puiden avaimien koko on kiinteä 17 tavun kokoinen tietorakenne \texttt{btrfs\_key} kun taas arvon koko voi muuten vaihdella,
 mutta arvon on mahduttava yhden B-puun lehtisivun sisälle.
 
-Suurin osa perinteisistä tiedostojärjestelmän tietorakenteista sijaitsee \emph{alitiedostojärjestelmäpuussa FIXME} (\emph{subvolume tree}).
-Tiedostojärjestelmän inodet sijaitsevat puussa 
+Suurin osa perinteisistä tiedostojärjestelmän tietorakenteista sijaitsee \emph{alitiedostojärjestelmäpuussa FIXME} (\emph{subvolume tree}),
+josta löytyvät sekä inodet, hakemistoalkiot että viittaukset tiedoston dataan.
+Kutakin tiedostojärjestelmän inodea vastaa yksi alkio tyyppiä \texttt{INODE\_ITEM} jossa \texttt{objectid} sisältä inoden numeron, \texttt{offset}-kenttää ei käytetä ja alkion arvo sisältää tyypilliset inoden attribuutit.
+Jokaista hakemistoalkiota vastaa B-puun alkio tyyppiä \texttt{DIR\_ITEM} jossa \texttt{objectid} sisältää hakemistoinoden numeron, \texttt{offset}-kenttä sisältää tiedostonimestä lasketun hajautusarvon ja alkion arvo sisltää itse tiedostonimen ja inodenumeron.
+Inoden dataan viitataan \emph{extenteillä}.. FIXME (\emph{extent}) joka on usein lohkopuuta tehokkaampi menetelmä.
 
 \section{Kirjoitusjärjestyksen hallintaan perustuvat tiedostojärjestelmät (``soft updates'')}
 \label{ChapSoftUpdates}
