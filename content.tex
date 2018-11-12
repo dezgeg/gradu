@@ -714,25 +714,29 @@ Myöskin metadataan tehtävät korjaukset on tärkeä tehdä tietyssä järjesty
 \end{enumerate}
 
 \subsection{Kaatumistilanteiden tutkiminen käytännössä}
-
-Tutkittavana kohteena on Linuxin versio 4.14 ja se on tehty ajamalla Linuxia QEMU-virtuaalikoneessa,
-jota on laajennettu kirjoittamaan lokitiedostoa jokaisesta levykirjoituksesta jota virtualisoidulle levylle on tehty.
-Teknisesti tämä on toteutettu lisäämällä QEMUun uusi lohkolaitetyyppi joka muuten ohjaa kaikki luku- ja kirjoitusoperaatiot jollekin toiselle QEMUun konfiguroidulle lohkolaitteelle,
-mutta kirjoitusoperaation yhteydessä tekee myös lokimerkinnän joka sisältää aikaleiman, muokattavan sektorin numeron sekä kirjoitettavan sisällön.
-Linux-virtuaalikoneelle annetaan etukäteen alustettu ext2-tiedostojärjestelmä kyseisen lokittavan lohkolaitteen läpi,
-ja virtuaalikoneen käynnistyttyä liitetään testattava tiedostojärjestelmä,
-suoritetaan testattavat operaatiot lyhyellä C-ohjelmalla,
+\texttt{ext2}-tiedostojärjestelmän käyttäytymistä kaatumistilanteessa testattiin käytännössä QEMU-virtuaalikoneen \texttt{blklogwrites}-lohkolaitteen avulla.
+\texttt{blklogwrites} on virtuaalinen lohkolaite joka näkyy käyttöjärjestelmälle muuten tavallisena levynä,
+mutta jokaisen kirjoitusoperaation yhteydessä tehdään lisäksi lokimerkintä joka sisältää aikaleiman, kirjoitettavan sektorin numeron sekä lohkon uuden sisällön.
+Koeasetelmassa virtuaalikoneessa käynnistetään Linux,
+liitetään tiedostojärjestelmä \texttt{blklogwrites}:in päälle ja tehdään sille haluttuja tiedostojärjestelmäoperaatioita,
 ja sammutetaan virtuaalikone.
-Ennen sammuttamista odotetaan X minuuttia,
-jotta voidaan selkeästi nähdä levyvälimuistien vaikutus useissa tilanteissa.
+Nyt levykirjoituslokin pohjalta voidaan jälkikäteen muodostaa jokainen mahdollinen välitilanne levyn sisällöstä,
+jossa jokainen välitilanne vastaa yhtä mahdollista kaatumistilannetta testitilanteen aikana.
+
+Koeasetelmassa käytettiin Linuxin versiota 4.14, QEMUn versiota 3.0.0 ja 1 gigatavun levyä.
+Lisäksi tiedostojärjestelmäoperaatioita ei tehdä peräjälkeen tai heti liittämisen jälkeen,
+vaan niiden välissä odotetaan 3 minuuttia.
+Tällä lailla voidaan erottaa levykirjoitukset jotka tapahtuvat suoraan tiedostojärjestelmä-operaation seurauksena
+ja mitkä käyttöjärjestelmä kirjoittaa taustalla. 
 
 \subsubsection{Tiedoston luominen}
 \label{ChapExt2FileCreation}
-Luotaessa tyhjän ext2-tiedostojärjestelmän juurihakemistoon uusi tyhjä tiedosto kutsulla \texttt{creat("new", 0755)} tapahtuu seuraavasti:
+Taulukossa \ref{TabExt2Creation} nähdään levykirjoitukset jota aiheutuu luotaessa tyhjään \texttt{ext2}-tiedostojärjestelmän juurihakemistoon uusi tyhjä tiedosto kutsulla \texttt{creat("new", 0755)}:
 
 \begin{table}[H]
+\label{TabExt2Creation}
 \begin{tabular}{l | l | l | l | l | p{7cm}}
-    \# & aika (s) & $\Delta t$ & lohko & lkm & kuvaus \\ \hline \hline
+    \# & $t$ (s) & $\Delta t$ (s) & lohko & lkm & kuvaus \\ \hline \hline
     1  & 0.000    &          &      &      & \texttt{creat()}-kutsu alkaa   \\ \hline %
     2  & 0.001    & +0.001   &      &      & \texttt{creat()}-kutsu loppuu  \\ \hline %
     3  & 30.847   & +30.846  & 1    & 1    & Lohkoryhmien kuvaajat: vähennetään vapaiden inodejen määrää (8181 -> 8180)         \\ \hline % 3
@@ -740,9 +744,10 @@ Luotaessa tyhjän ext2-tiedostojärjestelmän juurihakemistoon uusi tyhjä tiedo
     5  & 30.847   & +0.000   & 516  & 1    & Juurihakemisto: lisätään hakemistoalkio \texttt{new}                 \\ \hline % 1
     6  & 61.567   & +30.721  & 4    & 1    & Lohkoryhmän 0 inodetaulu: alustetaan inoden \texttt{new} attribuutit \\        % 4
 \end{tabular}
+\caption{Tiedoston luomisesta seuraavat levyoperaatiot.}
 \end{table}
 
-...kuvaus em. taulukosta tähän...
+Esimerkistä ilmenee selvästi miten \texttt{ext2} hyödyntää välimuistia levyn metadatarakenteille: \texttt{creat()}-kutsu palaa välittömästi eikä siitä aiheudu välittömiä levykirjoituksia.
 
 %%%%% Levyn liittämisen yhteydessä tehdään yksi levykirjoitus superlohkoon, jossa asetetaan lippu että tiedostojärjestelmä on käytössä.
 %%%%% %  Filesystem state: clean -> not clean, Mount count: 1 -> 2, Last mount time: *
@@ -775,6 +780,7 @@ Jatketaan edellisen kohdan tiedostojärjestelmästä ja kirjoitetaan \texttt{new
     6  & 5.226    & +0.000   & 4    & 1    & Lohkoryhmän 0 inodetaulu: inoden \texttt{new} attribuutit päivitetään ...      \\ \hline % 2
     7  & 5.226    & +0.000   & 8192 & 17   & Tiedoston \texttt{new} datalohkot sekä yksi epäsuora lohko                               \\        % 3
 \end{tabular}
+\caption{Olemassaolevan tiedostoon lisäyksestä seuraavat levyoperaatiot.}
 \end{table}
 
 ...kuvaus em. taulukosta tähän...
