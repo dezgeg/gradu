@@ -735,14 +735,14 @@ Taulukossa \ref{TabExt2Creation} nähdään levykirjoitukset jota aiheutuu luota
 
 \begin{table}[H]
 \label{TabExt2Creation}
-\begin{tabular}{l | l | l | l | l | p{7cm}}
-    \# & $t$ (s) & $\Delta t$ (s) & lohko & lkm & kuvaus \\ \hline \hline
-    1  & 0.000    &          &      &      & \texttt{creat()}-kutsu alkaa   \\ \hline %
-    2  & 0.001    & +0.001   &      &      & \texttt{creat()}-kutsu loppuu  \\ \hline %
-    3  & 30.847   & +30.846  & 1    & 1    & Lohkoryhmien kuvaajat: vähennetään vapaiden inodejen määrää (8181 -> 8180)         \\ \hline % 3
-    4  & 30.847   & +0.000   & 3    & 1    & Lohkoryhmän 0 inodebittikartta: merkitään inode \texttt{new} varatuksi \\ \hline % 2
-    5  & 30.847   & +0.000   & 516  & 1    & Juurihakemisto: lisätään hakemistoalkio \texttt{new}                 \\ \hline % 1
-    6  & 61.567   & +30.721  & 4    & 1    & Lohkoryhmän 0 inodetaulu: alustetaan inoden \texttt{new} attribuutit \\        % 4
+\begin{tabular}{l | l | l | l | p{7cm}}
+    \# & $t$ (s) & $\Delta t$ (s) & lohkot & kuvaus \\ \hline \hline
+    1  & 0.000    &          &     & \texttt{creat()}-kutsu alkaa   \\ \hline %
+    2  & 0.001    & +0.001   &     & \texttt{creat()}-kutsu loppuu  \\ \hline %
+    3  & 30.847   & +30.846  & 1   & Lohkoryhmien kuvaajat: vähennetään vapaiden inodejen määrää (8181 -> 8180)         \\ \hline % 3
+    4  & 30.847   & +0.000   & 3   & Lohkoryhmän 0 inodebittikartta: merkitään inode \texttt{new} varatuksi \\ \hline % 2
+    5  & 30.847   & +0.000   & 516 & Juurihakemisto: lisätään hakemistoalkio \texttt{new}                 \\ \hline % 1
+    6  & 61.567   & +30.721  & 4   & Lohkoryhmän 0 inodetaulu: alustetaan inoden \texttt{new} attribuutit \\        % 4
 \end{tabular}
 \caption{Tiedoston luomisesta seuraavat levyoperaatiot.}
 \end{table}
@@ -770,15 +770,15 @@ Esimerkistä ilmenee selvästi miten \texttt{ext2} hyödyntää välimuistia lev
 Jatketaan edellisen kohdan tiedostojärjestelmästä ja kirjoitetaan \texttt{new}-tiedostoon 64 kilotavun eli 16 lohkon verran dataa:
 % \texttt{creat("new", 0755)} tapahtuu seuraavasti:
 \begin{table}[H]
-\begin{tabular}{l | l | l | l | l | p{7cm}}
-    \# & aika (s) & $\Delta t$ & lohko & lkm & kuvaus \\ \hline \hline
-    1  & 0.000    & +0.000   &      &      & \texttt{open()}-kutsu alkaa    \\ \hline %
-    2  & 0.028    & +0.028   &      &      & \texttt{open()}-kutsu loppuu   \\ \hline %
-    3  & 0.028    & +0.000   &      &      & \texttt{write()}-kutsu alkaa   \\ \hline %
-    4  & 0.028    & +0.000   &      &      & \texttt{write()}-kutsu loppuu  \\ \hline %
-    5  & 5.226    & +5.198   & 1    & 2    & Lohkoryhmien kuvaajat: vapaiden lohkojen määrää vähennetään          \\ \hline % 1
-    6  & 5.226    & +0.000   & 4    & 1    & Lohkoryhmän 0 inodetaulu: inoden \texttt{new} attribuutit päivitetään ...      \\ \hline % 2
-    7  & 5.226    & +0.000   & 8192 & 17   & Tiedoston \texttt{new} datalohkot sekä yksi epäsuora lohko                               \\        % 3
+\begin{tabular}{l | l | l | l | p{7cm}}
+    \# & $t$ (s) & $\Delta t$ (s) & lohkot & kuvaus \\ \hline \hline
+    1  & 0.000    & +0.000   &            & \texttt{open()}-kutsu alkaa    \\ \hline %
+    2  & 0.028    & +0.028   &            & \texttt{open()}-kutsu loppuu   \\ \hline %
+    3  & 0.028    & +0.000   &            & \texttt{write()}-kutsu alkaa   \\ \hline %
+    4  & 0.028    & +0.000   &            & \texttt{write()}-kutsu loppuu  \\ \hline %
+    5  & 5.226    & +5.198   & 1          & Lohkoryhmien kuvaajat: vapaiden lohkojen määrää vähennetään          \\ \hline % 1
+    6  & 5.226    & +0.000   & 4          & Lohkoryhmän 0 inodetaulu: inoden \texttt{new} attribuutit päivitetään ...      \\ \hline % 2
+    7  & 5.226    & +0.000   & 8192 -- 8208 & Tiedoston \texttt{new} datalohkot sekä yksi epäsuora lohko                               \\        % 3
 \end{tabular}
 \caption{Olemassaolevan tiedostoon lisäyksestä seuraavat levyoperaatiot.}
 \end{table}
