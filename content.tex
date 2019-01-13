@@ -85,7 +85,7 @@ POSIX-tiedostojärjestelmä on \emph{hierarkkinen tiedostojärjestelmä},
 eli tavallisten tiedostojen lisäksi tiedostojärjestelmä tukee \emph{hakemistoja},
 jotka voivat sisältää mielivaltaisen määrän tiedostoja tai hakemistoja.
 Tiedostojärjestelmä muodostaa siis puurakenteen, mistä tulee tämä hierarkkisen määritelmä.
-Kaikilla tiedostoilla ja hakemistoilla on jokin epätyhjä käyttäjän antama nimi,
+Kaikilla tiedostoilla ja hakemistoilla on jokin käyttäjän antama nimi,
 jonka täytyy olla uniikki siinä hakemistossa jossa kyseinen tiedosto tai hakemisto sijaitsee.
 Mikä tahansa tiedosto tai hakemisto Unix-tiedostojärjestelmässä voidaan siis paikantaa \emph{tiedostopolulla},
 eli merkkijonolla jossa \texttt{/}-merkillä on eroteltuna alihakemistojen nimet joita pitkin pitää kulkea tiedoston paikantaakseen.
@@ -99,7 +99,7 @@ tarkoittaa että juurihakemistosta \texttt{/} paikannetaan alihakemisto \texttt{
 % Esimerkiksi prosessilla jonka nykyinen hakemisto on \texttt{/home/tuomas},
 % viittaisi polku \texttt{Downloads/kuva.jpg} tiedostoon \texttt{/home/tuomas/Downloads/kuva.jpg}.
 
-POSIXissa on kaksi erityistä `virtuaalista' tiedostonimeä, \texttt{.} ja \texttt{..}, joiden voidaan mieltää löytyvän jokaisesta hakemistosta.
+POSIXissa on kaksi erityistä tiedostonimeä, \texttt{.} ja \texttt{..}, joiden voidaan mieltää löytyvän jokaisesta hakemistosta.
 Näistä \texttt{.} viittaa aina siihen hakemistoon jossa se sijaitsee ja \texttt{..} viittaa ylempään hakemistoon hakemistopuussa.
 Siis esimerkiksi polku \texttt{/home/tuomas/.} viittaa samaan hakemistoon kuin polku \texttt{/home/tuomas}.
 Lisäksi \texttt{.}-nimeä voi käyttää missä tahansa kohtaa polkua,
@@ -114,11 +114,12 @@ on Unix-tiedostojärjestelmistä puhuttaessa yleisesti konventio sanoa että Uni
 jolloin käytetään termiä \emph{tavallinen tiedosto} (\emph{regular file}) viittaamaan yleiskielen termiin ``tiedosto''.
 
 Jokaiselle tiedostolle on tallennettu sen omistavan käyttäjän tunnus (\emph{user id, UID}) sekä ryhmän tunnus (\emph{group id, GID}).
-Näiden lisäksi tiedostoilla on kolme käyttöoikeutta: luku-, kirjoitus- sekä suoritusoikeus jotka tiedoston omistaja voi erikseen määritellä tiedoston omistajalle, samaan ryhmään kuuluville käyttäjille sekä ulkopuolisille käyttäjille.
+Näiden lisäksi tiedostoilla on kolme käyttöoikeutta: luku-, kirjoitus- sekä suoritusoikeus,
+jotka tiedoston omistaja voi määritellä erikseen joko tiedoston omistajalle, samaan ryhmään kuuluville käyttäjille sekä ulkopuolisille käyttäjille.
 Unix-tiedostojärjestelmä myös ylläpitää kolmea aikaleimaa eri tarkoituksiin:
-milloin tiedoston sisältöä on viimeksi luettu (last data access timestamp), milloin tiedoston sisältöä on viimeksi muokattu (last data modification timestamp) sekä milloin tiedostoa ylipäätään on muokattu (last status change timestamp).
+milloin tiedoston sisältöä on viimeksi luettu (access timestamp), milloin tiedoston sisältöä on viimeksi muokattu (data modification timestamp) sekä milloin tiedostoa ylipäätään on muokattu (status change timestamp).
 
-Eräs varsin erikoinen ominaisuus on \emph{kovat linkit} (\emph{hard link}), mikä käytännössä tarkoittaa että tiedostolla (mutta ei hakemistolle) voi olla useita nimiä tiedostojärjestelmässä.
+Eräs varsin erikoinen ominaisuus on \emph{kovat linkit} (\emph{hard link}), mikä käytännössä tarkoittaa että tiedostolla (mutta ei hakemistolla) voi olla useita nimiä tiedostojärjestelmässä.
 Kovan linkin luominen tehdään olemassa olevalle tiedostolle jonka jälkeen kyseistä tiedostoa voi käsitellä täysin identtisesti sekä alkuperäisellä nimellä että linkin nimellä;
 jälkikäteen ei ole edes mahdollista erottaa kumpi tiedoston nimistä oli se jolla tiedosto oli alunperin luotu.
 Yhden samaan tiedostoon viittaavan nimen poistaminen ei vaikuta muihin nimiin mitenkään.
@@ -133,7 +134,7 @@ eli mikäli sovellus tarvitsee esimerkiksi tietuepohjaista tiedostonkäsittelyä
 Tavallisten tiedostojen ja hakemistojen lisäksi Unix-tiedostojärjestelmä tukee viittä eri erikoistiedostotyyppiä.
 Merkittävin näistä on \emph{symbolinen linkki} (\emph{symbolic link}). (todo).
 
-Muita tuettuja tiedostotyyppejä ovat \emph{nimetty putki} (\emph{named pipe}) ja \emph{paikallinen pistoke} (\emph{domain socket}).
+Muita tuettuja erikoistiedostoja ovat \emph{nimetty putki} (\emph{named pipe}) ja \emph{paikallinen pistoke} (\emph{domain socket}).
 Kumpikaan näistä ei persistoi mitään dataa levylle,
 vaan niitä käytetään Unix-sovellusohjelmoinnissa mekanismina \emph{prosessien väliseen kommunikointiin} (\emph{IPC}, \emph{Inter-Process Communication}).
 Periaatteessa siis vastaava toiminnallisuus voitaisiin toteuttaa käyttöjärjestelmään täysin tiedostojärjestelmästä riippumattomasti,
