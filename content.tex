@@ -21,7 +21,7 @@ Eräs motivaattori uusien tiedostojärjestelmien kehittämiseen on luotettavuude
 Useat aikanaan käytetyt tiedostojärjestelmät,
 kuten DOS-käyttöjärjestelmän FAT tai alkuperäisen Unixin tiedostojärjestelmä,
 olivat nykymittapuulla erittäin yksinkertaisia eivätkä antaneet juuri mitään takuuta sille että tiedostojärjestelmän eheys säilyisi \emph{kaatumistilanteissa}.
-Tyypillisiä tiedostojärjestelmän kaatumistilanteita ovat esimerkisi koko tietokoneen sammuminen virtakatkoksen takia tai
+Tyypillisiä tiedostojärjestelmän kaatumistilanteita ovat esimerkiksi koko tietokoneen sammuminen virtakatkoksen takia tai
 tilanteita jossa järjestelmä pitää käynnistää uudelleen sammuttamatta sitä turvallisesti,
 esimerkiksi jonkin vakavan käyttöjärjestelmävirheen takia.
 Kyseisillä tiedostojärjestelmillä kaatumistilannetta seurasikin aina koko tiedostojärjestelmän tarkistus \texttt{fsck}-ohjelmalla,
@@ -32,7 +32,7 @@ Modernimmat tiedostojärjestelmät, kuten Linuxin ext3 vuodelta 2001, ovatkin su
 joten tämänkaltaiset pitkät käyttökatkot tiedostojärjestelmätarkistusten takia ovat olleet historiaa jo tovin.
 
 Itse tiedostojärjestelmä siis vaikuttaa merkittävästi siihen mitä seurauksia järjestelmän kaatumistilanteesta johtaa, mutta ongelma on monitahoinen.
-Vastuu siitä että käyttäjän dataa ei korruptoidu tiedostojärjestelmän kaatumistilanteessa ei ole pelkästään tiedostojärjestelmä-ajurin tai käyttöjärjestelmän taholla,
+Vastuu siitä että käyttäjän dataa ei korruptoidu tiedostojärjestelmän kaatumistilanteessa ei ole pelkästään tiedostojärjestelmäajurin tai käyttöjärjestelmän taholla,
 vaan myös sovelluksilla.
 Tämän tutkielman tavoitteena on esitellä kyseisiä menetelmiä tiedostojärjestelmän eheyden säilyttämiseen kaatumistilanteissa.
 % FIXME: motivaatio etc.
@@ -49,10 +49,10 @@ Nykypäivän Unix-tyyppisten käyttöjärjestelmien tiedostojärjestelmärajapin
 
 \subsection{Unixin ja POSIX-standardin lyhyt historia}
 
-Unix-käyttöjärjestelmän kehitys alkoi vuonna 1969 AT\&T:n Bell Labs-kehityslaboratoriassa.
-Ken Thompson ja Dennis Ritchie olivat olleet kehittämässa MULTICS-nimistä interaktiivista usean käyttäjän moniajokäyttöjärjestelmää yhdessä General Electricin ja MIT:n yliopiston kanssa.
+Unix-käyttöjärjestelmän kehitys alkoi vuonna 1969 AT\&T:n Bell Labs-kehityslaboratoriossa
+Ken Thompson ja Dennis Ritchie olivat olleet kehittämässä MULTICS-nimistä interaktiivista usean käyttäjän moniajokäyttöjärjestelmää yhdessä General Electricin ja MIT:n yliopiston kanssa.
 MULTICS-projektin tavoitteet olivat aikaansa nähden kunnianhimoisia ja käyttöjärjestelmän valmistuminen näyttikin venyvän ja venyvän, joten Bell Labs vetäytyi lopulta pois projektista.
-Thompson ja Ritchie eivät olleet tyytyväisiä tilanteeseen vaan alkoivat kehittää omaa MULTICSin insipiroimaa käyttöjärjestelmää PDP-7-tietokoneelle~\cite{UnixHistoryBook}.
+Thompson ja Ritchie eivät olleet tyytyväisiä tilanteeseen vaan alkoivat kehittää omaa MULTICSin inspiroimaa käyttöjärjestelmää PDP-7-tietokoneelle~\cite{UnixHistoryBook}.
 Jo samana vuonna Unix oli jo täysin omavarainen, eli Unixin kehitystä pystyttiin jatkamaan Unixilla itsellään.
 Aluksi Unixia kehitettiin pääasiassa tutkimuskäyttöön mutta myös AT\&T:n sisäiseen toimistokäyttöön,
 kuten tekstidokumenttien käsittelyyn sekä latomiseen~\cite{UnixFsBook}.
@@ -66,7 +66,7 @@ Ensimmäinen akateemisen maailman tuottama Unix-johdannainen on Berkeleyn yliopi
 AT\&T:n puhelinverkkotoiminnan monopoliaseman purkaantuminen avasi sille tilaisuuden myydä Unixia kaupallisesti,
 joka julkaistiin Unix System V-nimellä vuonna 1983.
 Markkinoilla oli siis saatavilla useita periaatteessa Unix-pohjaisia käyttöjärjestelmiä mutta jotka kaikki käytännössä toimivat hieman eri tavalla.
-Sovellusohjelmoijan kannalta tämä hankaloitti huomattavasti monella eri Unix-järjestelmällä toivivien ohjelmien toteutusta.
+Sovellusohjelmoijan kannalta tämä hankaloitti huomattavasti monella eri Unix-järjestelmällä toimivien ohjelmien toteutusta.
 Tämän ratkaisemiseksi kehiteltiin POSIX-standardi~\cite{PosixSpec} yhtenäistämään eri Unix-toteutusten tarjoamat sovellusrajapinnat.
 Ensimmäinen versio standardista julkaistiin vuonna 1988.
 POSIX-standardi määrittelee muun muassa komentorivityökaluja sekä C-kielisiä rajapintoja muun muassa tiedostojen, säikeiden ja prosessien hallintaan.
@@ -75,7 +75,7 @@ mutta käytännössä kehittäjät tähtäävät POSIX-yhteensopivuuteen~\cite{L
 
 Tiedostojärjestelmien käsittelyä varten POSIX tarjoaa sekä komentorivikomentoja kuten \texttt{ls}, \texttt{cp}, \texttt{rm} pääasiassa käyttäjien käyttöön että ohjelmointirajapintoja C-ohjelmointikielellä sovellusten toteuttamista varten.
 Valtaosa näistä ohjelmointirajapinnoista toimivat varsin matalalla tasolla,
-joista sovellusohjelmoijan täytyy itse koostaa useat vähänkään monimutkaisemmat tiedostojärjestelmä-operaatiot.
+joista sovellusohjelmoijan täytyy itse koostaa useat vähänkään monimutkaisemmat tiedostojärjestelmäoperaatiot.
 Erityisesti tiedostojärjestelmän käyttö kaatumisturvallisesti vaatii ohjelmoijalta erityistä kykyä ja ymmärrystä käyttää POSIX-rajapintoja oikein,
 mitä käsitellään myöhemmin kappaleessa~\ref{ChapPosixDataConsistency}.
 Tästä syystä esitelläänkin seuraavaksi lyhyesti tärkeimmät POSIXin tarjoamat C-rajapinnat tiedostojen käsittelyyn.
@@ -119,7 +119,7 @@ Unix-tiedostojärjestelmä myös ylläpitää kolmea aikaleimaa eri tarkoituksii
 milloin tiedoston sisältöä on viimeksi luettu (last data access timestamp), milloin tiedoston sisältöä on viimeksi muokattu (last data modification timestamp) sekä milloin tiedostoa ylipäätään on muokattu (last status change timestamp).
 
 Eräs varsin erikoinen ominaisuus on \emph{kovat linkit} (\emph{hard link}), mikä käytännössä tarkoittaa että tiedostolla (mutta ei hakemistolle) voi olla useita nimiä tiedostojärjestelmässä.
-Kovan linkin luominen tehdään olemassaolevalle tiedostolle jonka jälkeen kyseistä tiedostoa voi käsitellä täysin identtisesti sekä alkuperäisellä nimellä että linkin nimellä;
+Kovan linkin luominen tehdään olemassa olevalle tiedostolle jonka jälkeen kyseistä tiedostoa voi käsitellä täysin identtisesti sekä alkuperäisellä nimellä että linkin nimellä;
 jälkikäteen ei ole edes mahdollista erottaa kumpi tiedoston nimistä oli se jolla tiedosto oli alunperin luotu.
 Yhden samaan tiedostoon viittaavan nimen poistaminen ei vaikuta muihin nimiin mitenkään.
 Sanotaankin, että Unix-tiedostojärjestelmässä tiedostojen ja hakemistojen nimi on erillään niiden \emph{inodesta}, joka sisältää kaiken informaation kuten sisällön ja attribuutit.
@@ -154,14 +154,14 @@ Yksi lipuista \texttt{O\_RDONLY}, \texttt{O\_WRONLY} ja \texttt{O\_RDWR} on pakk
 Ne määräävät avataanko tiedosto vain lukua, vain kirjoitusta tai sekä lukua että
 kirjoitusta varten.
 Muita mahdollisia lippuja on esimerkiksi \texttt{O\_TRUNC},
-joka tyhjentään tiedoston sisällön (truncate).
+joka tyhjentää tiedoston sisällön (truncate).
 Tiedoston voi myös luoda antamalla lipun \texttt{O\_CREAT},
 jolloin kolmas parametri määrittelee luodun tiedoston oikeudet.
 Funktio palauttaa onnistuessaan \texttt{int}-tyyppisen \emph{tiedostokahvan},
 joka viittaa kyseiseen avattuun tiedostoon.
 Tiedostokahvat ovat prosessikohtaisia,
 eli yrittämällä lukea samalla tiedostokahvan numeerisella arvolla
-jossakin toisessa prosessissa tapahtuu jotain odottomatonta.
+jossakin toisessa prosessissa tapahtuu jotain odottamatonta.
 
 Tiedoston sulkeminen tapahtuu \texttt{close}-funktiolla,
 jolle annetaan auki oleva tiedostokahva ainoana parametrina:
@@ -267,7 +267,7 @@ Tiedoston (mutta ei hakemistoa) voi poistaa \texttt{unlink()}-funktiolla:
 int unlink(const char *path);
 \end{verbatim}
 
-Hakemiston poistamisille on oma funktio \texttt{rmdir()}:
+Hakemiston poistamiselle on oma funktio \texttt{rmdir()}:
 
 \begin{verbatim}
 int rmdir(const char *path);
@@ -275,7 +275,7 @@ int rmdir(const char *path);
 Hakemiston poistaminen onnistuu vain mikäli hakemisto on tyhjä.
 
 %%% % http://pubs.opengroup.org/onlinepubs/9699919799/functions/unlink.html#tag_16_635
-Tiedoston voi uudelleennimetä \texttt{rename()}-funktiolla:
+Tiedoston voi uudelleen nimetä \texttt{rename()}-funktiolla:
 % http://pubs.opengroup.org/onlinepubs/9699919799/functions/rename.html#tag_16_487
 \begin{verbatim}
 int rename(const char *old, const char *new);
@@ -284,8 +284,8 @@ int rename(const char *old, const char *new);
 Uudelleennimeämisen ei tarvitse tapahtua saman hakemiston sisällä,
 vaan esimerkiksi \texttt{rename("/tmp/file.tmp", "/home/foo/file.txt")} on sallittua,
 mutta sekä lähde- että kohdepolun täytyy sijaita samalla tiedostojärjestelmällä.
-Kohdepolku voi viitata myös olemassaolevaan tiedostoon,
-jolloin kyseinen olemassaoleva tiedosto poistetaan operaation yhteydessä ikään kuin \texttt{unlink()}-kutsua olisi käytetty ennen uudelleennimeämistä.
+Kohdepolku voi viitata myös olemassa olevaan tiedostoon,
+jolloin kyseinen olemassa oleva tiedosto poistetaan operaation yhteydessä ikään kuin \texttt{unlink()}-kutsua olisi käytetty ennen uudelleennimeämistä.
 Kaikissa tapauksissa operaatio on atominen.
 
 %%% % FIXME: hard links
@@ -344,7 +344,7 @@ Muun muassa Linux-tiedostojärjestelmät hyödyntävätkin levyvälimuisteja mer
 mikä nähdään myöhemmin luvussa~\ref{ChapExt2Crash}.
 Tämänkaltaisilla optimoinneilla on kuitenkin varjopuolensa,
 sillä ne hankaloittavat kaatumistilanteita kestävien sovellusten, kuten tietokantajärjestelmien toteuttamista.
-Tässä luvussa tarkastellaankin POSIXin tarjoamia rajapintoja tiedostojärjestelmän välimuistien hallintaan sekä muita sovellusohjelmoijan kannalta huomioonotettavia seikkoja.
+Tässä luvussa tarkastellaankin POSIXin tarjoamia rajapintoja tiedostojärjestelmän välimuistien hallintaan sekä muita sovellusohjelmoijan kannalta huomioon otettavia seikkoja.
 
 Erinäiset levyvälimuistit olivat käytössä jo hyvin varhain Unixissa.
 Jo Ritchien ja Thompsonin alkuperäisestä ``The UNIX time-sharing system''~\cite{UnixPaper}-artikkelista vuodelta 1974 löytyy lyhyt selostus Unixin \emph{lohkovälimuistista} (\emph{buffer cache}).
@@ -358,7 +358,7 @@ Tällaisen kanssavälimuistin \texttt{write()} ei siis ole \emph{pysyvä} (\emph
 (todo jatkoa).
 
 %tiedoston metadataa muokkaavat operaatiot,
-%mukaanlukien aikaleimojen päivitykset eivät välttämättä päädy levylle asti tiedostojärjestelmäkutsun palatessa.
+%mukaan lukien aikaleimojen päivitykset eivät välttämättä päädy levylle asti tiedostojärjestelmäkutsun palatessa.
 % http://pubs.opengroup.org/onlinepubs/9699919799/functions/fsync.html
 % http://pubs.opengroup.org/onlinepubs/9699919799/functions/fdatasync.html
 Levyvälimuistin hallintaan löytyy POSIXissa kaksi keskeistä funktiota~\cite{PosixSpec}:
@@ -370,7 +370,7 @@ int fdatasync(int fildes);
 Operaatio \texttt{fdatasync()} pakottaa parametrina annettua tiedostokahvaa \texttt{fildes} vastaavan tiedoston levyvälimuistin kirjoittamisen.
 Funktiokutsu ei palaa kunnes data on turvallisesti kirjoitettu levylle.
 \texttt{fdatasync()}-kutsu ei vaikuta tiedoston metadataan muuten kuin että kutsun onnistuessa taataan että tiedostoon tähän asti tehdyt kirjoitukset ovat luettavissa kaatumisen jälkeenkin.
-Käytännössä käyttäjän näkokulmasta tämä takaa vain että tiedoston koko on ajan tasalla.
+Käytännössä käyttäjän näkökulmasta tämä takaa vain että tiedoston koko on ajan tasalla.
 Funktio \texttt{fsync()} on vahvempi versio \texttt{fdatasync()}:stä joka lisäksi pakottaa kaiken tiedoston viittaavan inoden metadatan kirjoitettavan levylle.
 Lisäksi on varmistettava erikseen että tiedoston inodeen viittaavat tiedostonimet ovat kirjoitettu pysyvästi levylle.
 Tämä tapahtuu kutsumalla \texttt{fsync()}-funktiota hakemistolle jossa tiedostonimi sijaitsee.
@@ -421,7 +421,7 @@ Pysyvyyteen vaaditaan \texttt{fsync()}-operaation suoritus kohdetiedoston sisäl
 mikä takaa että \texttt{rename()} kutsun tekemän muutokset itse hakemiston sisällölle ovat päätyneet levylle.
 
 Kuten tästä esimerkistä nähtiin, on yksinkertaisenkin koostetun operaation toteuttaminen kaatumisturvallisesti verrattaen haastavaa,
-mikäli kaikki POSIXin tarjomat vapaudet tiedostojärjestelmille otetaan huomioon.
+mikäli kaikki POSIXin tarjoamat vapaudet tiedostojärjestelmille otetaan huomioon.
 POSIX kuitenkin on pelkkä abstrakti spesifikaatio, joten herääkin kysymys millaisia ongelmia käytännössä syntyy.
 Aihetta on mahdollista tutkia kokeellisesti kahdelta kannalta -- sekä tiedostojärjestelmien että sovellusten näkökulmasta.
 Tiedostojärjestelmien kannalta mielenkiintoinen kysymys on esimerkiksi operaatioiden kirjoitus levylle eri järjestyksessä kuin mitä sovellus ne teki --
@@ -438,19 +438,19 @@ Ensimmäinen osuus ``All File Systems Are Not Created Equal: On the Complexity o
 selvittääkin kokeellisesti millaisia \emph{persistenssiominaisuuksia} eri Linux-tiedostojärjestelmillä on~\cite{PosixDataConsistency}.
 
 Tiedostojärjestelmien osalta testattiin kuutta Linux-tiedostojärjestelmää: \texttt{btrfs}, \texttt{ext2}, \texttt{ext3}, \texttt{ext4}, \texttt{reiserfs} sekä \texttt{xfs}.
-Lisäksi tiedostojärjestemiä kokeiltiin eri tiedostojärjestelmäkohtaisilla optioilla,
+Lisäksi tiedostojärjestelmiä kokeiltiin eri tiedostojärjestelmäkohtaisilla optioilla,
 tuottaen yhteensä 16 konfiguraatiota.
 Persistenssiominaisuuksien testaus tapahtuu tutkijaryhmän kehittämällä BOB:ksi (\emph{Block order breaker}) kutsutulla työkalulla.
 Sen periaatteena on nauhoittaa testattavan tiedostojärjestelmän tekemiä levykirjoituksia lokitiedostoon,
 jonka avulla voidaan jälkikäteen käydä kaikki mahdolliset levyn tilat (joista siis jokainen vastaa mahdollista kaatumistilannetta) läpi.
 Nyt kaatumistilanteista voidaan etsiä vastaesimerkkejä joissa testattava persistenssiominaisuus ei päde.
-BOB:n voidaan siis vain todeta jonkin persistenssiominaisuuden paikkaansapitämättömyys, mutta ei toisinpäin.
+BOB:n voidaan siis vain todeta jonkin persistenssiominaisuuden paikkaansa pitämättömyys, mutta ei toisinpäin.
 
 \subsection{Testattuja tiedostojärjestelmien persistenssiominaisuuksia}
 
 Ensimmäisiä testattuja persistenssiominaisuuksia on erinäisten operaatioiden atomisuus itsessään.
 Jo pelkän tiedostoon kirjoittamiseen \texttt{write()}-kutsulla liittyy useita seikkoja jotka saattavat vaikuttaa lopputulokseen.
-Ensimmäinen seikka on että käytetäänkö \texttt{write()}-kutsua ylikirjoittamaan olemassaoleva tiedoston sisältöä vaiko kirjoitetaanko sillä tiedoston loppuun siten että sen koko kasvaa.
+Ensimmäinen seikka on että käytetäänkö \texttt{write()}-kutsua ylikirjoittamaan olemassa oleva tiedoston sisältöä vaiko kirjoitetaanko sillä tiedoston loppuun siten että sen koko kasvaa.
 Toinen on kirjoitettavan datan määrä, jossa ``mielenkiintoisia'' määriä ovat yhden levylohkon verran,
 yhden tiedostojärjestelmälohkon verran sekä tätä suuremmat määrät.
 Yhteensä näistä saadaan kuusi tapausta joita tarkastella.
@@ -548,7 +548,7 @@ mutta on lisäksi suunniteltu siten että tiedostojärjelmän levyformaattia voi
 Ext2:lle onkin kehitetty seuraajat \texttt{ext3} ja \texttt{ext4} joissa olemassaoleva \texttt{ext2}- tai \texttt{ext3}-osio voidaan päivittää seuraavaan
 versioon ilman tiedostojärjestelmän uudelleenformatointia~\cite{Ext4Status}.
 Merkittävin näiden seuraajien tuoma parannus on \texttt{ext3}:n kirjaus,
-joka parantaa huomavattavasti tiedostojärjestelmän kykyä säilyä konsistenttina kaatumistilanteessa \texttt{ext2}:n verrattuna.
+joka parantaa huomattavasti tiedostojärjestelmän kykyä säilyä konsistenttina kaatumistilanteessa \texttt{ext2}:n verrattuna.
 Ext3:a ja kirjaavia tiedostojärjestelmiä yleisesti käsitelläänkin myöhemmin luvussa~\ref{ChapJournallingFs}.
 
 \begin{figure}
@@ -563,7 +563,7 @@ Korkeimmalla tasolla ext2:n rakenne on jaettu kahteen osaan: on \emph{käynnisty
 Käynnistyslohkon tarkoitus on yksinkertaisesti varattua tilaa jollekin ext2:ta riippumattomalle käynnistyslataajalle,
 itse tiedostojärjestelmä ei käytä tätä tilaa mitenkään.
 Valtaosa ext2:n levynkäytöstä on lohkoryhmiä,
-joista jokainen lohkoryhmä viimeistä lukuunottamatta vie yhtä paljon tilaa levyltä.
+joista jokainen lohkoryhmä viimeistä lukuun ottamatta vie yhtä paljon tilaa levyltä.
 Jokainen ext2:n lohkoryhmä on puolestaan jaettu seuraaviin tietorakenteisiin:
 \emph{superlohkoon} (superblock),
 \emph{lohkoryhmien kuvaajiin} (block group descriptors),
@@ -575,7 +575,7 @@ joiden periaatteessa riittäisi olla levyllä vain kerran,
 mutta ext2 säilyttää kuitenkin kummastakin niistä useita kopioita siltä varalta että ensisijainen kopio näistä tietorakenteista korruptoituu.
 
 \subsection{Superlohkon sisältö}
-Superlohko sisältää muunmuassa seuraavanlaisia arvoja tiedostojärjestelmästä, enkoodattuna 32-bittisinä little-endian-kokonaislukuina:
+Superlohko sisältää muun muassa seuraavanlaisia arvoja tiedostojärjestelmästä, enkoodattuna 32-bittisinä little-endian-kokonaislukuina:
 \begin{itemize}
     \item Tiedostojärjestelmän lohkon (block) koko \texttt{s\_log\_block\_size}. Yleisesti käytettyjä lohkon kokoja on 1, 2, ja 4 kilotavua.
           Mahdollisia tiedostojärjestelmän lohkokokoja rajoittaa se, että lohkon koon täytyy olla käytettävän levyn sektorin koon moninkerta.
@@ -583,7 +583,7 @@ Superlohko sisältää muunmuassa seuraavanlaisia arvoja tiedostojärjestelmäst
           %Myöskin Linuxin ext2-ajurilla on lisärajoituksena että lohkon koko ei saa ylittää prosessoriarkkitehtuurin sivun kokoa,
           %mikä yleisemmin (muun muassa Intelin x86-arkkitehtuurissa) on 4096 tavua.
     \item Ominaisuusbitit \texttt{s\_feature\_compat}, \texttt{s\_feature\_incompat} ja \texttt{s\_feature\_ro\_compat} jotka kertovat mitä laajennoksia tiedostojärjestelmässä on käytössä.
-          Nämä ovat jaettu kolmeen eri luokkaan mikä mahdollistaa sekä taaksepäin- että eteenpäinyhteensopivuuden tietyissä rajoissa.
+          Nämä ovat jaettu kolmeen eri luokkaan mikä mahdollistaa sekä taaksepäin- että eteenpäin yhteensopivuuden tietyissä rajoissa.
     \item Lohkoryhmien koot, erikseen datalohkoille ja inodeille.
           \texttt{s\_blocks\_per\_group} kertoo datalohkojen määrän yhdessä lohkoryhmässä ja \texttt{s\_inodes\_per\_group} inodejen lukumäärän yhdessä lohkoryhmässä.
     \item Vapaiden datalohkojen määrä \texttt{s\_free\_blocks\_count} ja datalohkojen kokonaismäärä \texttt{s\_blocks\_count}.
@@ -651,7 +651,7 @@ Otsakkeen rakenne on seuraavanlainen:
 	uint8_t file_type;
 \end{verbatim}
 
-Kenttä \texttt{inode} sisältää hakemistoalkion viittavan inoden numeron.
+Kenttä \texttt{inode} sisältää hakemistoalkion viittaavan inoden numeron.
 Mikäli inoden numero on nolla, on kyseinen hakemisto
 Otsakkeen kenttä \texttt{name\_len} kertoo tiedostonimen pituuden.
 Koska kentän koko on 8 bittiä, rajoittuu tiedostonimen maksimipituudeksi 255.
@@ -683,7 +683,7 @@ Nyt poistettaessa tiedosto \texttt{defghijklmn} muuttuu kolmannen hakemistoalkio
     13 & 20  & 3  & "abc"\\
 \end{tabular}
 
-Siis poistettavaa hakemistoalkiota edeltävän hakemistoalkion \texttt{rec\_len}-kenttää kasvatetään ``hyppäämään'' poistetun alkion yli.
+Siis poistettavaa hakemistoalkiota edeltävän hakemistoalkion \texttt{rec\_len}-kenttää kasvatetaan ``hyppäämään'' poistetun alkion yli.
 
 \section{ext2 kaatumistilanteissa}
 \label{ChapExt2Crash}
@@ -797,10 +797,10 @@ Jatketaan edellisen kohdan tiedostojärjestelmästä ja kirjoitetaan \texttt{new
     4  & 0.028    & +0.000   &            & \texttt{write()}-kutsu loppuu  \\ \hline %
     5  & 5.226    & +5.198   & 1          & Lohkoryhmien kuvaajat: vapaiden lohkojen määrää vähennetään (32247 -> 32230)                             \\ \hline % 1
     6  & 5.226    & +0.000   & 2          & Lohkoryhmän 0 lohkobittikartta: varataan lohkot 8192 -- 8208         \\ \hline % 2
-    7  & 5.226    & +0.000   & 4          & Lohkoryhmän 0 inodetaulu: inoden \texttt{new} attribuuteista päivitetään sen koko, aikaleima ja viittaukset data- ja epäsuoriinlohkoihin               \\ \hline % 2
+    7  & 5.226    & +0.000   & 4          & Lohkoryhmän 0 inodetaulu: inoden \texttt{new} attribuuteista päivitetään sen koko, aikaleima ja viittaukset data- ja epäsuoriin lohkoihin               \\ \hline % 2
     8  & 5.226    & +0.000   & 8192 -- 8208 & Tiedoston \texttt{new} 16 datalohkoa sekä yksi epäsuora lohko                            \\        % 3
 \end{tabular}
-\caption{Olemassaolevan tiedostoon lisäyksestä seuraavat levyoperaatiot.}
+\caption{Olemassa olevan tiedostoon lisäyksestä seuraavat levyoperaatiot.}
 \end{table}
 
 Levyvälimuistien olemassaolo näkyy tässäkin esimerkissä,
@@ -825,7 +825,7 @@ eikä \texttt{e2fsck} kykene tunnistamaan tai korjaamaan tilannetta ollenkaan.
 Alustamattoman epäsuoran lohkon seuraukset ovat sitäkin vakavammat,
 koska lohkon aiempi data tulkitaan nyt lohko-osoittimina.
 Pahimmillaan alustamaton lohko-osoitin voi osoittaa jonkun muun inoden omistamaan lohkoon,
-jolloin \texttt{new}-tiedoston olemassaolevan sisällön ylikirjoittaminen vaikuttaisi johonkin muuhun tiedostojärjestelmän inodeen.
+jolloin \texttt{new}-tiedoston olemassa olevan sisällön ylikirjoittaminen vaikuttaisi johonkin muuhun tiedostojärjestelmän inodeen.
 Tiedostojärjestelmän käyttö tässä tilanteessa ei siis ole turvallista ennen tiedostojärjestelmän korjausta \texttt{e2fsck}-työkalulla.
 
 % 7  & 5.226    & +0.000   & 4          & Lohkoryhmän 0 inodetaulu: inoden \texttt{new} attribuuteista päivitetään sen koko, varattujen lohkojen määrä, aikaleima, suorat lohkoviittaukset, epäsuora lohkoviite.               \\ \hline % 2
@@ -879,7 +879,7 @@ Ominaisuus \texttt{dir\_index} tuo hakemistoihin hajautukseen pohjautuvan indeks
 %Ominaisuus \texttt{journal} tarkoittaa että journalille on varattu tila levyltä kun taas \texttt{needs\_recovery} asetetaan ilmaisemaan että journalin läpikäynti tarvitaan konsistenssin palautumiseen.
 Toisin kuin monille muille ext2:n levytietorakenteille, journalin sijaintia levyllä ei ole ennalta määrätty vaan tila sille varataan erityisen inoden avulla data-alueelta samaan tapaan kuin muille tiedostoille~\cite{Ext2Journal}.
 Muista inodeista poiketen journalin inode ei ole paikannettavissa normaalisti hakemistorakenteen kautta vaan se paikannetaan \texttt{journal}-laajennoksen tuomasta uudesta superlohkon kentästä.
-Inoden käyttö journalin lohkojen paikantamiseen mahdollistaa journalin lisäämisen olemassaolevaan \texttt{ext2}-tiedostojärjestelmään helposti kunhan tiedostojärjestelmässä on vapaata tilaa.
+Inoden käyttö journalin lohkojen paikantamiseen mahdollistaa journalin lisäämisen olemassa olevaan \texttt{ext2}-tiedostojärjestelmään helposti kunhan tiedostojärjestelmässä on vapaata tilaa.
 ilman että koko tiedostojärjestelmää täytyy alustaa uudelleen.
 
 Itse journalin levyformaatti alkaa \emph{otsakelohkolla} (\emph{header block}) joka kertoo journalin alkukohdan,
@@ -955,12 +955,12 @@ eli \texttt{ext2}:n tapaan operaation tehdään ensin pelkästään muistissa ja
 \section{Lokipohjaiset (``log-structured'') tiedostojärjestelmät}
 \label{ChapLogStructured}
 Aiemmissa kappaleissa käsitellyt ext2/ext3 ja Berkeley FFS ovat niin sanottuja päälle kirjoittavia tiedostojärjestelmiä (\emph{overwrite-based filesystem}~\cite{Btrfs}).
-Esimerkiksi aiemmin ext3:n yhteydessä nähtiin kuinka olemassaolevaa tiedostoa uudelleennimettäessä
+Esimerkiksi aiemmin ext3:n yhteydessä nähtiin kuinka olemassa olevaa tiedostoa uudelleennimettäessä
 alkuperäisen tiedostonimen hakemistoalkion sisältävä sektorilta poistetaan vanha hakemistoalkio
-ja vastaavasti kohdehakemistossa lisätätään uusi hakemistoalkio.
+ja vastaavasti kohdehakemistossa lisätään uusi hakemistoalkio.
 Mutta koska kahden eri levylohkon päivitys atomisesti ei ole mahdollista,
 täytyy \texttt{ext3}:n kirjoittaa kopiot molemmista levylohkoista journaliin kaatumistilanteen varalta.
-Lokipohjaiset tiedostojärjestelmät sen sijaan kääntävät tämän tilanteen päälaelleen - muutokset metadataan kirjoitetaan edeleen lokiin,
+Lokipohjaiset tiedostojärjestelmät sen sijaan kääntävät tämän tilanteen päälaelleen - muutokset metadataan kirjoitetaan edelleen lokiin,
 mutta tästä lokiin kirjoitetusta lohkosta tuleekin uusi sijainti kyseiselle metadatalle.
 
 Tässä kappaleessa tutkitaan ensimmäistä toteutettua lokipohjaista tiedostojärjestelmää, Sprite LFS:ää.
@@ -968,13 +968,13 @@ Tässä kappaleessa tutkitaan ensimmäistä toteutettua lokipohjaista tiedostoj�
 \subsection{Sprite LFS:n periaate}
 Sprite LFS on vuosina 1989--1990 kehitelty tiedostojärjestelmä Berkeleyn yliopiston kokeelliseen Sprite-käyttöjärjestelmään.
 Motivaatio uuden tiedostojärjestelmän kehittämiseen oli sekä parempi kaatumisturvallisuus että suorituskyky levylle kirjoittaessa.
-Perinteisiä mekaanisia kiintolevyjä käytettäessä suorituskyvyn kannalta huomioonotettavaa on niille ominainen \emph{hakuaika},
+Perinteisiä mekaanisia kiintolevyjä käytettäessä suorituskyvyn kannalta huomioon otettavaa on niille ominainen \emph{hakuaika},
 mikä tarkoittaa että levyltä useiden lohkojen lukeminen tai kirjoittaminen vie enemmän aikaa mikäli lohkot eivät sijaitse levyllä peräkkäin.
 Tämän johdosta lokipohjaisten tiedostojärjestelmien levyformaatit ovatkin suunniteltu siten,
 että valtaosa levykirjoituksista tehdään kirjoittamalla mahdollisimman pitkinä ja perättäisinä kirjoituksina tiedostojärjestelmän \emph{lokin} loppuun.
 Erityisesti lokin 'keskellä' olevien lohkojen sisältöä ei koskaan käydä uudelleenkirjoittamassa,
-vaan Sprite LFS ottaa eriläisen lähestymistavan tilanteisiin jossa jotain olemassaolevaa levytietorakennetta täytyy päivittää.
-Olemassaolevan levytietorakenteen sisältävän levylohkon muokkaamisen sijaan kirjoitetaan lokin loppuun uusi lohko johon haluttu muokkaus on tehty,
+vaan Sprite LFS ottaa erilaisen lähestymistavan tilanteisiin jossa jotain olemassa olevaa levytietorakennetta täytyy päivittää.
+Olemassa olevan levytietorakenteen sisältävän levylohkon muokkaamisen sijaan kirjoitetaan lokin loppuun uusi lohko johon haluttu muokkaus on tehty,
 ja tästä uudesta lohkosta tulee uusi sijainti kyseiselle levytietorakenteelle.
 Tämän mekanismin varjopuolena on tietysti että jokaisen muokkausoperaation jälkeen vanha versio levytietorakenteen sisältäneestä lohkosta jää 'kuolleeksi' viemään tilaa levyltä.
 Ennen pitkää tämä kuolleiden lohkojen käyttämä tila täytyy vapauttaa takaisin tiedostojärjestelmän käyttöön,
@@ -991,7 +991,7 @@ Tässä kappaleessa selitetään pelkät eroavaisuudet kappaleessa~\ref{ChapExt2
 %\end{itemize}
 
 Valtaosa tiedostojärjestelmän sisällöstä sijaitsee lokissa (\emph{log}), joka on jaettu joko 512 kilotavun tai 1 megatavun kokoisiin \emph{segmentteihin} (\emph{segment}).
-Tiedostojärjestelmän lokialueelle kirjoitetaan seitsemää erityypisiä lohkoja:
+Tiedostojärjestelmän lokialueelle kirjoitetaan seitsemää erityyppisiä lohkoja:
 
 \begin{itemize}
     \item{Datalohkot: tavallisten tiedostojen tai hakemistojen sisältämä data.
@@ -1066,18 +1066,18 @@ Eteenkiertopalautuksen aikana käydään kahdesti läpi kaikki viimeisimmän tar
 Ensimmäisellä läpikäynnillä tuodaan inodekartta ja segmentin käyttöastetaulu ajan tasalle.
 Lokin läpikäynti tapahtuu segmentin yhteenvetolohkojen avulla.
 Jokainen yhteenvetolohko sisältää edellisen kirjoitetun yhteenvetolohkon levyosoitteen sekä levyosoitteen johon seuraava yhteenvetolohko tullaan kirjoittamaan,
-joiden avulla lokin sisältössä voidaan liikkua eteen- ja taaksepäin, tunnistaa osittain kirjoitetun segmentit sekä tunnistaa lokin loppukohta.
+joiden avulla lokin sisällössä voidaan liikkua eteen- ja taaksepäin, tunnistaa osittain kirjoitetun segmentit sekä tunnistaa lokin loppukohta.
 Lisäksi segmentin yhteenvetolohkot sisältävät viittauksen kaikkiin kyseiseen segmenttiin kirjoitettuihin inodelohkoihin,
 jonka perusteella eteenkiertopalautus pystyy tekemään vastaavat päivitykset inodekarttaan.
 Inodelohkojen perusteella taas voidaan johtaa tarvittavat muutokset segmentin käyttöastetauluun.
 Kunkin inodelohkon sisältämän inoden uuden version lohkoviittauksia verrataan saman inoden vanhan version lohkoviittauksiin,
 ja kaikki eroavaisuudet kertovat mihin segmentteihin kuolleita sivujen määrä muuttuu.
 
-Eteenkiertopalautuksen toisella läpikäynnillä käydään lapi segmenttien sisältämät hakemistojen muutoslokilohkot.
+Eteenkiertopalautuksen toisella läpikäynnillä käydään läpi segmenttien sisältämät hakemistojen muutoslokilohkot.
 Erillinen muutosloki tarvitaan varmistamaan että samaan aikaan kahteen eri tiedostojärjestelmän levytietorakenteeseen kohdistuvat muutokset tapahtuvat atomisesti.
 Esimerkiksi uuden kovan linkin luominen vaatii vähintään kolmen tietorakenteen uuden version kirjoituksen: linkitettävän inoden kovien linkkien määrää kasvatetaan,
 kohdehakemiston datalohkoihin lisätään uusi hakemistoalkio sekä kohdehakemiston inode päivitetään osoittamaan edellä mainittuun uuteen datalohkoon.
-Sprite LFS ei sisällä mekanismiä joka varmistaisi että kaikki vaadittavat kirjoitukset pystyttäisiin sisällyttämään osaksi samaa segmenttiä,
+Sprite LFS ei sisällä mekanismia joka varmistaisi että kaikki vaadittavat kirjoitukset pystyttäisiin sisällyttämään osaksi samaa segmenttiä,
 joten erillistä muutoslokia on käytetty tämän ongelman ratkaisemiseen.
 Muutoslokiin kirjataan kaikki hakemisto-operaatiot eli tiedoston luominen, kovan linkin luominen tai poistaminen sekä uudelleennimeäminen,
 ja muutoslokilohko kirjoittaan aina lokiin ennen itse inodejen ja hakemistojen datalohkojen muutoksia.
@@ -1093,16 +1093,16 @@ ja tilanteesta riippuen koko hakemisto-operaatio saatetaan loppuun tai perutaan 
 \subsection{Motivaatio}
 Eräs uudempi, niinikään perinteisistä päälle kirjoittavista tiedostojärjestelmistä poikkeava tekniikka on \emph{kirjoittaessa kopioivat} (\emph{CoW, Copy-on-Write}) tiedostojärjestelmät.
 Merkittävimpiä kirjoittaessa kopioivia tiedostojärjestelmiä on Solaris-käyttöjärjestelmää varten suunniteltu ZFS vuodelta 2005,
-sekä Linuxiin vuodesta 2007 lähtien kehityksen alla ollut Btrfs~\cite{Btrfs} johon tutustutaan tässä kappeleessa.
+sekä Linuxiin vuodesta 2007 lähtien kehityksen alla ollut Btrfs~\cite{Btrfs} johon tutustutaan tässä kappaleessa.
 
 Btrfs-tiedostojärjestelmän tavoitteena on olla seuraava uuden sukupolven yleiskäyttöinen tiedostojärjestelmä jota voitaisiin käyttää kaikkialla matalatehoisista laitteista, kuten älypuhelimista palvelinsaleihin.
-Verrattuna Linuxin aiempaan vakiintuneeseen \texttt{ext4}-tiedostojärjestmään Btrfs kilpailee pääasiassa uusilla ominaisuuksilla,
+Verrattuna Linuxin aiempaan vakiintuneeseen \texttt{ext4}-tiedostojärjestelmään Btrfs kilpailee pääasiassa uusilla ominaisuuksilla,
 joista merkittävimmät ovat tarkistussummat sekä datalle että metadatalle, \emph{tilannevedokset} (\emph{snapshot}), tiedostojen pakkaus ja usean levyn tuki.
 Copy-on-write-tekniikka on keskeinen useiden edellä mainittujen ominaisuuksien kannalta.
 
 \subsection{Btrfs:n levyrakenne}
 Btrfs:n levytietorakenteet poikkeavat merkittävästi perinteisistä Unix-tiedostojärjestelmistä.
-Superlohkoa lukuunottamatta kaikki Btrfs-tiedostojärjestelmän metadata sijaitsee levyllä B-puuhun pohjautuvassa tietorakenteessa.
+Superlohkoa lukuun ottamatta kaikki Btrfs-tiedostojärjestelmän metadata sijaitsee levyllä B-puuhun pohjautuvassa tietorakenteessa.
 Btrfs:n kaikkien B-puiden avaimena on seuraava 17 tavun kokoinen tietorakenne \texttt{btrfs\_key}:
 \begin{verbatim}
 struct btrfs_key {
@@ -1173,8 +1173,8 @@ mutta pehmeitä päivityksiä käytettäessä levykirjoitusten järjestys voisi 
 Tässä järjestyksessä tehtynä kaatuminen ei milloinkaan johda tilanteeseen jossa tiedostojärjestelmän käytön jatkaminen ei olisi turvallista.
 Ainoastaan kohtien 1--2 tai 2--3 välissä tapahtunut kaatuminen johtaa yhden inoden vuotamiseen.
 Sallittuja kirjoitusjärjestyksiä on yleensä useita, tässä esimerkissä kohdat 1. ja 2. voisivat vaihtaa paikkaa ilman ongelmia.
-Kriittisintä on, että uuteen inodeen viittaavaa tietorakennetta (eli tässä tapauksessa hakemistoalkiota) ei kirjoiteta levylle ennen kuin itse inoden tietorakenne on alustettu ja merkattu käytössäolevaksi bittikarttaan.
-Tämäntyyppisiä kirjoitusjärjestystä koskevia rajoituksia (``päivitys metadatalohkoon tyyppiä $x$ täytyy kirjoittaa levylle ennen päivitystämetadatalohkoon tyyppiä $y$'') kutsutaan \emph{päivitysriippuvuuksiksi} (\emph{update dependency}).
+Kriittisintä on, että uuteen inodeen viittaavaa tietorakennetta (eli tässä tapauksessa hakemistoalkiota) ei kirjoiteta levylle ennen kuin itse inoden tietorakenne on alustettu ja merkattu käytössä olevaksi bittikarttaan.
+Tämäntyyppisiä kirjoitusjärjestystä koskevia rajoituksia (``päivitys metadatalohkoon tyyppiä $x$ täytyy kirjoittaa levylle ennen päivitystä metadatalohkoon tyyppiä $y$'') kutsutaan \emph{päivitysriippuvuuksiksi} (\emph{update dependency}).
 Niin kauan kuin muokkaukset tiedostojärjestelmän levytietorakenteisiin tehdään päivitysriippuvuuksien sallimassa järjestyksessä,
 eivät kaatumistilanteet aiheuta pahoja epäkonsistenssiuksia.
 
@@ -1219,7 +1219,7 @@ Tiedostoa poistettaessa:
     \item{Hakemistoalkio täytyy poistaa hakemistolohkosta ennen kuin inoden rakenne nollataan.}
     \item{Hakemistoalkio täytyy poistaa hakemistolohkosta ennen kuin inode merkitään vapautetuksi inodebittikartassa.}
     \item{Poistetun tiedoston inodea ei voida vapauttaa inodebittikartasta ennen kuin inoden rakenne on nollattu.}
-    \item{Poistetun tiedoston inodea ei voida uudelleenkäyttää ennen kuin olemassaolevat hakemistoalkiot on poistettu.}
+    \item{Poistetun tiedoston inodea ei voida uudelleenkäyttää ennen kuin olemassa olevat hakemistoalkiot on poistettu.}
 \end{itemize}
 
 % Ennen kuin lohkoon lisätään viittaus joko epäsuoran lohkoon tai inoden kautta on 
