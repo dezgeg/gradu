@@ -82,7 +82,7 @@ Erityisesti tiedostojärjestelmän käyttö kaatumisturvallisesti vaatii ohjelmo
 mitä käsitellään myöhemmin kappaleessa~\ref{ChapPosixDataConsistency}.
 Tästä syystä esitelläänkin seuraavaksi lyhyesti tärkeimmät POSIXin tarjoamat C-rajapinnat tiedostojen käsittelyyn.
 
-\subsection{POSIX-tiedostojärjestelmän perusteet}
+\subsection{POSIX-tiedostojärjestelmärajapintojen perusteet}
 POSIX-tiedostojärjestelmä on \emph{hierarkkinen tiedostojärjestelmä},
 eli tavallisten tiedostojen lisäksi tiedostojärjestelmä tukee \emph{hakemistoja},
 jotka voivat sisältää mielivaltaisen määrän tiedostoja tai hakemistoja.
@@ -660,8 +660,8 @@ Otsakkeen rakenne on seuraavanlainen:
 	uint8_t file_type;
 \end{verbatim}
 
-Kenttä \texttt{inode} sisältää hakemistoalkion viittaavan inoden numeron.
-Mikäli inoden numero on nolla, on kyseinen hakemisto
+Kenttä \texttt{inode} sisältää hakemistoalkion viittaavan inoden numeron,
+jossa inodenumero 0 tarkoittaa käyttämätöntä tilaa hakemistossa.
 Otsakkeen kenttä \texttt{name\_len} kertoo tiedostonimen pituuden.
 Koska kentän koko on 8 bittiä, rajoittuu tiedostonimen maksimipituudeksi 255.
 Kenttä \texttt{rec\_len} kertoo koko hakemistoalkion koon,
