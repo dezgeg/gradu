@@ -57,6 +57,7 @@ Jo samana vuonna Unix oli jo täysin omavarainen, eli Unixin kehitystä pystytti
 Aluksi Unixia kehitettiin pääasiassa tutkimuskäyttöön mutta myös AT\&T:n sisäiseen toimistokäyttöön,
 kuten tekstidokumenttien käsittelyyn sekä latomiseen~\cite{UnixFsBook}.
 Kuitenkin vuonna 1974 Unix tuotiin akateemisen maailman tietoisuuteen Thompsonin ja Ritchien julkaisemalla artikkelilla ``The UNIX time-sharing system''~\cite{UnixPaper} jonka seurauksena ulkopuolisetkin kiinnostuivat Unixista.
+
 Bell Labsin emoyhtiöllä oli kuitenkin tuohon aikoihin monopoliasema Yhdysvaltojen puhelinverkkotoimintoihin,
 joten kilpailuviraston kanssa tehdyn sopimuksen pohjalta sen oli kiellettyä alkaa tekemään liiketoimintaa muilla toimialueilla eikä voinut siten tuotteistaa Unixia.
 Sen sijaan Unixin lähdekoodia alettiin lisensoida nimellistä kertakorvausta vastaan pääasiassa yliopistoille mutta myös joillekin yrityksille,
@@ -65,6 +66,7 @@ Ensimmäinen akateemisen maailman tuottama Unix-johdannainen on Berkeleyn yliopi
 80-luvun aikana tunnettuja markkinoille tuli muun muassa Microsoftin Xenix, Sun Microsystemsin SunOS sekä IBM:n AIX.
 AT\&T:n puhelinverkkotoiminnan monopoliaseman purkaantuminen avasi sille tilaisuuden myydä Unixia kaupallisesti,
 joka julkaistiin Unix System V-nimellä vuonna 1983.
+
 Markkinoilla oli siis saatavilla useita periaatteessa Unix-pohjaisia käyttöjärjestelmiä mutta jotka kaikki käytännössä toimivat hieman eri tavalla.
 Sovellusohjelmoijan kannalta tämä hankaloitti huomattavasti monella eri Unix-järjestelmällä toimivien ohjelmien toteutusta.
 Tämän ratkaisemiseksi kehiteltiin POSIX-standardi~\cite{PosixSpec} yhtenäistämään eri Unix-toteutusten tarjoamat sovellusrajapinnat.
@@ -109,7 +111,7 @@ eli tiedostopolku \texttt{/home/tuomas/..} viittaa samaan hakemistoon kuin tiedo
 Juurihakemiston tapauksessa \texttt{..}-nimi vie takaisin juurihakemistoon itseensä, eli tiedostopolut \texttt{/..} ja \texttt{/} toimivat identtisesti.
 
 Nimen lisäksi kaikilla tiedostoilla ja hakemistoilla on jonkin verran metadataa muun muassa käyttöoikeuksille sekä aikaleimoille.
-Koska tässä ja useissa muissakin yhteyksissä sekä tiedostot että hakemistot toimivat yhtenäisesti,
+Koska useissa yhteyksissä sekä tiedostot että hakemistot toimivat yhtenäisesti,
 on Unix-tiedostojärjestelmistä puhuttaessa yleisesti konventio sanoa että Unixissa hakemistotkin ovat tiedostoja,
 jolloin käytetään termiä \emph{tavallinen tiedosto} (\emph{regular file}) viittaamaan yleiskielen termiin ``tiedosto''.
 
@@ -120,8 +122,9 @@ Unix-tiedostojärjestelmä myös ylläpitää kolmea aikaleimaa eri tarkoituksii
 milloin tiedoston sisältöä on viimeksi luettu (access timestamp), milloin tiedoston sisältöä on viimeksi muokattu (data modification timestamp) sekä milloin tiedostoa ylipäätään on muokattu (status change timestamp).
 
 Eräs varsin erikoinen ominaisuus on \emph{kovat linkit} (\emph{hard link}), mikä käytännössä tarkoittaa että tiedostolla (mutta ei hakemistolla) voi olla useita nimiä tiedostojärjestelmässä.
-Kovan linkin luominen tehdään olemassa olevalle tiedostolle jonka jälkeen kyseistä tiedostoa voi käsitellä täysin identtisesti sekä alkuperäisellä nimellä että linkin nimellä;
-jälkikäteen ei ole edes mahdollista erottaa kumpi tiedoston nimistä oli se jolla tiedosto oli alunperin luotu.
+Kovan linkin luominen tehdään olemassa olevalle tiedostolle,
+jonka jälkeen kyseistä tiedostoa voi käsitellä täysin identtisesti sekä alkuperäisellä nimellä että linkin nimellä.
+Jälkikäteen ei ole edes mahdollista erottaa kumpi tiedoston nimistä oli se jolla tiedosto oli alunperin luotu.
 Yhden samaan tiedostoon viittaavan nimen poistaminen ei vaikuta muihin nimiin mitenkään.
 Sanotaankin, että Unix-tiedostojärjestelmässä tiedostojen ja hakemistojen nimi on erillään niiden \emph{inodesta}, joka sisältää kaiken informaation kuten sisällön ja attribuutit.
 Hakemistot sen sijaan sisältävät vain viitteen nimestä inodeen.
@@ -197,7 +200,6 @@ tiedosto loppui kesken.
 
 Jokaisella tavalliseen tiedostoon viittaavalla tiedostokahvalla on sijainti tavuina missä kohtaa tiedostoa ollaan ja josta lukeminen tai kirjoittaminen aloitetaan.
 Tiedostoa avatessa tiedostokahvan sijainti on normaalisti tiedoston alussa ja luku- ja kirjoitusoperaatiot onnistuessaan sijainti tiedostossa siirtyy eteenpäin paluuarvon verran.
-
 Tiedostokahvan sijaintia tiedostossa voi siirtää \texttt{lseek}-kutsulla:
 
 % http://pubs.opengroup.org/onlinepubs/9699919799/functions/lseek.html#tag_16_310
@@ -219,7 +221,6 @@ Harvojen tiedostojen tekeminen onnistuu \texttt{lseek()}-funktion avulla siirtym
 Esimerkiksi kirjoittamalla ensin 32 kilotavua,
 siirtymällä eteenpäin 32 kilotavua kutsulla \texttt{lseek(fd, 32768, SEEK\_CUR)},
 ja kirjoittamalla toiset 32 kilotavua pitäisi lopputuloksena olla tiedosto jonka koko on 96 kilotavua mutta vie vain 64 kilotavua levytilaa.
-
 Tiedoston metadatan voi lukea \texttt{fstat()}- tai \texttt{stat()}-funktioilla.
 
 % http://pubs.opengroup.org/onlinepubs/9699919799/functions/fstat.html#tag_16_173
@@ -234,10 +235,10 @@ josta löytyy muun muassa seuraavia kenttiä:
 
 \begin{itemize}
     \item Kenttä \texttt{mode\_t st\_mode} kertoo tiedoston tyypin (tavallinen tiedosto, hakemisto, yms.) ja käyttöoikeudet.
-    \item Kenttä \texttt{size\_t st\_size} kertoo tiedoston koon.
-    \item Kenttä \texttt{blckcnt\_t st\_size} kertoo tiedoston viemän tilan 512 tavun sektoreissa.
+    \item Kenttä \texttt{size\_t st\_size} kertoo tiedoston koon tavuina.
+    \item Kenttä \texttt{blkcnt\_t st\_blocks} kertoo tiedoston viemän tilan 512 tavun yksiköissä.
     \item Kentät \texttt{uid\_t st\_uid} ja \texttt{gid\_t st\_gid} kertovat tiedoston omistavan käyttäjän sekä ryhmän tunnuksen numeerisen arvon.
-    \item ...
+    \item Kentät \texttt{st\_atim}, \texttt{st\_mtim} ja \texttt{st\_ctim} kertovat tiedoston aikaleimat.
 \end{itemize}
 
 % \begin{verbatim}
