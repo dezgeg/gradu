@@ -380,11 +380,15 @@ Funktio \texttt{fsync()} on vahvempi versio \texttt{fdatasync()}:stä joka lisä
 Lisäksi on varmistettava erikseen että tiedoston inodeen viittaavat tiedostonimet ovat kirjoitettu pysyvästi levylle.
 Tämä tapahtuu kutsumalla \texttt{fsync()}-funktiota hakemistolle jossa tiedostonimi sijaitsee.
 
-\subsection{Esimerkki tekstieditorista}
+\subsection{Esimerkki tiedoston tallentamisesta tekstieditorissa}
 Tarkastellaan nyt esimerkin avulla miten POSIXin levyvälimuistin käsittelyfunktioilla voidaan toteuttaa kaatumisturvallisia sovelluksia.
 Melkeinpä yksinkertaisin mahdollinen sovellus jossa kaatumisturvallisuus on tärkeää on perus tekstieditori.
 Tyypillinen käyttötapaus on, että käyttäjä avaa editorissa tiedoston, muokkaa sitä, ja tallentaa muokatun sisällön samalla nimellä alkuperäisen tiedoston päälle.
-Suoraviivaisesti toteutettuna tämä menetelmä näyttää seuraavalta:
+Luotettavan editorin kuuluu tehdä tiedoston tallennus atomisesti,
+eli kaatumistilanteen sattuessa joko tiedoston täytyy sisältää joko uusi tai alkuperäinen sisältö.
+Lisäksi voidaan odottaa tallennusoperaation olevan \emph{pysyvä} (\emph{durable}),
+eli editorin ilmoittaessa tallennuksen olevan valmis täytyy tiedoston uuden version olla kirjoitettuna levylle.
+Suoraviivaisin tapa toteuttaa tallennus on kirjoittaa koko tiedosto uudelleen seuraavasti:
 
 \begin{verbatim}
 int fd = open("/mnt/usb/file.txt", O_CREAT | O_WRONLY | O_TRUNC);
@@ -423,7 +427,7 @@ close(dfd);
 \texttt{write()}-ja \texttt{rename()}-kutsujen väliin on siis lisätty yksi \texttt{fsync()}-kutsu takaamaan että näiden operaatioiden järjestys ei vaihdu levylle kirjoittaessa.
 Tämä lisätty \texttt{fsync(fd)} tekee tiedoston tallennusoperaatiosta atomisen mutta ei vielä takaa pysyvyyttä.
 Pysyvyyteen vaaditaan \texttt{fsync()}-operaation suoritus kohdetiedoston sisältävälle hakemistolle,
-mikä takaa että \texttt{rename()} kutsun tekemän muutokset itse hakemiston sisällölle ovat päätyneet levylle.
+mikä takaa että \texttt{rename()}-kutsun tekemän muutokset itse hakemiston sisällölle ovat päätyneet levylle.
 
 Kuten tästä esimerkistä nähtiin, on yksinkertaisenkin koostetun operaation toteuttaminen kaatumisturvallisesti verrattaen haastavaa,
 mikäli kaikki POSIXin tarjoamat vapaudet tiedostojärjestelmille otetaan huomioon.
