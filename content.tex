@@ -355,9 +355,13 @@ Pelkkien levylukujen vieminen välimuistin kautta ei vielä näy sovellusohjelmo
 mutta lohkovälimuisti joka toimii myös levykirjoituksille tuottaa haasteita.
 Käytännössä tämä tarkoittaa että \texttt{write()}-kutsun yhteydessä tehty tiedostoon kirjoitus ei välttämättä päädy levylle asti,
 vaan sovellusohjelman kirjoittama data ainoastaan kopioidaan levyvälimuistin puskuriin sekä merkitään kyseinen puskuri kirjoitettavaksi myöhemmin levylle~\cite{UnixPaper}.
-Tällaisen kanssavälimuistin \texttt{write()} ei siis ole \emph{pysyvä} (\emph{durable}) operaatio.
-(todo jatkoa).
-
+Moderneissa Unix-järjestelmissä levyvälimuistien käyttö on laajennettu koskemaan myös hakemistoja ja tiedostojen metadataa.
+%Kokonaisuudessaan tästä aiheutuu seuraavia pulmia jotka sovelllusohjelmoijan täytyy ottaa huomioon:
+%\begin{itemize}
+%    \item{Muokkaukset  \emph{pysyvä} (\emph{durable}) operaatio.}
+%\end{itemize}
+%
+%
 %tiedoston metadataa muokkaavat operaatiot,
 %mukaan lukien aikaleimojen päivitykset eivät välttämättä päädy levylle asti tiedostojärjestelmäkutsun palatessa.
 % http://pubs.opengroup.org/onlinepubs/9699919799/functions/fsync.html
@@ -441,7 +445,7 @@ selvittääkin kokeellisesti millaisia \emph{persistenssiominaisuuksia} eri Linu
 Tiedostojärjestelmien osalta testattiin kuutta Linux-tiedostojärjestelmää: \texttt{btrfs}, \texttt{ext2}, \texttt{ext3}, \texttt{ext4}, \texttt{reiserfs} sekä \texttt{xfs}.
 Lisäksi tiedostojärjestelmiä kokeiltiin eri tiedostojärjestelmäkohtaisilla optioilla,
 tuottaen yhteensä 16 konfiguraatiota.
-Persistenssiominaisuuksien testaus tapahtuu tutkijaryhmän kehittämällä BOB:ksi (\emph{Block order breaker}) kutsutulla työkalulla.
+Persistenssiominaisuuksien testaus tapahtuu tutkijaryhmän kehittämällä BOB:ksi (\emph{Block Order Breaker}) kutsutulla työkalulla.
 Sen periaatteena on nauhoittaa testattavan tiedostojärjestelmän tekemiä levykirjoituksia lokitiedostoon,
 jonka avulla voidaan jälkikäteen käydä kaikki mahdolliset levyn tilat (joista siis jokainen vastaa mahdollista kaatumistilannetta) läpi.
 Nyt kaatumistilanteista voidaan etsiä vastaesimerkkejä joissa testattava persistenssiominaisuus ei päde.
