@@ -336,7 +336,7 @@ Kaikissa tapauksissa operaatio on atominen.
 %%% int closedir(DIR *dirp);
 %%% \end{verbatim}
 
-\section{POSIX kaatumistilanteessa}
+\section{POSIX-rajapintojen käyttö kaatumisturvallisesti}
 \label{ChapPosixDataConsistency}
 Tietokoneiden massamuistit ovat tyypillisesti keskusmuistia merkittävästi hitaampia lukea ja kirjoittaa.
 Tyypillinen tapa parantaa tiedostojärjestelmän suorituskykyä onkin käyttää osaa keskusmuistista välimuistina tiedostojärjestelmälle,
@@ -429,14 +429,13 @@ Tämä lisätty \texttt{fsync(fd)} tekee tiedoston tallennusoperaatiosta atomise
 Pysyvyyteen vaaditaan \texttt{fsync()}-operaation suoritus kohdetiedoston sisältävälle hakemistolle,
 mikä takaa että \texttt{rename()}-kutsun tekemän muutokset itse hakemiston sisällölle ovat päätyneet levylle.
 
-Kuten tästä esimerkistä nähtiin, on yksinkertaisenkin koostetun operaation toteuttaminen kaatumisturvallisesti verrattaen haastavaa,
-mikäli kaikki POSIXin tarjoamat vapaudet tiedostojärjestelmille otetaan huomioon.
-POSIX kuitenkin on pelkkä abstrakti spesifikaatio, joten herääkin kysymys millaisia ongelmia käytännössä syntyy.
-Aihetta on mahdollista tutkia kokeellisesti kahdelta kannalta -- sekä tiedostojärjestelmien että sovellusten näkökulmasta.
-Tiedostojärjestelmien kannalta mielenkiintoinen kysymys on esimerkiksi operaatioiden kirjoitus levylle eri järjestyksessä kuin mitä sovellus ne teki --
-tapahtuuko sitä ylipäätään vaiko esimerkiksi vain tiettyjä tiedostojärjestelmäkutsuja tehdessä sopivassa järjestyksessä.
-Toisaalta taas sama kysymys toistuu sovellustenkin kanssa, eli käyttävätkö sovellukset varmasti tiedostojärjestelmäfunktioita oikein siten
-että kaatumisturvallisuus säilyy millä tahansa POSIX-yhteensopivalla tiedostojärjestelmällä.
+\section{Sovellusten käyttäytyminen kaatumistilanteessa}
+
+Edellisen luvun esimerkistä nähtiin että yksinkertaisenkin koostetun tiedostojärjestelmäoperaation toteuttaminen kaatumisturvallisesti on verrattaen haastavaa,
+koska POSIX tarjoaa tiedostojärjestelmätoteutuksille merkittävät vapaudet uudelleenjärjestellä tai lykätä levykirjoitusten tekemistä ellei sitä erikseen pakoteta \texttt{fsync()}- tai \texttt{fdatasync()}-kutsuja käyttämällä.
+Herääkin kysymys, että ovatko tiedostojärjestelmää käyttävät sovellukset ottaneet nämä seikat huomioon vai onko niiden kaatumisturvallisuudessa puutteita.
+Toisaalta, vaikka POSIX spesifikaationa salliikin tiedostojärjestelmätoteutuksille paljon vapauksia,
+eivät kaikki tiedostojärjestelmätoteutukset välttämättä hyödynnä kaikkia niistä.
 Molempia näistä aiheista on tutkittu kokeellisesti artikkelissa ``All File Systems Are Not Created Equal: On the Complexity of Crafting Crash-consistent Applications''~\cite{PosixDataConsistency} vuodelta 2014,
 joten tarkastellaan aiheita seuraavissa aliluvuissa.
 
@@ -475,8 +474,6 @@ Toinen tutkittu persistenssiominaisuus on mahdollinen tiedostojärjestelmäopera
 % sekä myös kirjoitettavan datan määrä vaikuttaa tulokseen.
 % Jo yhden sektorin (tai vähemmän) lisääminen tiedostoon ei ole atominen operaatio muutamalla tiedostojärjestelmällä: ext2 sekä
 % ext3, ext4 ja reiserfs mikäli käytetään writeback-journalointitilaa.
-
-\section{Sovellusten käyttäytyminen kaatumistilanteessa}
 
 Kuten edellisessä luvussa nähtiin,
 jo pelkästään Linuxin mukana tulevat tiedostojärjestelmät omaavat erilaisia persistenssiominaisuuksia,
