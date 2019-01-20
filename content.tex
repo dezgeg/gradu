@@ -431,11 +431,12 @@ mikä takaa että \texttt{rename()}-kutsun tekemän muutokset itse hakemiston si
 
 \section{Sovellusten käyttäytyminen kaatumistilanteessa}
 
-Edellisen luvun esimerkistä nähtiin että yksinkertaisenkin koostetun tiedostojärjestelmäoperaation toteuttaminen kaatumisturvallisesti on verrattaen haastavaa,
-koska POSIX tarjoaa tiedostojärjestelmätoteutuksille merkittävät vapaudet uudelleenjärjestellä tai lykätä levykirjoitusten tekemistä ellei sitä erikseen pakoteta \texttt{fsync()}- tai \texttt{fdatasync()}-kutsuja käyttämällä.
-Herääkin kysymys, että ovatko tiedostojärjestelmää käyttävät sovellukset ottaneet nämä seikat huomioon vai onko niiden kaatumisturvallisuudessa puutteita.
-Toisaalta, vaikka POSIX spesifikaationa salliikin tiedostojärjestelmätoteutuksille paljon vapauksia,
-eivät kaikki tiedostojärjestelmätoteutukset välttämättä hyödynnä kaikkia niistä.
+Edellisen luvun esimerkistä nähtiin miten yksinkertaisenkin koostetun tiedostojärjestelmäoperaation toteuttaminen kaatumisturvallisesti on verrattaen haastavaa,
+koska POSIX-standardi tarjoaa tiedostojärjestelmätoteutuksille merkittävät vapaudet uudelleenjärjestellä tai lykätä levykirjoitusten tekemistä ellei sitä erikseen pakoteta \texttt{fsync()}- tai \texttt{fdatasync()}-kutsuja käyttämällä.
+Onkin siis mielekästä tutkia kokeellisesti miten kaatumistilanteet vaikuttavat tosimaailman sovelluksiin ja tiedostojärjestelmiin.
+Koska sovellusohjelmoijan täytyy erikseen osata käyttää POSIX-rajapintoja oikein jotta sovelluksesta saadaan kaatumisturvallinen,
+herääkin kysymys, että kuinka moni sovellus ylipäätään on pyritty toteuttamaan kaatumisturvallisesti ja että onko niiden toteutus oikein.
+Tiedostojärjestelmätoteutusten kannalta taas on relevanttia selvittää miten eri tiedostojärjestelmät käytännössä käyttäytyvät kaatumistilanteessa sovellusohjelmoijan näkökulmasta.
 Molempia näistä aiheista on tutkittu kokeellisesti artikkelissa ``All File Systems Are Not Created Equal: On the Complexity of Crafting Crash-consistent Applications''~\cite{PosixDataConsistency} vuodelta 2014,
 joten tarkastellaan aiheita seuraavissa aliluvuissa.
 
