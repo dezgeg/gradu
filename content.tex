@@ -452,21 +452,23 @@ joten testattavia kombinaatioita saatiin 16 kappaletta.
 Tiedostojärjestelmien vertailu tapahtuu niiden \emph{persistenssiominaisuuksia} vertailemalla.
 Persistenssiominaisuudet ovat käytöksiä joita ilmenee tiedostojärjestelmän kaatumistilanteessa,
 kuten operaatioiden uudelleenjärjestyminen tai atomisuuden puute.
-Tutkittavia persistenssiominaisuuksia ovat:
+Seuraavien operaatioiden osalta tutkittiin niiden atomisuutta:
 \begin{itemize}
-    \item{Tiedoston olemassaolevan sisällön ylikirjoitus \texttt{write()}-kutsulla atomisuus.}
+    \item{Tiedoston olemassaolevan sisällön ylikirjoitus \texttt{write()}-kutsulla.}
     \item{Sisällön lisääminen tiedoston loppuun \texttt{write()}-kutsulla.}
-    \item{Hakemisto-operaatioiden, kuten \texttt{link()}, \texttt{unlink()} ja \texttt{rename()} atomisuus.}
+    \item{Hakemisto-operaatioita, kuten \texttt{link()}, \texttt{unlink()} ja \texttt{rename()}.}
 \end{itemize}
 
 Jo pelkän tiedostoon kirjoittamiseen \texttt{write()}-kutsulla liittyy useita seikkoja jotka saattavat vaikuttaa lopputulokseen.
 Ensimmäinen seikka on että käytetäänkö \texttt{write()}-kutsua ylikirjoittamaan olemassa oleva tiedoston sisältöä vaiko kirjoitetaanko sillä tiedoston loppuun siten että sen koko kasvaa.
 Toinen on kirjoitettavan datan määrä, jossa ``mielenkiintoisia'' määriä ovat yhden levylohkon verran,
 yhden tiedostojärjestelmälohkon verran sekä tätä suuremmat määrät.
-Yhteensä näistä saadaan kuusi tapausta joita tarkastella.
-Myöskin hakemisto-operaatioiden,
 
 Toinen tutkittu persistenssiominaisuus on mahdollinen tiedostojärjestelmäoperaatioiden järjestyksen vaihtuminen levylle kirjoittaessa.
+
+%\begin{tabular}{l|l|l}
+%
+%\end{tabular}
 
 Persistenssiominaisuuksien testaus tapahtuu tutkijaryhmän kehittämällä BOB:ksi (\emph{Block Order Breaker}) kutsutulla työkalulla.
 Sen periaatteena on nauhoittaa testattavan tiedostojärjestelmän tekemiä levykirjoituksia lokitiedostoon,
