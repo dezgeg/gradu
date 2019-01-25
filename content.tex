@@ -441,32 +441,38 @@ Molempia näistä aiheista on tutkittu kokeellisesti artikkelissa ``All File Sys
 joten tarkastellaan aiheita seuraavissa aliluvuissa.
 
 \subsection{Tiedostojärjestelmän persistenssiominaisuudet}
-Kuten edellä nähtiin, POSIXin konsistenssimalli tarjoaa tiedostojärjestelmätoteutuksille vapauksia suorituskyvyn parantamiseen
+Kuten edellä nähtiin, POSIXin konsistenssimalli tarjoaa tiedostojärjestelmätoteutuksille vapauksia suorituskyvyn parantamiseen,
 mutta jotka samalla tuottavat haasteita sovellusohjelmoijille mikäli tavoitteena on käyttää tiedostojärjestelmää kaatumisturvallisesti.
-Ensimmäinen osuus ``All File Systems Are Not Created Equal: On the Complexity of Crafting Crash-consistent Applications''-artikkelin tutkimuksesta
-selvittääkin kokeellisesti millaisia \emph{persistenssiominaisuuksia} eri Linux-tiedostojärjestelmillä on~\cite{PosixDataConsistency}.
+Ensimmäinen osuus ``All File Systems Are Not Created Equal: On the Complexity of Crafting Crash-consistent Applications''-artikkelista keskittyykin tutkimaan kokeellisesti
+miten eri Linux-tiedostojärjestelmät käyttäytyvät kaatumistilanteissa.
+Tutkittavana oli kuusi Linux-tiedostojärjestelmää: \texttt{btrfs}, \texttt{ext2}, \texttt{ext3}, \texttt{ext4}, \texttt{reiserfs} sekä \texttt{xfs}.
+Lisäksi useimpia tiedostojärjestelmiä testattiin eri tiedostojärjestelmäkohtaisilla optioilla,
+joten testattavia kombinaatioita saatiin 16 kappaletta.
 
-Tiedostojärjestelmien osalta testattiin kuutta Linux-tiedostojärjestelmää: \texttt{btrfs}, \texttt{ext2}, \texttt{ext3}, \texttt{ext4}, \texttt{reiserfs} sekä \texttt{xfs}.
-Lisäksi tiedostojärjestelmiä kokeiltiin eri tiedostojärjestelmäkohtaisilla optioilla,
-tuottaen yhteensä 16 konfiguraatiota.
-Persistenssiominaisuuksien testaus tapahtuu tutkijaryhmän kehittämällä BOB:ksi (\emph{Block Order Breaker}) kutsutulla työkalulla.
-Sen periaatteena on nauhoittaa testattavan tiedostojärjestelmän tekemiä levykirjoituksia lokitiedostoon,
-jonka avulla voidaan jälkikäteen käydä kaikki mahdolliset levyn tilat (joista siis jokainen vastaa mahdollista kaatumistilannetta) läpi.
-Nyt kaatumistilanteista voidaan etsiä vastaesimerkkejä joissa testattava persistenssiominaisuus ei päde.
-BOB:n voidaan siis vain todeta jonkin persistenssiominaisuuden paikkaansa pitämättömyys, mutta ei toisinpäin.
+Tiedostojärjestelmien vertailu tapahtuu niiden \emph{persistenssiominaisuuksia} vertailemalla.
+Persistenssiominaisuudet ovat käytöksiä joita ilmenee tiedostojärjestelmän kaatumistilanteessa,
+kuten operaatioiden uudelleenjärjestyminen tai atomisuuden puute.
+Tutkittavia persistenssiominaisuuksia ovat:
+\begin{itemize}
+    \item{Tiedoston olemassaolevan sisällön ylikirjoitus \texttt{write()}-kutsulla atomisuus.}
+    \item{Sisällön lisääminen tiedoston loppuun \texttt{write()}-kutsulla.}
+    \item{Hakemisto-operaatioiden, kuten \texttt{link()}, \texttt{unlink()} ja \texttt{rename()} atomisuus.}
+\end{itemize}
 
-\subsection{Testattuja tiedostojärjestelmien persistenssiominaisuuksia}
-
-Ensimmäisiä testattuja persistenssiominaisuuksia on erinäisten operaatioiden atomisuus itsessään.
 Jo pelkän tiedostoon kirjoittamiseen \texttt{write()}-kutsulla liittyy useita seikkoja jotka saattavat vaikuttaa lopputulokseen.
 Ensimmäinen seikka on että käytetäänkö \texttt{write()}-kutsua ylikirjoittamaan olemassa oleva tiedoston sisältöä vaiko kirjoitetaanko sillä tiedoston loppuun siten että sen koko kasvaa.
 Toinen on kirjoitettavan datan määrä, jossa ``mielenkiintoisia'' määriä ovat yhden levylohkon verran,
 yhden tiedostojärjestelmälohkon verran sekä tätä suuremmat määrät.
 Yhteensä näistä saadaan kuusi tapausta joita tarkastella.
 Myöskin hakemisto-operaatioiden,
-kuten \texttt{link()}, \texttt{unlink()} ja \texttt{rename()} atomisuutta on testattu.
 
 Toinen tutkittu persistenssiominaisuus on mahdollinen tiedostojärjestelmäoperaatioiden järjestyksen vaihtuminen levylle kirjoittaessa.
+
+Persistenssiominaisuuksien testaus tapahtuu tutkijaryhmän kehittämällä BOB:ksi (\emph{Block Order Breaker}) kutsutulla työkalulla.
+Sen periaatteena on nauhoittaa testattavan tiedostojärjestelmän tekemiä levykirjoituksia lokitiedostoon,
+jonka avulla voidaan jälkikäteen käydä kaikki mahdolliset levyn tilat (joista siis jokainen vastaa mahdollista kaatumistilannetta) läpi.
+Nyt kaatumistilanteista voidaan etsiä vastaesimerkkejä joissa testattava persistenssiominaisuus ei päde.
+BOB:n voidaan siis vain todeta jonkin persistenssiominaisuuden paikkaansa pitämättömyys, mutta ei toisinpäin.
 
 \subsection{Tuloksia}
 
