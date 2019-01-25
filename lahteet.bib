@@ -2,67 +2,6 @@
 % Main references
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% Main work. ext2/ext3, reiserfs, jfs, xfs
-@article{ModelChecking,
- author = {Yang, Junfeng and Twohey, Paul and Engler, Dawson and Musuvathi, Madanlal},
- title = {Using Model Checking to Find Serious File System Errors},
- journal = {ACM Trans. Comput. Syst.},
- issue_date = {November 2006},
- volume = {24},
- number = {4},
- month = nov,
- year = {2006},
- issn = {0734-2071},
- pages = {393--423},
- numpages = {31},
- url = {http://doi.acm.org/10.1145/1189256.1189259},
- doi = {10.1145/1189256.1189259},
- acmid = {1189259},
- publisher = {ACM},
- address = {New York, NY, USA},
- keywords = {Model checking, crash, file system, journaling, recovery},
-}
-
-% More model checking.
-% http://www.cs.columbia.edu/~junfeng/09fa-e6998/papers/explode.pdf
-@inproceedings{Explode,
- author = {Yang, Junfeng and Sar, Can and Engler, Dawson},
- title = {EXPLODE: A Lightweight, General System for Finding Serious Storage System Errors},
- booktitle = {Proceedings of the 7th USENIX Symposium on Operating Systems Design and Implementation - Volume 7},
- series = {OSDI '06},
- year = {2006},
- location = {Seattle, WA},
- pages = {10--10},
- numpages = {1},
- url = {http://dl.acm.org/citation.cfm?id=1267308.1267318},
- acmid = {1267318},
- publisher = {USENIX Association},
- address = {Berkeley, CA, USA},
-}
-
-% Runtime invariant validation of ext2/3 and btrfs
-% - modifies block layer & ext3/btrfs transaction commit code
-@article{Recon,
- author = {Fryer, Daniel and Sun, Kuei and Mahmood, Rahat and Cheng, Tinghao and Benjamin, Shaun and Goel, Ashvin and Brown, Angela Demke},
- title = {Recon: Verifying File System Consistency at Runtime},
- journal = {Trans. Storage},
- issue_date = {November 2012},
- volume = {8},
- number = {4},
- month = dec,
- year = {2012},
- issn = {1553-3077},
- pages = {15:1--15:29},
- articleno = {15},
- numpages = {29},
- url = {http://doi.acm.org/10.1145/2385603.2385608},
- doi = {10.1145/2385603.2385608},
- acmid = {2385608},
- publisher = {ACM},
- address = {New York, NY, USA},
- keywords = {Metadata consistency, file system checker, runtime verification},
-}
-
 % ext2 fsck described in SQL, details some ext2 invariants
 % Otherwise quite bland
 @inproceedings{SQCK,
@@ -102,6 +41,7 @@
  keywords = {B-trees, RAID, concurrency, copy-on-write, filesystem, shadowing, snapshots},
 }
 
+% TODO: Why is this unused?
 % Sprite Log Structured Filesystem; checkpoints & roll-forward recovery
 @article{SpriteLfs,
  author = {Rosenblum, Mendel and Ousterhout, John K.},
@@ -123,6 +63,7 @@
  keywords = {Unix, disk storage management, fast crash recovery, file system organization, file system performance, high write performance, log-structured, logging},
 }
 
+% TODO: Why is this unused?
 % Sprite LFS authors' Ph.D thesis
 @phdthesis{SpriteSeltzerThesis,
  author = {Seltzer, Margo Ilene},
@@ -141,7 +82,6 @@
     Month = {Jun},
     URL = {http://www2.eecs.berkeley.edu/Pubs/TechRpts/1992/6267.html},
     Number = {UCB/CSD-92-696},
-    Abstract = {This dissertation presents a new technique for disk storage management called a log-structured file system. The technique writes all file system changes in large sequential transfers to a log-like structure on disk. The key benefit is a high write performance that is independent of the workload. The large transfers also enable the efficient use of large disk arrays such as RAIDs. The technique minimizes the overhead of computing the redundancy information required by large RAIDs.   <p>A log-structured file system achieves high write rates without sacrificing file retrieval performance. Files are read back from the log efficiently due to the indexing information that is maintained. The log structure also permits fast recovery from system crashes. Using a recovery system based on checkpoints and roll-forward the log-structured file system can quickly restore the disk to a consistent state.   <p>An important focus of this dissertation is the technique used for free space management in a log--structured file system. The approach taken was to divide the disk into large segments to which the log was written. A segment cleaner mechanism exists to compress the live information from heavily fragmented segments. The mechanism reads in the fragmented segments, compacts the live data, and writes the data back to segments on disk. The dissertation includes a series of simulations that demonstrate the efficiency of a simple segment cleaning policy based on cost and benefit. The segment cleaner decides which segments to clean based on a function of the fraction alive in the segment and the age of the data in the segment.   <p>I have implemented a prototype log-structured file system called Sprite LFS; it outperforms current Unix file systems by an order of magnitude for small-file writes and matches or exceeds Unix performance for reads and large writes. Even when the overhead for cleaning is included, Sprite LFS can use 70% of the disk bandwidth for writing. Unix file systems typically can use only 5-10%.}
 }
 
 % App / POSIX data consistency
@@ -161,6 +101,7 @@
  address = {Berkeley, CA, USA},
 }
 
+% TODO: Why is this unused?
 % Among journaling and soft updates, also log-structured stuff. Good intro to metadata consistency.
 @inproceedings{JournalVsSoftUpdates,
  author = {Seltzer, Margo I. and Ganger, Gregory R. and McKusick, M. Kirk and Smith, Keith A. and Soules, Craig A. N. and Stein, Christopher A.},
@@ -190,6 +131,7 @@
  url = {http://web.mit.edu/tytso/www/linux/ext2intro.html},
 }
 
+% TODO: why is this unused?
 @article{Ext2Korner,
  author = {Appleton, Randy},
  title = {Kernel Korner: A Non-Technical Look Inside the EXT2 File System},
@@ -207,6 +149,7 @@
  address = {Houston, TX},
 }
 
+% TODO: why is this unused?
 % Useful misc. information on ext2
 @inproceedings{Ext2Plans,
  author = {Ts'o, Theodore Y. and Tweedie, Stephen},
@@ -252,6 +195,7 @@
   year={2007}
 }
 
+% TODO: why is this unused?
 @article{SoftUpdates2000,
  author = {Ganger, Gregory R. and McKusick, Marshall Kirk and Soules, Craig A. N. and Patt, Yale N.},
  title = {Soft Updates: A Solution to the Metadata Update Problem in File Systems},
@@ -287,6 +231,7 @@
  address = {Berkeley, CA, USA},
 }
 
+% TODO: why is this unused?
 % FreeBSD extensions to the FFS.
 @book{FreeBsdBook,
  author = {McKusick, Marshall Kirk and Neville-Neil, George and Watson, Robert N.M.},
@@ -313,24 +258,6 @@
  acmid = {2522726},
  publisher = {ACM},
  address = {New York, NY, USA},
-}
-
-
-
-% Alternative approach to journaling/etc.
-@inproceedings{ConsistencyWithoutOrdering,
- author = {Chidambaram, Vijay and Sharma, Tushar and Arpaci-Dusseau, Andrea C. and Arpaci-Dusseau, Remzi H.},
- title = {Consistency Without Ordering},
- booktitle = {Proceedings of the 10th USENIX Conference on File and Storage Technologies},
- series = {FAST'12},
- year = {2012},
- location = {San Jose, CA},
- pages = {9--9},
- numpages = {1},
- url = {http://dl.acm.org/citation.cfm?id=2208461.2208470},
- acmid = {2208470},
- publisher = {USENIX Association},
- address = {Berkeley, CA, USA},
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -378,6 +305,7 @@
  keywords = {PDP-11, command language, file system, operating system, time-sharing},
 }
 
+% TODO: why is this unused?
 % Hopefully describes BSD buffer cache
 @book{Bsd44Book,
  author = {McKusick, Marshall Kirk and Bostic, Keith and Karels, Michael J. and Quarterman, John S.},
@@ -492,24 +420,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Not used
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% Ubifs, in case we ever need to refer to non-block filesystems.
-@inproceedings{Ubifs,
-author="Schierl, Andreas
-and Schellhorn, Gerhard
-and Haneberg, Dominik
-and Reif, Wolfgang",
-editor="Cavalcanti, Ana
-and Dams, Dennis R.",
-title="Abstract Specification of the UBIFS File System for Flash Memory",
-booktitle="FM 2009: Formal Methods",
-year="2009",
-publisher="Springer Berlin Heidelberg",
-address="Berlin, Heidelberg",
-pages="190--206",
-abstract="Today we see an increasing demand for flash memory because it has certain advantages like resistance against kinetic shock. However, reliable data storage also requires a specialized file system knowing and handling the limitations of flash memory. This paper develops a formal, abstract model for the UBIFS flash file system, which has recently been included in the Linux kernel. We develop formal specifications for the core components of the file system: the inode-based file store, the flash index, its cached copy in the RAM and the journal to save the differences. Based on these data structures we give an abstract specification of the interface operations of UBIFS and prove some of the most important properties using the interactive verification system KIV.",
-isbn="978-3-642-05089-3"
-}
 
 
 % https://people.eecs.berkeley.edu/~brewer/cs262/FFS.pdf / A Fast File System for UNIX
