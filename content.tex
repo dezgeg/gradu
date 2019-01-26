@@ -40,7 +40,7 @@ Toisaalta itse tiedostojärjestelmätoteutuksen täytyy huolehtia siitä että t
 
 Tämän tutkielman tavoitteena on tarkastella kaatumisturvallisuutta molemmista näkökulmista.
 Ensimmäisessä osuudessa keskitytään tarkastelemaan sovellusten näkökulmasta:
-luvussa~\ref{ChapUnixFsBasics} tarkastellaan Unix-tiedostojärjestelmärajapintojen perusteita ja luvussa~\ref{ChapPosixDataConsistency} kuinka niitä tulisi käyttää kaatumisturvallisuuden takaamiseksi.
+luvussa~\ref{ChapUnixFsBasics} tarkastellaan Unix-tiedosto\-järjestelmärajapintojen perusteita ja luvussa~\ref{ChapPosixDataConsistency} kuinka niitä tulisi käyttää kaatumisturvallisuuden takaamiseksi.
 Luvussa~\ref{ChapPosixSafetyStudy} tarkastellaan käytännön tutkimusta siitä miten kaatumistilanteet vaikuttavat eri tiedostojärjestelmillä ja kuinka hyvin olemassaolevat sovellukset ottavat ne huomioon.
 Tutkielman toisessa osuudessa keskitytään tarkastelemaan tiedostojärjestelmien sisäisten tietorakenteiden eheyden säilymistä.
 Luvussa~\ref{ChapExt2Fs} esitellään perinteisen mutta ei kovin kaatumisturvallisen Linux-tiedostojärjestelmän, \texttt{ext2}:n, sisäistä rakennetta ja luvussa~\ref{ChapExt2Crash} mitä seurauksia kaatumistilanteilla on \texttt{ext2}:lle.
@@ -741,8 +741,8 @@ Myöskin metadataan tehtävät korjaukset on tärkeä tehdä tietyssä järjesty
 \end{enumerate}
 
 \subsection{Kaatumistilanteiden tutkiminen käytännössä}
-\texttt{ext2}-tiedostojärjestelmän käyttäytymistä kaatumistilanteessa testattiin käytännössä QEMU-virtuaalikoneen \texttt{blklogwrites}-lohkolaitteen avulla.
-\texttt{blklogwrites} on virtuaalinen lohkolaite joka näkyy käyttöjärjestelmälle muuten tavallisena levynä,
+\texttt{ext2}-tiedostojärjestelmän käyttäytymistä kaatumistilanteessa testattiin käytännössä QEMU-virtuaalikoneen \texttt{blk\-log\-writes}-lohkolaitteen avulla.
+\texttt{blk\-log\-writes} on virtuaalinen lohkolaite joka näkyy käyttöjärjestelmälle muuten tavallisena levynä,
 mutta jokaisen kirjoitusoperaation yhteydessä tehdään lisäksi lokimerkintä joka sisältää aikaleiman, kirjoitettavan sektorin numeron sekä lohkon uuden sisällön.
 Koeasetelmassa virtuaalikoneessa käynnistetään Linux,
 liitetään tiedostojärjestelmä \texttt{blklogwrites}:in päälle ja tehdään sille haluttuja tiedostojärjestelmäoperaatioita,
@@ -1128,7 +1128,7 @@ joista merkittävimmät ovat tarkistussummat sekä datalle että metadatalle, \e
 Copy-on-write-tekniikka on keskeinen useiden edellä mainittujen ominaisuuksien kannalta.
 
 \subsection{Btrfs:n levyrakenne}
-Btrfs:n levytietorakenteet poikkeavat merkittävästi perinteisistä Unix-tiedostojärjestelmistä.
+Btrfs:n levytietorakenteet poikkeavat merkittävästi perinteisistä Unix-tiedosto\-järjestelmistä.
 Superlohkoa lukuun ottamatta kaikki Btrfs-tiedostojärjestelmän metadata sijaitsee levyllä B-puuhun pohjautuvassa tietorakenteessa.
 Btrfs:n kaikkien B-puiden avaimena on seuraava 17 tavun kokoinen tietorakenne \texttt{btrfs\_key}:
 \begin{verbatim}
