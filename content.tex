@@ -769,7 +769,7 @@ Taulukossa~\ref{TabExt2Creation} nähdään levykirjoitukset jota aiheutuu luota
     3  & 30.847   & +30.846  & 1   & Lohkoryhmien kuvaajat: vähennetään vapaiden inodejen määrää (8181 -> 8180)         \\ \hline % 3
     4  & 30.847   & +0.000   & 3   & Lohkoryhmän 0 inodebittikartta: merkitään inode 12 varatuksi \\ \hline % 2
     5  & 30.847   & +0.000   & 516 & Juurihakemisto: lisätään hakemistoalkio \texttt{new} osoittamaan inodeen 12                 \\ \hline % 1
-    6  & 61.567   & +30.721  & 4   & Lohkoryhmän 0 inodetaulu: alustetaan inoden 12 attribuutit, päivitetään juurihakemiston aikaleimaa \\        % 4
+    6  & 61.567   & +30.721  & 4   & Lohkoryhmän 0 inodetaulu: alustetaan inoden 12 attribuutit(TODO), päivitetään juurihakemiston aikaleimaa \\        % 4
 \end{tabular}
 \caption{Tiedoston luomisesta seuraavat levyoperaatiot.}
 \end{table}
@@ -951,13 +951,13 @@ eli \texttt{ext2}:n tapaan operaation tehdään ensin pelkästään muistissa ja
     6  & 5.411    & +0.000   & 9216 & 16   & Tiedoston \texttt{new} datalohkot                               \\ \hline % 2
     7  & 5.411    & +0.000   & 522  & 8    & Journalin lohkoihin 1--8 kirjoitetaan yksi kuvaajalohko sekä 7 sisältölohkoa. Päivitettävät lohkot ovat 3, 1, 4, 516, 0, 2, 8722                       \\ \hline % 4
     8  & 5.411    & +0.000   & 530  & 1    & Journalin lohko 9: sitoutumislohko                       \\ \hline % 6
-    9  & 36.131   & +30.720  & 0    & 5    & Superlohko: ...                     \\ \hline % 10
-    10 & 36.131   & +0.000   & 1    & 1    & Lohkoryhmien kuvaajat: ...                     \\ \hline % 10
-    11 & 36.131   & +0.000   & 2    & 1    & Lohkobittikartta: ...                     \\ \hline % 10
-    12 & 36.131   & +0.000   & 3    & 1    & Inodebittikartta: ...                     \\ \hline % 10
-    13 & 36.131   & +0.000   & 4    & 1    & Inodetaulu: ...                     \\ \hline % 10
-    14 & 36.131   & +0.000   & 516  & 1    & Juurihakemisto                 \\ \hline % 9
-    15 & 36.131   & +0.000   & 8722 & 1    & Epäsuora lohko: ...                               \\        % 8
+    9  & 36.131   & +30.720  & 0    & 1    & Superlohko: vapaiden lohkojen ja inodejen määriä vähennetään                     \\ \hline % 10
+    10 & 36.131   & +0.000   & 1    & 1    & Lohkoryhmien kuvaajat: vapaiden lohkojen ja inodejen määriä vähennetään                     \\ \hline % 10
+    11 & 36.131   & +0.000   & 2    & 1    & Lohkobittikartta: merkitään lohkot 8722 ja 9216--9231 varatuksi                     \\ \hline % 10
+    12 & 36.131   & +0.000   & 3    & 1    & Lohkoryhmän 0 inodebittikartta: merkitään inode 12 varatuksi \\ \hline % 10
+    13 & 36.131   & +0.000   & 4    & 1    & Lohkoryhmän 0 inodetaulu: alustetaan inoden 12 attribuutit(TODO), päivitetään juurihakemiston aikaleimaa: ...                     \\ \hline % 10
+    14 & 36.131   & +0.000   & 516  & 1    & Juurihakemisto: lisätään hakemistoalkio \texttt{new} osoittamaan inodeen 12                 \\ \hline % 9
+    15 & 36.131   & +0.000   & 8722 & 1    & Tiedoston \texttt{new} epäsuora lohko: tiedoston lohkot 12--15 merkitään viittaamaan lohkoihin 9228--9231 \\        % 8
 \end{tabular}
 \end{table}
 
