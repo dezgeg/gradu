@@ -32,12 +32,23 @@ Modernimmat tiedostojärjestelmät, kuten Linuxin ext3 vuodelta 2001, ovatkin su
 joten tämänkaltaiset pitkät käyttökatkot tiedostojärjestelmätarkistusten takia ovat olleet historiaa jo tovin.
 
 Itse tiedostojärjestelmä siis vaikuttaa merkittävästi siihen mitä seurauksia järjestelmän kaatumistilanteesta johtaa, mutta ongelma on monitahoinen.
+Tässä tutkielmassa tarkastellaan erityisesti Unix-tyyppisiä tiedostojärjestelmiä ja rajapintoja jotka on määritelty POSIX-standardissa.
 Vastuu siitä että käyttäjän dataa ei korruptoidu tiedostojärjestelmän kaatumistilanteessa ei ole pelkästään tiedostojärjestelmäajurin tai käyttöjärjestelmän taholla,
 vaan myös sovelluksilla.
-Tämän tutkielman tavoitteena on esitellä kyseisiä menetelmiä tiedostojärjestelmän eheyden säilyttämiseen kaatumistilanteissa.
+POSIX-tiedostojärjestelmäkutsujen käyttö kaatumisturvallisesti ei ole täysin suoraviivaista,
+vaan sovellusohjelmoijan täytyy käytännössä aina tehdä erityistoimenpiteitä jotta kokonaisuudesta tulee kaatumisturvallinen.
+Toisaalta itse tiedostojärjestelmätoteutuksen täytyy huolehtia siitä että tiedostojärjestelmän sisäisiä tietorakenteita päivitetään kaatumisturvallisesti ja että toteutus pystyy täyttämään POSIX-standardin asettamat vaatimukset joihin sovellukset luottavat.
+Tämän tutkielman tavoitteena on tarkastella kaatumisturvallisuutta molemmista näkökulmista.
+Ensimmäisessä osuudessa keskitytään tarkastelemaan sovellusten näkökulmasta:
+luvussa~\ref{ChapUnixFsBasics} tarkastellaan Unix-tiedostojärjestelmärajapintojen perusteita ja luvussa~\ref{ChapPosixDataConsistency} kuinka niitä tulisi käyttää kaatumisturvallisuuden takaamiseksi.
+Luvussa~\ref{ChapPosixSafetyStudy} tarkastellaan käytännön tutkimusta siitä miten kaatumistilanteet vaikuttavat eri tiedostojärjestelmillä ja kuinka hyvin olemassaolevat sovellukset ottavat ne huomioon.
+Tutkielman toisessa osuudessa keskitytään tarkastelemaan tiedostojärjestelmien sisäisten tietorakenteiden eheyden säilymistä.
+Luvussa~\ref{ChapExt2Fs} esitellään perinteisen mutta ei kovin kaatumisturvallisen Linux-tiedostojärjestelmän, \texttt{ext2}:n, sisäistä rakennetta ja luvussa~\ref{ChapExt2Crash} mitä seurauksia kaatumistilanteilla on \texttt{ext2}:lle.
+Lopuksi esitellään tekniikoita joita modernit tiedostojärjestelmät käyttävät tiedostojärjestelmän eheyden säilyttämiseen kaatumistilanteissa: kirjaavia tiedostojärjestelmiä luvussa~\ref{ChapJournallingFs}, lokipohjaisia tiedostojärjestelmiä luvussa~\ref{ChapLogStructured}, kirjoittaessa kopioivia tiedostojärjestelmiä luvussa~\ref{ChapCopyOnWrite} ja kirjoitusjärjestyksen hallintaan perustuvia tiedostojärjestelmiä luvussa~\ref{ChapSoftUpdates}.
 % FIXME: motivaatio etc.
 
 \section{Unix-tiedostojärjestelmien perusteet}
+\label{ChapUnixFsBasics}
 
 Vaikka tiedostojärjestelmät konseptina ovatkin todennäköisesti tuttuja monille tietokoneenkäyttäjille,
 on laitettava merkille ettei tiedostojärjestelmälle ole olemassa mitään yhtä oikeaa määritelmää
@@ -429,7 +440,8 @@ Tämä lisätty \texttt{fsync(fd)} tekee tiedoston tallennusoperaatiosta atomise
 Pysyvyyteen vaaditaan \texttt{fsync()}-operaation suoritus kohdetiedoston sisältävälle hakemistolle,
 mikä takaa että \texttt{rename()}-kutsun tekemän muutokset itse hakemiston sisällölle ovat päätyneet levylle.
 
-\section{Sovellusten käyttäytyminen kaatumistilanteessa}
+\section{POSIX-tiedostojärjestelmien kaatumistilanteet käytännössä}
+\label{ChapPosixSafetyStudy}
 
 Edellisen luvun esimerkistä nähtiin miten yksinkertaisenkin koostetun tiedostojärjestelmäoperaation toteuttaminen kaatumisturvallisesti on verrattaen haastavaa,
 koska POSIX-standardi tarjoaa tiedostojärjestelmätoteutuksille merkittävät vapaudet uudelleenjärjestellä tai lykätä levykirjoitusten tekemistä ellei sitä erikseen pakoteta \texttt{fsync()}- tai \texttt{fdatasync()}-kutsuja käyttämällä.
@@ -492,7 +504,7 @@ ja onkin samalla toinen ``All File Systems Are Not Created Equal: On the Complex
 
 \subsection{Sovellusten päivitysprotokollat}
 
-Aiemmin luvussa \ref{ChapPosixDataConsistency} nähtiin miten tekstieditorin tiedoston tallennuksesta saatiin tehtyä kaatumisturvallinen POSIX-tiedostojärjestelmäoperaatioita koostamalla.
+Aiemmin luvussa~\ref{ChapPosixDataConsistency} nähtiin miten tekstieditorin tiedoston tallennuksesta saatiin tehtyä kaatumisturvallinen POSIX-tiedostojärjestelmäoperaatioita koostamalla.
 Tässä kyseisessä käyttötapauksessa päästiin haluttuun lopputulokseen varsin suoraviivaisella toteutuksella, jossa yksinkertaisesti kirjoitettiin koko tiedosto uudestaan.
 Muuntyyppisillä sovelluksilla voi olla huomattavastikin monimutkaisempia vaatimuksia.
 Esimerkiksi SQL-kyselykielen perustoiminnallisuuksiin kuuluvat transaktiot,
@@ -573,7 +585,7 @@ Ext3:a ja kirjaavia tiedostojärjestelmiä yleisesti käsitelläänkin myöhemmi
     \caption{Ext2:n rakenne levyllä~\cite{LinuxKernelBook}.}
 \end{figure}
 
-Ext2:n levyrakenne korkealla tasolla on esitetty kuvaajassa \ref{FigExt2DiskFormat}~\cite{LinuxKernelBook}.
+Ext2:n levyrakenne korkealla tasolla on esitetty kuvaajassa~\ref{FigExt2DiskFormat}~\cite{LinuxKernelBook}.
 Korkeimmalla tasolla ext2:n rakenne on jaettu kahteen osaan: on \emph{käynnistyslohkoon} sekä useisiin \emph{lohkoryhmiin}.
 Käynnistyslohkon tarkoitus on yksinkertaisesti varattua tilaa jollekin ext2:ta riippumattomalle käynnistyslataajalle,
 itse tiedostojärjestelmä ei käytä tätä tilaa mitenkään.
@@ -746,7 +758,7 @@ ja mitkä käyttöjärjestelmä kirjoittaa taustalla.
 
 \subsubsection{Tiedoston luominen}
 \label{ChapExt2FileCreation}
-Taulukossa \ref{TabExt2Creation} nähdään levykirjoitukset jota aiheutuu luotaessa tyhjään \texttt{ext2}-tiedostojärjestelmän juurihakemistoon uusi tyhjä tiedosto kutsulla \texttt{creat("new", 0755)}:
+Taulukossa~\ref{TabExt2Creation} nähdään levykirjoitukset jota aiheutuu luotaessa tyhjään \texttt{ext2}-tiedostojärjestelmän juurihakemistoon uusi tyhjä tiedosto kutsulla \texttt{creat("new", 0755)}:
 
 \begin{table}[H]
 \label{TabExt2Creation}
@@ -885,7 +897,7 @@ Nyt mahdollisen kaatumistilanteen sattuessa voidaan journalin sisällön peruste
 %Kirjauksen vaatima loki on kiinteän pituinen ja tila sille on varattu piilotetun, tiedostojärjestelmän käyttäjällä näkymättömän inoden avulla.
 
 \subsection{Kirjauksen toteutus ext3:ssa}
-Aiemmin luvussa \ref{ChapExt2Fs} nähtiin miten \texttt{ext2}:n levyformaattia voidaan laajentaa tulevaisuudessa ominaisuusbiteillä.
+Aiemmin luvussa~\ref{ChapExt2Fs} nähtiin miten \texttt{ext2}:n levyformaattia voidaan laajentaa tulevaisuudessa ominaisuusbiteillä.
 Vaikka useassa yhteydessä \texttt{ext3}:sta puhutaan ikään kuin se olisi oma erillinen tiedostojärjestelmänsä,
 on se levyformaatin näkökulmasta edelleen \texttt{ext2}-tiedostojärjestelmä mutta varustettuna lisäominaisuuksilla.
 Relevantteja ominaisuusbittejä ovat `taaksepäin yhteensopivat' ominaisuudet \texttt{has\_journal} ja \texttt{dir\_index} sekä `ei-taaksepäin yhteensopiva` ominaisuus \texttt{needs\_recovery}.
@@ -913,7 +925,7 @@ Journalia aletaan lukea otsakelohkon ilmaisemasta kohdasta eteenpäin,
 ja jokaisen kokonaan lokiin kirjoitetun transaktion sisältölohkot kirjoitetaan kuvaajalohkon osoittamiin paikkoihin levyllä.
 
 \subsection{Esimerkki}
-\texttt{ext3}:n tekemiä levykirjoituksia tutkittiin QEMU-virtuaalikoneella samanlaisella testiasetelmalla kuin aiemmin \texttt{ext2}:n kohdalla tehtiin luvussa \ref{ChapExt2Fs}.
+\texttt{ext3}:n tekemiä levykirjoituksia tutkittiin QEMU-virtuaalikoneella samanlaisella testiasetelmalla kuin aiemmin \texttt{ext2}:n kohdalla tehtiin luvussa~\ref{ChapExt2Fs}.
 1 gigatavun levylle \texttt{mkfs.ext3} loi rakenteeltaan muuten samanlaisen tiedostojärjestelmän kuin \texttt{ext2}:n tapauksessa,
 paitsi että lohkoryhmä 0 sisältää 32 megatavun kokoisen journalin.
 Testiohjelmana käytetään seuraavaa koodinpätkää,
@@ -1074,7 +1086,7 @@ mutta eteenkierron kanssa riittää että pelkästään tarvittavat lokikirjoitu
 Tarvittavia levykirjoituksia voidaan vähentää vielä lisää huomioimalla että kahta Sprite LFS:n levytietorakennetta,
 inodekarttaa ja segmentin käyttöastetaulua ei tarvitse kirjoittaa levylle muuten kuin tarkistuspisteen luonnin yhteydessä
 sillä niihin tehtävät muutokset voidaan aina johtaa muista lokikirjoituksista eteenkiertopalautuksen aikana.
-Eli esimerkiksi edellisen aliluvun \ref{SubsectSpriteLfsExample} esimerkistä voidaan kohdat 5, 6, ja 8 lykätä tehtäväksi myöhemmin. 
+Eli esimerkiksi edellisen aliluvun~\ref{SubsectSpriteLfsExample} esimerkistä voidaan kohdat 5, 6, ja 8 lykätä tehtäväksi myöhemmin.
 
 \subsection{Eteenkiertopalautuksen toiminta}
 Eteenkiertopalautuksen aikana käydään kahdesti läpi kaikki viimeisimmän tarkistuspisteen jälkeen tehdyt lokikirjoitukset~\cite{SpriteRosenblumThesis}.
