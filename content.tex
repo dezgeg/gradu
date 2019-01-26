@@ -31,13 +31,13 @@ mikä tiedostojärjestelmän käyttötarkoituksesta riippuen tarkoittikin mahdol
 Modernimmat tiedostojärjestelmät, kuten Linuxin ext3 vuodelta 2001, ovatkin suunniteltu selviämään kaatumistilanteista nopeasti ja turvallisesti,
 joten tämänkaltaiset pitkät käyttökatkot tiedostojärjestelmätarkistusten takia ovat olleet historiaa jo tovin.
 
-Itse tiedostojärjestelmä siis vaikuttaa merkittävästi siihen mitä seurauksia järjestelmän kaatumistilanteesta johtaa, mutta ongelma on monitahoinen.
-Tässä tutkielmassa tarkastellaan erityisesti Unix-tyyppisiä tiedostojärjestelmiä ja rajapintoja jotka on määritelty POSIX-standardissa.
-Vastuu siitä että käyttäjän dataa ei korruptoidu tiedostojärjestelmän kaatumistilanteessa ei ole pelkästään tiedostojärjestelmäajurin tai käyttöjärjestelmän taholla,
-vaan myös sovelluksilla.
-POSIX-tiedostojärjestelmäkutsujen käyttö kaatumisturvallisesti ei ole täysin suoraviivaista,
-vaan sovellusohjelmoijan täytyy käytännössä aina tehdä erityistoimenpiteitä jotta kokonaisuudesta tulee kaatumisturvallinen.
-Toisaalta itse tiedostojärjestelmätoteutuksen täytyy huolehtia siitä että tiedostojärjestelmän sisäisiä tietorakenteita päivitetään kaatumisturvallisesti ja että toteutus pystyy täyttämään POSIX-standardin asettamat vaatimukset joihin sovellukset luottavat.
+Kokonaisuutena kaatumistilanteista selviytiminen on monitahoinen ongelma.
+Vaikka siis käytettävä tiedostojärjestelmä vaikuttaakin merkittävästi siihen mitä seurauksia järjestelmän kaatumistilanteesta johtaa,
+on sovellusohjelmallakin oma vastuunsa siitä että käyttäjän dataa ei korruptoidu.
+Tiedostojärjestelmäkutsujen käyttö kaatumisturvallisesti ei välttämättä ole täysin suoraviivaista,
+vaan sovellusohjelmoijan täytyy usein tehdä erityistoimenpiteitä jotta kokonaisuudesta tulee kaatumisturvallinen.
+Toisaalta itse tiedostojärjestelmätoteutuksen täytyy huolehtia siitä että tiedostojärjestelmän sisäisten tietorakenteiden eheys säilyy kaatumistilanteessa ja että toteutus pystyy täyttämään tiedostojärjestelmärajapinnan asettamat vaatimukset joihin sovellukset luottavat.
+
 Tämän tutkielman tavoitteena on tarkastella kaatumisturvallisuutta molemmista näkökulmista.
 Ensimmäisessä osuudessa keskitytään tarkastelemaan sovellusten näkökulmasta:
 luvussa~\ref{ChapUnixFsBasics} tarkastellaan Unix-tiedostojärjestelmärajapintojen perusteita ja luvussa~\ref{ChapPosixDataConsistency} kuinka niitä tulisi käyttää kaatumisturvallisuuden takaamiseksi.
