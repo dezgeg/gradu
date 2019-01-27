@@ -465,18 +465,25 @@ Tiedostojärjestelmien vertailu tapahtuu niiden \emph{persistenssiominaisuuksia}
 Persistenssiominaisuudet ovat käytöksiä joita ilmenee tiedostojärjestelmän kaatumistilanteessa,
 kuten operaatioiden uudelleenjärjestyminen tai atomisuuden puute.
 Seuraavien operaatioiden osalta tutkittiin niiden atomisuutta:
+%
 \begin{itemize}
-    \item{Tiedoston olemassaolevan sisällön ylikirjoitus \texttt{write()}-kutsulla.}
-    \item{Sisällön lisääminen tiedoston loppuun \texttt{write()}-kutsulla.}
+    \item{Tiedoston olemassaolevan sisällön ylikirjoitus erikokoisilla \texttt{write()}-kutsulla.}
+    \item{Sisällön lisääminen tiedoston loppuun erikokoisilla \texttt{write()}-kutsulla.}
     \item{Hakemisto-operaatioita, kuten \texttt{link()}, \texttt{unlink()} ja \texttt{rename()}.}
 \end{itemize}
+%
+\texttt{write()}-kutsun tapauksessa on siis erikseen tutkittu tilanteita jossa tiedoston pituus kasvaa ja tilanteita jossa pelkästään ylikirjoitetaan olemassaolevaa sisältöä.
+Lisäksi molempia kokeiltiin vaihtelevilla kirjoitettavan datan määrillä,
+joista mielekkäitä tilanteita ovat levyn sektorin koon (tai vähemmän) verran, yhden tiedostojärjestelmälohkon sekä tätä suuremmat määrät.
 
-Jo pelkän tiedostoon kirjoittamiseen \texttt{write()}-kutsulla liittyy useita seikkoja jotka saattavat vaikuttaa lopputulokseen.
-Ensimmäinen seikka on että käytetäänkö \texttt{write()}-kutsua ylikirjoittamaan olemassa oleva tiedoston sisältöä vaiko kirjoitetaanko sillä tiedoston loppuun siten että sen koko kasvaa.
-Toinen on kirjoitettavan datan määrä, jossa ``mielenkiintoisia'' määriä ovat yhden levylohkon verran,
-yhden tiedostojärjestelmälohkon verran sekä tätä suuremmat määrät.
+Toinen tutkittu persistenssiominaisuuksien kategoria on mahdollinen tiedostojärjestelmäoperaatioiden järjestyksen vaihtuminen levylle kirjoittaessa.
 
-Toinen tutkittu persistenssiominaisuus on mahdollinen tiedostojärjestelmäoperaatioiden järjestyksen vaihtuminen levylle kirjoittaessa.
+\subsection{Koejärjestely}
+Persistenssiominaisuuksien testaus tapahtuu tutkijaryhmän kehittämällä BOB:ksi (\emph{Block Order Breaker}) kutsutulla työkalulla.
+Sen periaatteena on nauhoittaa testattavan tiedostojärjestelmän tekemiä levykirjoituksia lokitiedostoon,
+jonka avulla voidaan jälkikäteen käydä kaikki mahdolliset levyn tilat (joista siis jokainen vastaa mahdollista kaatumistilannetta) läpi.
+Nyt kaatumistilanteista voidaan etsiä vastaesimerkkejä joissa testattava persistenssiominaisuus ei päde.
+BOB:n voidaan siis vain todeta jonkin persistenssiominaisuuden paikkaansa pitämättömyys, mutta ei toisinpäin.
 
 \newcommand{\hdr}[1]{\rotatebox[origin=l]{90}{\small \texttt{#1}}}
 % ei atomisuutta    x  \atN
@@ -504,14 +511,6 @@ Toinen tutkittu persistenssiominaisuus on mahdollinen tiedostojärjestelmäopera
     hakemisto-operaatiot  & \no  & \no  & \yes & \yes & \yes & \yes & \yes & \yes & \yes & \yes & \yes & \yes & \no  & \yes & \yes & \yes \\
 \end{tabular}
 \egroup
-
-Persistenssiominaisuuksien testaus tapahtuu tutkijaryhmän kehittämällä BOB:ksi (\emph{Block Order Breaker}) kutsutulla työkalulla.
-Sen periaatteena on nauhoittaa testattavan tiedostojärjestelmän tekemiä levykirjoituksia lokitiedostoon,
-jonka avulla voidaan jälkikäteen käydä kaikki mahdolliset levyn tilat (joista siis jokainen vastaa mahdollista kaatumistilannetta) läpi.
-Nyt kaatumistilanteista voidaan etsiä vastaesimerkkejä joissa testattava persistenssiominaisuus ei päde.
-BOB:n voidaan siis vain todeta jonkin persistenssiominaisuuden paikkaansa pitämättömyys, mutta ei toisinpäin.
-
-\subsection{Tuloksia}
 
 % TODO for next release
 % Jo varsin yksinkertainen operaatio, tiedoston loppuun kirjoittaminen tuottaa erilaisia tuloksia eri tiedostojärjestelmäkonfiguraatioilla
