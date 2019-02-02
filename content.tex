@@ -159,10 +159,10 @@ Esimerkiksi aiemmin esitellyt tiedostojen käyttöoikeudet toimivat nimetyille p
 Tiedoston avaus tapahtuu \texttt{open}-funktiolla:
 
 % http://pubs.opengroup.org/onlinepubs/9699919799/functions/open.html#tag_16_357
-\begin{verbatim}
+\begin{minted}{c}
 int open(const char *path, int oflag, ...);
-\end{verbatim}
-
+\end{minted}
+%
 Parametri \texttt{path} on tiedoston polku merkkijonona
 ja \texttt{oflag} on kasa lippuja jotka määräävät miten tiedosto avataan.
 Yksi lipuista \texttt{O\_RDONLY}, \texttt{O\_WRONLY} ja \texttt{O\_RDWR} on pakko antaa.
@@ -182,9 +182,9 @@ Tiedoston sulkeminen tapahtuu \texttt{close}-funktiolla,
 jolle annetaan auki oleva tiedostokahva ainoana parametrina:
 
 % http://pubs.opengroup.org/onlinepubs/9699919799/functions/close.html#tag_16_67
-\begin{verbatim}
+\begin{minted}{c}
 int close(int fildes);
-\end{verbatim}
+\end{minted}
 
 \subsection{Tiedoston luku ja kirjoitus}
 
@@ -193,11 +193,11 @@ samalla tavalla, funktioilla \texttt{read} ja \texttt{write}:
 
 % http://pubs.opengroup.org/onlinepubs/9699919799/functions/read.html#tag_16_474
 % http://pubs.opengroup.org/onlinepubs/9699919799/functions/write.html#tag_16_685
-\begin{verbatim}
+\begin{minted}{c}
 ssize_t read(int fildes, void *buf, size_t nbyte);
 ssize_t write(int fildes, const void *buf, size_t nbyte);
-\end{verbatim}
-
+\end{minted}
+%
 Ensimmäinen parametri \texttt{fildes} on tiedostokahva jota operoidaan.
 \texttt{buf} on osoitin \texttt{nbyte} tavun kokoiseen puskuriin johon
 luetaan tai josta kirjoitetaan.
@@ -214,9 +214,9 @@ Tiedostoa avatessa tiedostokahvan sijainti on normaalisti tiedoston alussa ja lu
 Tiedostokahvan sijaintia tiedostossa voi siirtää \texttt{lseek}-kutsulla:
 
 % http://pubs.opengroup.org/onlinepubs/9699919799/functions/lseek.html#tag_16_310
-\begin{verbatim}
+\begin{minted}{c}
 off_t lseek(int fildes, off_t offset, int whence);
-\end{verbatim}
+\end{minted}
 Ensimmäinen parametri \texttt{fildes} on tiedostokahva jota operoidaan.
 Kolmas parametri \texttt{whence} kertoo miten \texttt{offset}-parametri tulkitaan.
 Sallittuja arvoja ovat vakiot \texttt{SEEK\_SET}, \texttt{SEEK\_CUR} ja \texttt{SEEK\_END},
@@ -236,14 +236,14 @@ Tiedoston metadatan voi lukea \texttt{fstat()}- tai \texttt{stat()}-funktioilla.
 
 % http://pubs.opengroup.org/onlinepubs/9699919799/functions/fstat.html#tag_16_173
 % myös: int lstat(const char *path, struct stat *buf);
-\begin{verbatim}
+\begin{minted}{c}
 int fstat(int fildes, struct stat *buf);
 int stat(const char *path, struct stat *buf);
-\end{verbatim}
-
+\end{minted}
+%
 Onnistuessaan funktio täyttää \texttt{struct stat}-tietueen,
 josta löytyy muun muassa seuraavia kenttiä:
-
+%
 \begin{itemize}
     \item Kenttä \texttt{mode\_t st\_mode} kertoo tiedoston tyypin (tavallinen tiedosto, hakemisto, yms.) ja käyttöoikeudet.
     \item Kenttä \texttt{size\_t st\_size} kertoo tiedoston koon tavuina.
@@ -252,14 +252,14 @@ josta löytyy muun muassa seuraavia kenttiä:
     \item Kentät \texttt{st\_atim}, \texttt{st\_mtim} ja \texttt{st\_ctim} kertovat tiedoston aikaleimat.
 \end{itemize}
 
-% \begin{verbatim}
+% \begin{minted}{c}
 %         mode_t st_mode          Mode of file (see below).
 %         uid_t st_uid            User ID of file.
 %         gid_t st_gid            Group ID of file.
 %         struct timespec st_atim Last data access timestamp.
 %         struct timespec st_mtim Last data modification timestamp.
 %         struct timespec st_ctim Last file status change timestamp.
-% \end{verbatim}
+% \end{minted}
 %
 % dev_t st_dev            Device ID of device containing file
 % ino_t st_ino            File serial number.
@@ -275,24 +275,26 @@ josta löytyy muun muassa seuraavia kenttiä:
 %
 
 Tiedoston (mutta ei hakemistoa) voi poistaa \texttt{unlink()}-funktiolla:
-\begin{verbatim}
+\begin{minted}{c}
 int unlink(const char *path);
-\end{verbatim}
-
+\end{minted}
+%
 Hakemiston poistamiselle on oma funktio \texttt{rmdir()}:
-
-\begin{verbatim}
+%
+\begin{minted}{c}
 int rmdir(const char *path);
-\end{verbatim}
+\end{minted}
+%
 Hakemiston poistaminen onnistuu vain mikäli hakemisto on tyhjä.
 
 %%% % http://pubs.opengroup.org/onlinepubs/9699919799/functions/unlink.html#tag_16_635
 Tiedoston voi uudelleen nimetä \texttt{rename()}-funktiolla:
 % http://pubs.opengroup.org/onlinepubs/9699919799/functions/rename.html#tag_16_487
-\begin{verbatim}
+%
+\begin{minted}{c}
 int rename(const char *old, const char *new);
-\end{verbatim}
-
+\end{minted}
+%
 Uudelleennimeämisen ei tarvitse tapahtua saman hakemiston sisällä,
 vaan esimerkiksi \texttt{rename("/tmp/file.tmp", "/home/foo/file.txt")} on sallittua,
 mutta sekä lähde- että kohdepolun täytyy sijaita samalla tiedostojärjestelmällä.
@@ -303,49 +305,49 @@ Kaikissa tapauksissa operaatio on atominen.
 %%% % FIXME: hard links
 %%%
 %%% % http://pubs.opengroup.org/onlinepubs/9699919799/functions/chmod.html#tag_16_58
-%%% \begin{verbatim}
+%%% \begin{minted}{c}
 %%% int chmod(const char *path, mode_t mode);
-%%% \end{verbatim}
+%%% \end{minted}
 %%%
 %%% % http://pubs.opengroup.org/onlinepubs/9699919799/functions/chown.html#tag_16_59
-%%% \begin{verbatim}
+%%% \begin{minted}{c}
 %%% int chown(const char *path, uid_t owner, gid_t group);
-%%% \end{verbatim}
+%%% \end{minted}
 %%%
 %%% % http://pubs.opengroup.org/onlinepubs/9699919799/functions/link.html#tag_16_293
-%%% \begin{verbatim}
+%%% \begin{minted}{c}
 %%% int link(const char *path1, const char *path2);
-%%% \end{verbatim}
+%%% \end{minted}
 %%%
 %%% % http://pubs.opengroup.org/onlinepubs/9699919799/functions/unlink.html#tag_16_635
-%%% \begin{verbatim}
+%%% \begin{minted}{c}
 %%% int unlink(const char *path);
-%%% \end{verbatim}
+%%% \end{minted}
 %%%
 %%% % http://pubs.opengroup.org/onlinepubs/9699919799/functions/readdir.html#tag_16_475
-%%% \begin{verbatim}
+%%% \begin{minted}{c}
 %%% struct dirent *readdir(DIR *dirp);
-%%% \end{verbatim}
+%%% \end{minted}
 %%%
 %%% % http://pubs.opengroup.org/onlinepubs/9699919799/functions/readlink.html#tag_16_476
-%%% \begin{verbatim}
+%%% \begin{minted}{c}
 %%% ssize_t readlink(const char *restrict path, char *restrict buf, size_t bufsize);
-%%% \end{verbatim}
+%%% \end{minted}
 %%%
 %%% % http://pubs.opengroup.org/onlinepubs/9699919799/functions/ftruncate.html
-%%% \begin{verbatim}
+%%% \begin{minted}{c}
 %%% int ftruncate(int fildes, off_t length);
-%%% \end{verbatim}
+%%% \end{minted}
 %%%
 %%% % http://pubs.opengroup.org/onlinepubs/9699919799/functions/fdopendir.html#tag_16_127
-%%% \begin{verbatim}
+%%% \begin{minted}{c}
 %%% DIR *opendir(const char *dirname);
-%%% \end{verbatim}
+%%% \end{minted}
 %%%
 %%% % http://pubs.opengroup.org/onlinepubs/9699919799/functions/closedir.html
-%%% \begin{verbatim}
+%%% \begin{minted}{c}
 %%% int closedir(DIR *dirp);
-%%% \end{verbatim}
+%%% \end{minted}
 
 \section{POSIX-rajapintojen käyttö kaatumisturvallisesti}
 \label{ChapPosixDataConsistency}
@@ -378,10 +380,10 @@ Moderneissa Unix-järjestelmissä levyvälimuistien käyttö on laajennettu kosk
 % http://pubs.opengroup.org/onlinepubs/9699919799/functions/fsync.html
 % http://pubs.opengroup.org/onlinepubs/9699919799/functions/fdatasync.html
 Levyvälimuistin hallintaan löytyy POSIXissa kaksi keskeistä funktiota~\cite{PosixSpec}:
-\begin{verbatim}
+\begin{minted}{c}
 int fsync(int fildes);
 int fdatasync(int fildes);
-\end{verbatim}
+\end{minted}
 %
 Operaatio \texttt{fdatasync()} pakottaa parametrina annettua tiedostokahvaa \texttt{fildes} vastaavan tiedoston levyvälimuistin kirjoittamisen.
 Funktiokutsu ei palaa kunnes data on turvallisesti kirjoitettu levylle.
@@ -511,13 +513,13 @@ BOB:n voidaan siis vain todeta jonkin persistenssiominaisuuden paikkaansa pitäm
     hakemisto-operaatiot  & \no  & \no  & \yes & \yes & \yes & \yes & \yes & \yes & \yes & \yes & \yes & \yes & \no  & \yes & \yes & \yes \\
 \end{tabular}
 \egroup
-
+%
 % TODO for next release
 % Jo varsin yksinkertainen operaatio, tiedoston loppuun kirjoittaminen tuottaa erilaisia tuloksia eri tiedostojärjestelmäkonfiguraatioilla
 % sekä myös kirjoitettavan datan määrä vaikuttaa tulokseen.
 % Jo yhden sektorin (tai vähemmän) lisääminen tiedostoon ei ole atominen operaatio muutamalla tiedostojärjestelmällä: \texttt{ext2} sekä
 % \texttt{ext3}, \texttt{ext4} ja \texttt{reiserfs} mikäli käytetään writeback-journalointitilaa.
-
+%
 Kuten edellisessä luvussa nähtiin,
 jo pelkästään Linuxin mukana tulevat tiedostojärjestelmät omaavat erilaisia persistenssiominaisuuksia,
 jotka saattoivat riippua myös tiedostojärjestelmälle annetuista optioista.
@@ -693,12 +695,12 @@ Hakemistoalkio sijaitsee aina kokonaan yhden datalohkon sisällä.
 Hakemistoalkio koostuu vakiokokoisesta otsakkeesta jota välittömästi seuraa tiedostonimi.
 Otsakkeen rakenne on seuraavanlainen:
 
-\begin{verbatim}
+\begin{minted}{c}
 	uint32_t inode;
 	uint16_t rec_len;
 	uint8_t name_len;
 	uint8_t file_type;
-\end{verbatim}
+\end{minted}
 
 Kenttä \texttt{inode} sisältää hakemistoalkion viittaavan inoden numeron,
 jossa inodenumero 0 tarkoittaa käyttämätöntä tilaa hakemistossa.
@@ -861,7 +863,7 @@ Tämän esimerkin kaatumistilanne voi aiheuttaa seuraavia inkonsistenssiuksia:
     \item{Kohtien 6--7 välissä: lohkobittikartta näyttää vapaita lohkoja olevan vähemmän kuin niitä todellisuudessa on.}
     \item{Kohtien 7--8 välissä: tiedostoa \texttt{new} vastaava inode viittaa alustamattomiin lohkoihin.}
 \end{enumerate}
-
+%
 Näistä tilanteista kaksi ensimmäistä johtaa datalohkojen vuotamiseen,
 eli samantyyppiseen tilanteeseen kuten edellisen aliluvun esimerkissä josta aiheutui vapaiden inodejen vuotaminen.
 Kolmannessa kaatumistilanteessa taas päädytään tilanteeseen missä tiedoston \texttt{new} inoden kokoa on kasvatettu onnistuneesti ja siihen on lisätty viittaukset datalohkoihin sekä epäsuoraan lohkoon,
@@ -952,13 +954,13 @@ ja jokaisen kokonaan lokiin kirjoitetun transaktion sisältölohkot kirjoitetaan
 paitsi että lohkoryhmä 0 sisältää 32 megatavun kokoisen journalin.
 Testiohjelmana käytetään seuraavaa koodinpätkää,
 joka luo tiedostojärjestelmään uuden tiedoston \texttt{new} ja kirjoittaa sinne 64 kilotavua dataa:
-
-\begin{verbatim}
+%
+\begin{minted}{c}
     int fd = creat("/mnt/fs/new", 0644);
     write(fd, "XXX...XXX", 64 * 1024);
     close(fd);
-\end{verbatim}
-
+\end{minted}
+%
 Molemmat testiohjelman tekemät tiedostojärjestelmäkutsut valmistuvat aiheuttamatta yhtään levykirjoituksia,
 eli \texttt{ext2}:n tapaan operaation tehdään ensin pelkästään muistissa ja kirjoitetaan vasta myöhemmin taustalla levylle:
 
@@ -1153,13 +1155,13 @@ Copy-on-write-tekniikka on keskeinen useiden edellä mainittujen ominaisuuksien 
 Btrfs:n levytietorakenteet poikkeavat merkittävästi perinteisistä Unix-tiedosto\-järjestelmistä.
 Superlohkoa lukuun ottamatta kaikki Btrfs-tiedostojärjestelmän metadata sijaitsee levyllä B-puuhun pohjautuvassa tietorakenteessa.
 Btrfs:n kaikkien B-puiden avaimena on seuraava 17 tavun kokoinen tietorakenne \texttt{btrfs\_key}:
-\begin{verbatim}
+\begin{minted}{c}
 struct btrfs_key {
     uint64_t objectid;
     uint8_t type;
     uint64_t offset;
 }
-\end{verbatim}
+\end{minted}
 Jokaisella tiedostojärjestelmäobjektilla on yksilöivä tunniste \texttt{objectid},
 ja B-puun sisältämiä avain-arvo-pareja käytetään oleellisesti yhdistämään mahdollisesti useita erityyppisiä tietueita avaimen \texttt{objectid}-kentän osoittamaan tiedostojärjestelmäobjektiin.
 Avaimen \texttt{type}-kenttä kertoo tietueen tyypin ja \texttt{offset}-kenttä tietueiden järjestyksen samantyyppisten tietueiden välillä.
