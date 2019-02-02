@@ -90,7 +90,7 @@ Tiedostojärjestelmien käsittelyä varten POSIX tarjoaa sekä komentorivikoment
 Valtaosa näistä ohjelmointirajapinnoista toimivat varsin matalalla tasolla,
 joista sovellusohjelmoijan täytyy itse koostaa useat vähänkään monimutkaisemmat tiedostojärjestelmäoperaatiot.
 Erityisesti tiedostojärjestelmän käyttö kaatumisturvallisesti vaatii ohjelmoijalta erityistä kykyä ja ymmärrystä käyttää POSIX-rajapintoja oikein,
-mitä käsitellään myöhemmin kappaleessa~\ref{ChapPosixDataConsistency}.
+mitä käsitellään myöhemmin luvussa~\ref{ChapPosixDataConsistency}.
 Tästä syystä esitelläänkin seuraavaksi lyhyesti tärkeimmät POSIXin tarjoamat C-rajapinnat tiedostojen käsittelyyn.
 
 \subsection{POSIX-tiedostojärjestelmärajapintojen perusteet}
@@ -578,7 +578,7 @@ Edellisissä kappaleissa nähtiin sovellusohjelmoijan näkökulmasta millaisia t
 Nyt siirrytään tarkastelemaan miten itse tiedostojärjestelmän pitää toimia jotta kaatumisturvallisuus säilyy koko kokonaisuuden kannalta.
 Esimerkiksi aiemmin nähdyn tekstieditoriesimerkin toiminnan kannalta on kriittistä että \texttt{rename()}-kutsu toimii atomisesti,
 joten tiedostojärjestelmän täytyy siis pystyä toteuttamaan tämä sekä joitakin muita lupauksia tiedostojärjestelmäkutsujen toiminnasta.
-Tässä kappaleessa vastataan näihin kysymyksiin perehtymällä Linuxin \texttt{ext2}-tiedostojärjestelmän sisäiseen toimintaan ja sen rakenteeseen levyllä.
+Tässä luvussa vastataan näihin kysymyksiin perehtymällä Linuxin \texttt{ext2}-tiedostojärjestelmän sisäiseen toimintaan ja sen rakenteeseen levyllä.
 Tiedostojärjestelmän levyrakenne vaikuttaa olennaisesti siihen minkälaisia epäkonsistenttiuksia tiedostojärjestelmään voi syntyä virhetilanteissa,
 joten vahva ymmärrys ext2:n levyformaatista on tarpeen tutkittaessa ext2:n käyttäytymistä kaatumistilanteessa luvussa~\ref{ChapExt2Crash}.
 Lisäksi ext2:n levyrakenne on vahvasti BSD-käyttöjärjestelmän Berkeley Fast Filesystem-tiedostojärjestelmän inspiroima~\cite{Ext2Design},
@@ -889,7 +889,7 @@ Eräs varsin laajasti käytetty tekniikka on \emph{kirjaavat}tai \emph{journaloi
 Tätä tekniikkaa käyttääkin ext2:n seuraaja ext3, sekä sen lisäksi
 muun muassa IBM:n JFS sekä Microsoftin NTFS~\cite{JournalingAnalysis}.
 Kirjauksen toteuttaminen tiedostojärjestelmään voidaan tehdä muutamalla eri lähestymistavalla.
-Tässä kappaleessa kuitenkin tarkastellaan pääosin ext3:n toteutusta kirjauksesta.
+Tässä luvussa kuitenkin tarkastellaan pääosin ext3:n toteutusta kirjauksesta.
 
 \subsection{Motivaatio}
 
@@ -1033,8 +1033,8 @@ mikä tapahtuu \emph{segmentin puhdistuksella} (\emph{segment cleaning}).
 \subsection{Sprite LFS:n levyrakenne}
 
 Sprite LFS:llä on merkittävästi yhtenäisyyksiä perinteisen Berkeley Fast Filesystem-tiedostojärjestelmän kanssa ja siten myös \texttt{ext2}:n kanssa.
-Tässä kappaleessa selitetään pelkät eroavaisuudet kappaleessa~\ref{ChapExt2Fs} esiteltyihin \texttt{ext2}:n levytietorakenteisiin.
-%Seuraavilta osin Sprite LFS toimii samoin kuin aiemmin kappaleessa~\ref{ChapExt2Fs} esitelty ext2:
+Tässä luvussa selitetään pelkät eroavaisuudet luvussa~\ref{ChapExt2Fs} esiteltyihin \texttt{ext2}:n levytietorakenteisiin.
+%Seuraavilta osin Sprite LFS toimii samoin kuin aiemmin luvussa~\ref{ChapExt2Fs} esitelty ext2:
 %\begin{itemize}
 %    \item{osoitus datalohkoihin: Kuten ext2:ssa, Sprite LFS:n inode pystyy viittaamaan suoraan kymmeneen datalohkoon ja tätä suuremmilla tiedostoilla käytetään epäsuorien lohkojen muodostamaa lohkopuuta.}
 %    \item{hakemistojen sisältö: Kuten ext2:ssa, hakemistoalkiot ...}
@@ -1095,7 +1095,7 @@ voidaan keskeneräisesti kirjoitettu tarkistuspiste tunnistaa ja samalla tavoin 
 
 \subsection{Eteenkiertopalautus}
 
-Edellisessä kappaleessa nähtiin kuinka tiedostojärjestelmään voidaan tehdä muutoksia kaatumisturvallisesti ja atomisesti kirjoittamalla uusi tarkistuspiste.
+Edellisessä luvussa nähtiin kuinka tiedostojärjestelmään voidaan tehdä muutoksia kaatumisturvallisesti ja atomisesti kirjoittamalla uusi tarkistuspiste.
 Kokonaisen tarkistuspisteen luominen vaatii kuitenkin suhteellisen monta levykirjoitusta,
 joten Sprite LFS käyttää lisäksi monimutkaisempaa \emph{eteenkiertopalautusta} (\emph{roll forward recovery}) joka tuo samantasoisen kaatumisturvallisuuden mutta pienemmällä määrällä levykirjoituksia.
 Eteenkiertopalautuksen perusajatuksena on lähteä liikkeelle viimeisimmästä tarkistuspisteestä samoin kuin aiemmin,
@@ -1143,7 +1143,7 @@ ja tilanteesta riippuen koko hakemisto-operaatio saatetaan loppuun tai perutaan 
 \subsection{Motivaatio}
 Eräs uudempi, niinikään perinteisistä päälle kirjoittavista tiedostojärjestelmistä poikkeava tekniikka on \emph{kirjoittaessa kopioivat} (\emph{CoW, Copy-on-Write}) tiedostojärjestelmät.
 Merkittävimpiä kirjoittaessa kopioivia tiedostojärjestelmiä on Solaris-käyttöjärjestelmää varten suunniteltu ZFS vuodelta 2005,
-sekä Linuxiin vuodesta 2007 lähtien kehityksen alla ollut Btrfs~\cite{Btrfs} johon tutustutaan tässä kappaleessa.
+sekä Linuxiin vuodesta 2007 lähtien kehityksen alla ollut Btrfs~\cite{Btrfs} johon tutustutaan tässä luvussa.
 
 Btrfs-tiedostojärjestelmän tavoitteena on olla seuraava uuden sukupolven yleiskäyttöinen tiedostojärjestelmä jota voitaisiin käyttää kaikkialla matalatehoisista laitteista, kuten älypuhelimista palvelinsaleihin.
 Verrattuna Linuxin aiempaan vakiintuneeseen \texttt{ext4}-tiedostojärjestelmään Btrfs kilpailee pääasiassa uusilla ominaisuuksilla,
@@ -1195,7 +1195,7 @@ mikä onkin tiedostojärjestelmän ainoa tietorakenne jota päivitetään pääl
 \section{Kirjoitusjärjestyksen hallintaan perustuvat tiedostojärjestelmät (``soft updates'')}
 \label{ChapSoftUpdates}
 Edellisissä kappaleissa esiteltiin tekniikoita jossa tiedostojärjestelmän konsistenssiuden säilyminen kaatumistilanteessa toteutettiin tuomalla tiedostojärjestelmään menetelmä atomisten päivitysten tekemiseen.
-Tässä kappaleessa tarkastellaan vaihtoehtoista \emph{pehmeät päivitykset} (\emph{soft updates})-tekniikkaa,
+Tässä luvussa tarkastellaan vaihtoehtoista \emph{pehmeät päivitykset} (\emph{soft updates})-tekniikkaa,
 ja erityisesti sen toteutusta Berkeley Fast Filesystem (FFS)-tiedostojärjestelmään~\cite{SoftUpdatesFfs}.
 Pehmeiden päivitysten pääperiaatteena on käyttää edelleen FFS:n levyformaattia,
 mutta tehdä päivitykset levytietorakenteisiin järjestyksessä jossa tiedostojärjestelmä säilyy mahdollisimman konsistenttina.
