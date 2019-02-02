@@ -503,6 +503,8 @@ BOB:n voidaan siis vain todeta jonkin persistenssiominaisuuden paikkaansa pitäm
 \newcommand{\yes}{$\bullet$}
 \newcommand{\no}{\small $\times$}
 
+\begin{table}
+\label{TabPersistencePropsAtomicity}
 \bgroup
 %\def\arraystretch{0.9}
 \setlength{\tabcolsep}{0.3em}
@@ -513,6 +515,8 @@ BOB:n voidaan siis vain todeta jonkin persistenssiominaisuuden paikkaansa pitäm
     hakemisto-operaatiot  & \no  & \no  & \yes & \yes & \yes & \yes & \yes & \yes & \yes & \yes & \yes & \yes & \no  & \yes & \yes & \yes \\
 \end{tabular}
 \egroup
+\caption{Tulokset atomisuuteen liittyvistä persistenssiominaisuuksista. FIXME lähde.}
+\end{table}
 %
 % TODO for next release
 % Jo varsin yksinkertainen operaatio, tiedoston loppuun kirjoittaminen tuottaa erilaisia tuloksia eri tiedostojärjestelmäkonfiguraatioilla
@@ -965,6 +969,7 @@ Molemmat testiohjelman tekemät tiedostojärjestelmäkutsut valmistuvat aiheutta
 eli \texttt{ext2}:n tapaan operaation tehdään ensin pelkästään muistissa ja kirjoitetaan vasta myöhemmin taustalla levylle:
 
 \begin{table}[H]
+\label{TabExt3CreatAndWrite}
 \begin{tabular}{l | l | l | l | l | p{7cm}}
     \# & aika (s) & $\Delta t$ & lohko & lkm & kuvaus \\ \hline \hline
     1  & 0.000    & +0.000   &      &      & \texttt{creat()}-kutsu alkaa   \\ \hline %
@@ -983,6 +988,7 @@ eli \texttt{ext2}:n tapaan operaation tehdään ensin pelkästään muistissa ja
     14 & 36.131   & +0.000   & 516  & 1    & Juurihakemisto: lisätään hakemistoalkio \texttt{new} osoittamaan inodeen 12                 \\ \hline % 9
     15 & 36.131   & +0.000   & 8722 & 1    & Tiedoston \texttt{new} epäsuora lohko: tiedoston lohkot 12--15 merkitään viittaamaan lohkoihin 9228--9231 \\        % 8
 \end{tabular}
+\caption{Tiedoston luonnista ja sinne kirjoittamisesta seuraavat levyoperaatiot \texttt{ext3}-tiedostojärjestelmässä.}
 \end{table}
 
 %%%%% \begin{enumerate}
