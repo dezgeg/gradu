@@ -1022,7 +1022,7 @@ Perinteisiä mekaanisia kiintolevyjä käytettäessä suorituskyvyn kannalta huo
 mikä tarkoittaa että levyltä useiden lohkojen lukeminen tai kirjoittaminen vie enemmän aikaa mikäli lohkot eivät sijaitse levyllä peräkkäin.
 Tämän johdosta lokipohjaisten tiedostojärjestelmien levyformaatit ovatkin suunniteltu siten,
 että valtaosa levykirjoituksista tehdään kirjoittamalla mahdollisimman pitkinä ja perättäisinä kirjoituksina tiedostojärjestelmän \emph{lokin} loppuun.
-Erityisesti lokin 'keskellä' olevien lohkojen sisältöä ei koskaan käydä uudelleenkirjoittamassa,
+Erityisesti lokin `keskellä' olevien lohkojen sisältöä ei koskaan käydä uudelleenkirjoittamassa,
 vaan Sprite LFS ottaa erilaisen lähestymistavan tilanteisiin jossa jotain olemassa olevaa levytietorakennetta täytyy päivittää.
 Olemassa olevan levytietorakenteen sisältävän levylohkon muokkaamisen sijaan kirjoitetaan lokin loppuun uusi lohko johon haluttu muokkaus on tehty,
 ja tästä uudesta lohkosta tulee uusi sijainti kyseiselle levytietorakenteelle.
@@ -1048,9 +1048,9 @@ Tiedostojärjestelmän lokialueelle kirjoitetaan seitsemää erityyppisiä lohko
         Hakemistot toimivat samalla periaatteella kuin \texttt{ext2}:ssa, eli hakemistoinoden datalohkot sisältävät hakemistoalkioita peräkkäismuodossa.}
     \item{Epäsuora lohko: toimivat samalla lailla kuin \texttt{ext2}:ssa, suurien tiedostojen datalohkoihin viitataan epäsuorien lohkojen muodostamalla lohkopuulla.}
     \item{Inodelohkot: sisältö pääosin samanlainen kuin \texttt{ext2}:n inode. Suurimpana erona on että Sprite LFS:n inoden sijaintia levyllä ei voi laskea pelkän inodenumeron avulla.}
-    \item{Inodekarttan lohkot (\emph{inode map}): tietorakenne jonka avulla voidaan paikantaa inoden sijainti levyllä inodenumeron perusteella.}
-    \item{Segmentin käyttöastetaulun lohkot (\emph{segment usage table}): ylläpitää tietoa kunkin segmentin vapaiden lohkojen määrästä.}
-    \item{Segmentin yhteenvetolohko (\emph{segment summary block}): TODO}
+    \item{Inodekartan (\emph{inode map}) lohkot: tietorakenne jonka avulla voidaan paikantaa inoden sijainti levyllä inodenumeron perusteella.}
+    \item{Segmentin käyttöastetaulun (\emph{segment usage table}) lohkot: ylläpitää tietoa kunkin segmentin vapaiden lohkojen määrästä.}
+    \item{Segmentin yhteenvetolohko (\emph{segment summary block}): kertoo segmentin sisältämien lohkojen tyypit (data vai metadata). Käytetään kaatumistilanteesta palautumisessa ja segmentin puhdistuksessa.}
     \item{Hakemistojen muutoslokilohko (\emph{directory change log block}): käytetään kaatumistilanteesta palautumiseen.}
 \end{itemize}
 Huomioitavaa on että \texttt{ext2}:een verrattuna inodebittikarttaa eikä lohkobittikarttaa ole.
@@ -1076,15 +1076,14 @@ Kokonaisuutena tiedostojärjestelmälle tehdään seuraavat operaatiot:
     \item{Hakemiston muutoslokilohko joka kertoo \texttt{testdir}:iin tapahtuvan hakemistoalkion luomisen kirjoitetaan lokiin.}
     \item{Uuden tiedoston \texttt{newfile} datalohko kirjoitetaan lokiin.}
     \item{Hakemiston \texttt{testdir} datalohkosta kirjoitetaan uusi versio lokiin johon on lisätty hakemistoalkio \texttt{newfile}.}
-    \item{Uuden tiedoston \texttt{newfile} inode ja hakemiston \texttt{testdir} inodesta kirjoitetaan uusi versio jossa datalohkoksi on vaihtunut edellisessä kohdassa kirjoitettu lohko. Molemmat}
-    \item{Inodekartan lohkoista kirjoitetaan uudet versiot lokiin joissa kerrotaan \texttt{newfile}:n ja \texttt{testdir}:n inodejen uudet sijainnit levyllä.}
+    \item{Uuden tiedoston \texttt{newfile} inode ja hakemiston \texttt{testdir} inodesta kirjoitetaan uusi versio jossa datalohkoksi on vaihtunut edellisessä kohdassa kirjoitettu lohko. Molemmat lisätään uuteen inodelohkoon joka kirjoitetaan lokiin.}
+    \item{Inodekartan lohkoista kirjoitetaan uudet versiot lokiin joissa kerrotaan \texttt{newfile}:n ja \texttt{testdir}:n inodejen sijaitsevan nyt kohdassa 4 kirjoitetussa inodelohkossa.}
     \item{Segmentin käyttöastetaulun lohkoista kirjoitetaan uudet versiot lokiin, koska kohdissa 3.--5. tehdyt päivitykset aiheuttivat kuolleita lohkoja aiempiin lokisegmentteihin.}
-    \item{Segmentin yhteenveto kirjoitetaan lokiin.}
+    \item{Segmentin yhteenveto kirjoitetaan lokiin. FIXME details.}
     \item{Uusi tarkistuspiste kirjoitetaan, joka viittaa kohdissa 5. ja 6. kirjoitettuun inodekarttaan ja segmentin käyttöastetauluun.}
 \end{enumerate}
-
 Lokipohjaiselle tiedostojärjestelmälle on kaksi mahdollista tekniikkaa jota käyttää kaatumistilanteista palautumiseen.
-Yksinkertaisempi tekniikka on käyttää pelkkää tarkistuspisteitä palautumiseen ja monimutkaisempi mutta suorituskyvyltään parempi tekniikka on lisäksi käyttää \emph{eteenkiertoa} (\emph{roll-forward recovery}).
+Yksinkertaisempi tekniikka on käyttää pelkkää tarkistuspisteitä palautumiseen ja monimutkaisempi mutta suorituskyvyltään parempi tekniikka on lisäksi käyttää \emph{eteenkiertopalautusta} (\emph{roll-forward recovery}).
 
 Pelkkää tarkistuspistettä käytettäessä ei palautumisen yhteydessä tarvitse tehdä mitään tavallisesta tiedostojärjestelmän liittämisestä poikkeavaa,
 eli yksinkertaisesti jatketaan tiedostojärjestelmän käyttöä uusimman kokonaan kirjoitetun tarkistuspisteen perusteella.
@@ -1095,7 +1094,7 @@ voidaan keskeneräisesti kirjoitettu tarkistuspiste tunnistaa ja samalla tavoin 
 
 \subsection{Eteenkiertopalautus}
 
-Edellisessä luvussa nähtiin kuinka tiedostojärjestelmään voidaan tehdä muutoksia kaatumisturvallisesti ja atomisesti kirjoittamalla uusi tarkistuspiste.
+Edellisessä aliluvussa nähtiin kuinka tiedostojärjestelmään voidaan tehdä muutoksia kaatumisturvallisesti ja atomisesti kirjoittamalla uusi tarkistuspiste.
 Kokonaisen tarkistuspisteen luominen vaatii kuitenkin suhteellisen monta levykirjoitusta,
 joten Sprite LFS käyttää lisäksi monimutkaisempaa \emph{eteenkiertopalautusta} (\emph{roll forward recovery}) joka tuo samantasoisen kaatumisturvallisuuden mutta pienemmällä määrällä levykirjoituksia.
 Eteenkiertopalautuksen perusajatuksena on lähteä liikkeelle viimeisimmästä tarkistuspisteestä samoin kuin aiemmin,
