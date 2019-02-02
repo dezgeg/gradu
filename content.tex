@@ -382,7 +382,7 @@ Levyvälimuistin hallintaan löytyy POSIXissa kaksi keskeistä funktiota~\cite{P
 int fsync(int fildes);
 int fdatasync(int fildes);
 \end{verbatim}
-
+%
 Operaatio \texttt{fdatasync()} pakottaa parametrina annettua tiedostokahvaa \texttt{fildes} vastaavan tiedoston levyvälimuistin kirjoittamisen.
 Funktiokutsu ei palaa kunnes data on turvallisesti kirjoitettu levylle.
 \texttt{fdatasync()}-kutsu ei vaikuta tiedoston metadataan muuten kuin että kutsun onnistuessa taataan että tiedostoon tähän asti tehdyt kirjoitukset ovat luettavissa kaatumisen jälkeenkin.
@@ -401,30 +401,30 @@ Lisäksi voidaan odottaa tallennusoperaation olevan \emph{pysyvä} (\emph{durabl
 eli editorin ilmoittaessa tallennuksen olevan valmis täytyy tiedoston uuden version olla kirjoitettuna levylle.
 Suoraviivaisin tapa toteuttaa tallennus on kirjoittaa koko tiedosto uudelleen seuraavasti:
 
-\begin{verbatim}
+\begin{minted}[linenos]{c++}
 int fd = open("/mnt/usb/file.txt", O_CREAT | O_WRONLY | O_TRUNC);
 write(fd, uusi_sisalto, strlen(uusi_sisalto));
 close(fd);
-\end{verbatim}
-
+\end{minted}
+%
 Tämä sekvenssi operaatioita ei kuitenkaan ole turvallinen vaikka edes tiedostojärjestelmän kaatumista ei tapahtuisi.
 Jo pelkkä tekstieditorin kaatuminen \texttt{open()}- ja \texttt{write()}- kutsujen välissä jättää jäljelleen tyhjän tiedoston.
 Yksinkertainen yritys välttyä tältä ongelmalta on ensin kirjoittaa tallennettava sisältö väliaikaistiedostoon,
 ja hyödyntää \texttt{rename()}-kutsun kykyä atomisesti korvata tiedosto toisella:
 
-\begin{verbatim}
+\begin{minted}[linenos]{c++}
 int fd = open("/mnt/usb/file.txt.tmp", O_CREAT | O_WRONLY | O_TRUNC);
 write(fd, uusi_sisalto, strlen(uusi_sisalto));
 close(fd);
 rename("/mnt/usb/file.txt.tmp", "/mnt/usb/file.txt");
-\end{verbatim}
-
+\end{minted}
+%
 Tämä versio sietää sovelluksen kaatumisen mutta ei toimi tiedostojärjestelmän kaatumistilanteessa,
 sillä mikään ei takaa että \texttt{write()}-kutsun tekemät kirjoitukset ja tiedoston uudelleennimeäminen \texttt{rename()}-kutsulla kirjoitettaisiin levylle edellä mainitussa järjestyksessä.
 Tiedostojärjestelmän kaatumistilanteessa tyhjä tai osittain kirjoitettu tiedosto on siis edelleen mahdollinen.
 Sen sijaan täysin kaatumisturvallinen tallennus on toteutettu Gedit-tekstieditorissa seuraavasti~\cite{OptimisticCrashConsistency}:
 
-\begin{verbatim}
+\begin{minted}[linenos]{c++}
 int fd = open("/mnt/usb/file.txt.tmp", O_CREAT | O_WRONLY | O_TRUNC);
 write(fd, uusi_sisalto, strlen(uusi_sisalto));
 fsync(fd);
@@ -433,11 +433,11 @@ rename("/mnt/usb/file.txt.tmp", "/mnt/usb/file.txt");
 int dfd = open("/mnt/usb", O_DIRECTORY | O_RDONLY);
 fsync(dfd);
 close(dfd);
-\end{verbatim}
-
-\texttt{write()}-ja \texttt{rename()}-kutsujen väliin on siis lisätty yksi \texttt{fsync()}-kutsu takaamaan että näiden operaatioiden järjestys ei vaihdu levylle kirjoittaessa.
-Tämä lisätty \texttt{fsync(fd)} tekee tiedoston tallennusoperaatiosta atomisen mutta ei vielä takaa pysyvyyttä.
-Pysyvyyteen vaaditaan \texttt{fsync()}-operaation suoritus kohdetiedoston sisältävälle hakemistolle,
+\end{minted}
+%
+\texttt{write()}-ja \texttt{rename()}-kutsujen väliin on siis lisätty yksi \texttt{fsync()}-kutsu riville 3 takaamaan että näiden operaatioiden järjestys ei vaihdu levylle kirjoittaessa.
+Tämä tekee tiedoston tallennusoperaatiosta atomisen mutta ei vielä takaa pysyvyyttä.
+Pysyvyyteen vaaditaan \texttt{fsync()}-operaation suoritus kohdetiedoston sisältävälle hakemistolle rivillä 7,
 mikä takaa että \texttt{rename()}-kutsun tekemän muutokset itse hakemiston sisällölle ovat päätyneet levylle.
 
 \section{POSIX-tiedostojärjestelmien kaatumistilanteet käytännössä}
