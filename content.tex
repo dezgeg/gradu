@@ -1003,16 +1003,17 @@ eli \texttt{ext2}:n tapaan operaation tehdään ensin pelkästään muistissa ja
 
 \section{Lokipohjaiset (``log-structured'') tiedostojärjestelmät}
 \label{ChapLogStructured}
-Aiemmissa kappaleissa käsitellyt ext2/ext3 ja Berkeley FFS ovat niin sanottuja päälle kirjoittavia tiedostojärjestelmiä (\emph{overwrite-based filesystem}~\cite{Btrfs}).
-Esimerkiksi aiemmin ext3:n yhteydessä nähtiin kuinka olemassa olevaa tiedostoa uudelleennimettäessä
+Aiemmissa luvuissa käsitellyt \texttt{ext2}/\texttt{ext3} ja Berkeley FFS ovat niin sanottuja päälle kirjoittavia tiedostojärjestelmiä (\emph{overwrite-based filesystem}~\cite{Btrfs}).
+Esimerkiksi aiemmin \texttt{ext3}:n yhteydessä nähtiin kuinka olemassa olevaa tiedostoa uudelleennimettäessä
 alkuperäisen tiedostonimen hakemistoalkion sisältävä sektorilta poistetaan vanha hakemistoalkio
 ja vastaavasti kohdehakemistossa lisätään uusi hakemistoalkio.
 Mutta koska kahden eri levylohkon päivitys atomisesti ei ole mahdollista,
 täytyy \texttt{ext3}:n kirjoittaa kopiot molemmista levylohkoista journaliin kaatumistilanteen varalta.
-Lokipohjaiset tiedostojärjestelmät sen sijaan kääntävät tämän tilanteen päälaelleen - muutokset metadataan kirjoitetaan edelleen lokiin,
+Lokipohjaiset tiedostojärjestelmät sen sijaan kääntävät tämän tilanteen päälaelleen -- muutokset metadataan kirjoitetaan edelleen lokiin,
 mutta tästä lokiin kirjoitetusta lohkosta tuleekin uusi sijainti kyseiselle metadatalle.
-
-Tässä kappaleessa tutkitaan ensimmäistä toteutettua lokipohjaista tiedostojärjestelmää, Sprite LFS:ää.
+Tällä tekniikalla vältytään siis metadatan kahdesti kirjoittamiselta,
+mutta toisaalta nyt on tarpeen tehdä päivityksiä muualla päin tiedostojärjestelmää kertomaan muokatun metadatalohkon uusi sijainti levyllä.
+Tässä luvussa tutkitaan Sprite LFS:ää, joka on varhainen toteutus lokipohjaisesta tiedostojärjestelmästä.
 
 \subsection{Sprite LFS:n periaate}
 Sprite LFS on vuosina 1989--1990 kehitelty tiedostojärjestelmä Berkeleyn yliopiston kokeelliseen Sprite-käyttöjärjestelmään.
@@ -1031,8 +1032,8 @@ mikä tapahtuu \emph{segmentin puhdistuksella} (\emph{segment cleaning}).
 
 \subsection{Sprite LFS:n levyrakenne}
 
-Sprite LFS:llä on merkittävästi yhtenäisyyksiä perinteisen Berkeley Fast Filesystem-tiedostojärjestelmän kanssa ja siten myös ext2:n kanssa.
-Tässä kappaleessa selitetään pelkät eroavaisuudet kappaleessa~\ref{ChapExt2Fs} esiteltyihin ext2:n levytietorakenteisiin.
+Sprite LFS:llä on merkittävästi yhtenäisyyksiä perinteisen Berkeley Fast Filesystem-tiedostojärjestelmän kanssa ja siten myös \texttt{ext2}:n kanssa.
+Tässä kappaleessa selitetään pelkät eroavaisuudet kappaleessa~\ref{ChapExt2Fs} esiteltyihin \texttt{ext2}:n levytietorakenteisiin.
 %Seuraavilta osin Sprite LFS toimii samoin kuin aiemmin kappaleessa~\ref{ChapExt2Fs} esitelty ext2:
 %\begin{itemize}
 %    \item{osoitus datalohkoihin: Kuten ext2:ssa, Sprite LFS:n inode pystyy viittaamaan suoraan kymmeneen datalohkoon ja tätä suuremmilla tiedostoilla käytetään epäsuorien lohkojen muodostamaa lohkopuuta.}
@@ -1044,9 +1045,9 @@ Tiedostojärjestelmän lokialueelle kirjoitetaan seitsemää erityyppisiä lohko
 
 \begin{itemize}
     \item{Datalohkot: tavallisten tiedostojen tai hakemistojen sisältämä data.
-          Hakemistot toimivat samalla periaatteella kuin ext2:ssa, eli hakemistoinoden datalohkot sisältävät hakemistoalkioita peräkkäismuodossa.}
-    \item{Epäsuora lohko: toimivat samalla lailla kuin ext2:ssa, suurien tiedostojen datalohkoihin viitataan epäsuorien lohkojen muodostamalla lohkopuulla.}
-    \item{Inodelohkot: sisältö pääosin samanlainen kuin ext2:n inode. Suurimpana erona on että Sprite LFS:n inoden sijaintia levyllä ei voi laskea pelkän inodenumeron avulla.}
+        Hakemistot toimivat samalla periaatteella kuin \texttt{ext2}:ssa, eli hakemistoinoden datalohkot sisältävät hakemistoalkioita peräkkäismuodossa.}
+    \item{Epäsuora lohko: toimivat samalla lailla kuin \texttt{ext2}:ssa, suurien tiedostojen datalohkoihin viitataan epäsuorien lohkojen muodostamalla lohkopuulla.}
+    \item{Inodelohkot: sisältö pääosin samanlainen kuin \texttt{ext2}:n inode. Suurimpana erona on että Sprite LFS:n inoden sijaintia levyllä ei voi laskea pelkän inodenumeron avulla.}
     \item{Inodekarttan lohkot (\emph{inode map}): tietorakenne jonka avulla voidaan paikantaa inoden sijainti levyllä inodenumeron perusteella.}
     \item{Segmentin käyttöastetaulun lohkot (\emph{segment usage table}): ylläpitää tietoa kunkin segmentin vapaiden lohkojen määrästä.}
     \item{Segmentin yhteenvetolohko (\emph{segment summary block}): TODO}
