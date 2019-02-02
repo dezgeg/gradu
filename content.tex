@@ -28,7 +28,7 @@ Kyseisillä tiedostojärjestelmillä kaatumistilannetta seurasikin aina koko tie
 joka kävi koko levyn läpi ja yritti parhaansa mukaan palauttaa tiedostojärjestelmän toimivaan tilaan~\cite{Ext2Journal}.
 Fsck-ohjelman suorituksen aikana tiedostojärjestelmä ei ole normaalisti käytettävissä,
 mikä tiedostojärjestelmän käyttötarkoituksesta riippuen tarkoittikin mahdollista käyttökatkosta koko järjestelmälle.
-Modernimmat tiedostojärjestelmät, kuten Linuxin ext3 vuodelta 2001, ovatkin suunniteltu selviämään kaatumistilanteista nopeasti ja turvallisesti,
+Modernimmat tiedostojärjestelmät, kuten Linuxin \texttt{ext3} vuodelta 2001, ovatkin suunniteltu selviämään kaatumistilanteista nopeasti ja turvallisesti,
 joten tämänkaltaiset pitkät käyttökatkot tiedostojärjestelmätarkistusten takia ovat olleet historiaa jo tovin.
 
 Kokonaisuutena kaatumistilanteista selviytiminen on monitahoinen ongelma.
@@ -515,8 +515,8 @@ BOB:n voidaan siis vain todeta jonkin persistenssiominaisuuden paikkaansa pitäm
 % TODO for next release
 % Jo varsin yksinkertainen operaatio, tiedoston loppuun kirjoittaminen tuottaa erilaisia tuloksia eri tiedostojärjestelmäkonfiguraatioilla
 % sekä myös kirjoitettavan datan määrä vaikuttaa tulokseen.
-% Jo yhden sektorin (tai vähemmän) lisääminen tiedostoon ei ole atominen operaatio muutamalla tiedostojärjestelmällä: ext2 sekä
-% ext3, ext4 ja reiserfs mikäli käytetään writeback-journalointitilaa.
+% Jo yhden sektorin (tai vähemmän) lisääminen tiedostoon ei ole atominen operaatio muutamalla tiedostojärjestelmällä: \texttt{ext2} sekä
+% \texttt{ext3}, \texttt{ext4} ja \texttt{reiserfs} mikäli käytetään writeback-journalointitilaa.
 
 Kuten edellisessä luvussa nähtiin,
 jo pelkästään Linuxin mukana tulevat tiedostojärjestelmät omaavat erilaisia persistenssiominaisuuksia,
@@ -572,7 +572,7 @@ että mikäli rollback journal-tiedostoa ei ole tai sen otsakkeen perusteella si
 on itse tietokanta konsistentissa tilassa ja palautumiseen riittää ainoastaan poistaa mahdollinen osittain kirjoitettu rollback journal.
 Muuten palautetaan tietokanta konsistentiksi peruuttamalla rollback journalin 
 
-\section{ext2-tiedostojärjestelmä}
+\section{\texttt{ext2}-tiedostojärjestelmä}
 \label{ChapExt2Fs}
 Edellisissä kappaleissa nähtiin sovellusohjelmoijan näkökulmasta millaisia tiedostojärjestelmärajapintoja POSIX-spesifikaatio antaa sovellusten käytettäväksi sekä kuinka niitä täytyy käyttää oikein kaatumisturvallisuuden säilyttämiseksi.
 Nyt siirrytään tarkastelemaan miten itse tiedostojärjestelmän pitää toimia jotta kaatumisturvallisuus säilyy koko kokonaisuuden kannalta.
@@ -580,40 +580,40 @@ Esimerkiksi aiemmin nähdyn tekstieditoriesimerkin toiminnan kannalta on kriitti
 joten tiedostojärjestelmän täytyy siis pystyä toteuttamaan tämä sekä joitakin muita lupauksia tiedostojärjestelmäkutsujen toiminnasta.
 Tässä luvussa vastataan näihin kysymyksiin perehtymällä Linuxin \texttt{ext2}-tiedostojärjestelmän sisäiseen toimintaan ja sen rakenteeseen levyllä.
 Tiedostojärjestelmän levyrakenne vaikuttaa olennaisesti siihen minkälaisia epäkonsistenttiuksia tiedostojärjestelmään voi syntyä virhetilanteissa,
-joten vahva ymmärrys ext2:n levyformaatista on tarpeen tutkittaessa ext2:n käyttäytymistä kaatumistilanteessa luvussa~\ref{ChapExt2Crash}.
-Lisäksi ext2:n levyrakenne on vahvasti BSD-käyttöjärjestelmän Berkeley Fast Filesystem-tiedostojärjestelmän inspiroima~\cite{Ext2Design},
+joten vahva ymmärrys \texttt{ext2}:n levyformaatista on tarpeen tutkittaessa \texttt{ext2}:n käyttäytymistä kaatumistilanteessa luvussa~\ref{ChapExt2Crash}.
+Lisäksi \texttt{ext2}:n levyrakenne on vahvasti BSD-käyttöjärjestelmän Berkeley Fast Filesystem-tiedostojärjestelmän inspiroima~\cite{Ext2Design},
 sekä yleisestikin ottaen on varsin suoraviivainen tapa toteuttaa Unix-tyylinen tiedostojärjestelmä,
-joten ext2:n ymmärrys auttaa merkittävästi muidenkin saman aikakauden Unix-tyylisten tiedostojärjestelmien ymmärtämisessä.
+joten \texttt{ext2}:n ymmärrys auttaa merkittävästi muidenkin saman aikakauden Unix-tyylisten tiedostojärjestelmien ymmärtämisessä.
 
 \subsection{Historia}
 
-ext2 (``Second extended filesystem'') on tiedostojärjestelmä joka on luotu jo Linuxin varhaisina aikoina, vuosina 1992--1993~\cite{Ext2Design}.
+\texttt{ext2} (``Second extended filesystem'') on tiedostojärjestelmä joka on luotu jo Linuxin varhaisina aikoina, vuosina 1992--1993~\cite{Ext2Design}.
 Alunperin Linuxilla ei ollut omaa varta vasten suunniteltua tiedostojärjestelmää,
 vaan se käytti MINIX-käyttöjärjestelmän tiedostojärjestelmää vain koska Linuxin alkuperäinen kehitys oli tehty MINIXillä.
 MINIX-tiedostojärjestelmä kuitenkin sisälsi erinäisiä rajoitteita jotka alkoivat haittaamaan.
 Esimerkiksi tiedostonimen pituus oli rajoitettu 14 merkkiin ja tiedoston koko 64 megatavuun~\cite{Ext2Design}.
 \texttt{ext2} ei ainoastaan korjaa näitä puutteita,
 mutta on lisäksi suunniteltu siten että tiedostojärjelmän levyformaattia voidaan laajentaa taaksepäin yhteensopivasti.
-Ext2:lle onkin kehitetty seuraajat \texttt{ext3} ja \texttt{ext4} joissa olemassaoleva \texttt{ext2}- tai \texttt{ext3}-osio voidaan päivittää seuraavaan
+\texttt{ext2}:lle onkin kehitetty seuraajat \texttt{ext3} ja \texttt{ext4} joissa olemassaoleva \texttt{ext2}- tai \texttt{ext3}-osio voidaan päivittää seuraavaan
 versioon ilman tiedostojärjestelmän uudelleenformatointia~\cite{Ext4Status}.
 Merkittävin näiden seuraajien tuoma parannus on \texttt{ext3}:n kirjaus,
 joka parantaa huomattavasti tiedostojärjestelmän kykyä säilyä konsistenttina kaatumistilanteessa \texttt{ext2}:n verrattuna.
-Ext3:a ja kirjaavia tiedostojärjestelmiä yleisesti käsitelläänkin myöhemmin luvussa~\ref{ChapJournallingFs}.
+\texttt{ext3}:a ja kirjaavia tiedostojärjestelmiä yleisesti käsitelläänkin myöhemmin luvussa~\ref{ChapJournallingFs}.
 
 \begin{figure}
     \label{FigExt2DiskFormat}
     \centering
     \includegraphics[width=0.7\textwidth]{gfx/ext2-structure.pdf}
-    \caption{Ext2:n rakenne levyllä~\cite{LinuxKernelBook}.}
+    \caption{\texttt{ext2}:n rakenne levyllä~\cite{LinuxKernelBook}.}
 \end{figure}
 
-Ext2:n levyrakenne korkealla tasolla on esitetty kuvaajassa~\ref{FigExt2DiskFormat}~\cite{LinuxKernelBook}.
-Korkeimmalla tasolla ext2:n rakenne on jaettu kahteen osaan: on \emph{käynnistyslohkoon} sekä useisiin \emph{lohkoryhmiin}.
-Käynnistyslohkon tarkoitus on yksinkertaisesti varattua tilaa jollekin ext2:ta riippumattomalle käynnistyslataajalle,
+\texttt{ext2}:n levyrakenne korkealla tasolla on esitetty kuvaajassa~\ref{FigExt2DiskFormat}~\cite{LinuxKernelBook}.
+Korkeimmalla tasolla \texttt{ext2}:n rakenne on jaettu kahteen osaan: on \emph{käynnistyslohkoon} sekä useisiin \emph{lohkoryhmiin}.
+Käynnistyslohkon tarkoitus on yksinkertaisesti varattua tilaa jollekin \texttt{ext2}:ta riippumattomalle käynnistyslataajalle,
 itse tiedostojärjestelmä ei käytä tätä tilaa mitenkään.
-Valtaosa ext2:n levynkäytöstä on lohkoryhmiä,
+Valtaosa \texttt{ext2}:n levynkäytöstä on lohkoryhmiä,
 joista jokainen lohkoryhmä viimeistä lukuun ottamatta vie yhtä paljon tilaa levyltä.
-Jokainen ext2:n lohkoryhmä on puolestaan jaettu seuraaviin tietorakenteisiin:
+Jokainen \texttt{ext2}:n lohkoryhmä on puolestaan jaettu seuraaviin tietorakenteisiin:
 \emph{superlohkoon} (superblock),
 \emph{lohkoryhmien kuvaajiin} (block group descriptors),
 \emph{lohkobittikarttoihin} (block bitmap),
@@ -621,7 +621,7 @@ Jokainen ext2:n lohkoryhmä on puolestaan jaettu seuraaviin tietorakenteisiin:
 \emph{inodetauluun} (inode table) sekä datalohkoihin.
 Näistä superlohko ja lohkoryhmien kuvaajat ovat koko tiedostojärjestelmälle yhtenäistä metadataa,
 joiden periaatteessa riittäisi olla levyllä vain kerran,
-mutta ext2 säilyttää kuitenkin kummastakin niistä useita kopioita siltä varalta että ensisijainen kopio näistä tietorakenteista korruptoituu.
+mutta \texttt{ext2} säilyttää kuitenkin kummastakin niistä useita kopioita siltä varalta että ensisijainen kopio näistä tietorakenteista korruptoituu.
 
 \subsection{Superlohkon sisältö}
 Superlohko sisältää muun muassa seuraavanlaisia arvoja tiedostojärjestelmästä, enkoodattuna 32-bittisinä little-endian-kokonaislukuina:
@@ -639,9 +639,9 @@ Superlohko sisältää muun muassa seuraavanlaisia arvoja tiedostojärjestelmäs
     \item Niinikään samat laskurit inodeille: \texttt{s\_free\_inodes\_count} kertoo vapaiden inodejen määrän ja \texttt{s\_inodes\_count} inodejen kokonaismäärän tiedostojärjestelmässä.
 \end{itemize}
 
-Ext2:ssa inodeille on varattu tila joka on erillinen datalohkoista.
+\texttt{ext2}:ssa inodeille on varattu tila joka on erillinen datalohkoista.
 Tiedostojärjestelmää luodessa valitut \texttt{s\_blocks\_per\_group}- ja \texttt{s\_inodes\_per\_group}-parametrit määräävät inodejen ja datalohkojen suhteellisen osuuden koko levytilasta.
-Ext2:aa käyttäessä voikin joutua tilanteeseen, jossa käyttäjän näkökulmasta levytilaa (eli datalohkoja) on runsaasti vapaana, mutta kaikki inodet ovat käytössä, tai päinvastoin.
+\texttt{ext2}:aa käyttäessä voikin joutua tilanteeseen, jossa käyttäjän näkökulmasta levytilaa (eli datalohkoja) on runsaasti vapaana, mutta kaikki inodet ovat käytössä, tai päinvastoin.
 
 \subsection{Lohkoryhmäkuvaajien sisältö}
 Kuten superlohkon kohdalla, lohkoryhmäkuvaajista säilytetään kopioita useassa kohtaa levyä.
@@ -660,7 +660,7 @@ Lohkoryhmäkuvaajat on yksinkertaisesti taulukko seuraavista tietorakenteesta:
 
 \subsection{Inoden rakenne}
 
-Ext2:ssa tietyn inoden paikannus inodenumeron perusteella on yksinkertaista.
+\texttt{ext2}:ssa tietyn inoden paikannus inodenumeron perusteella on yksinkertaista.
 Kuten edellä nähtiin, jokaisessa lohkoryhmässä on sama määrä inodeja ja lohkoryhmän sisällä inodet sijaitsevat yksinkertaisesti taulukossa.
 Inodeiden numerointi alkaa ykkösestä, joten inoden numerosta voidaan laskea lohkoryhmän numero kaavalla:
 $$ n_\text{bg} = \frac{n_\text{ino} - 1}{\texttt{s\_inodes\_per\_group}} $$
@@ -687,7 +687,7 @@ Kentän formaatti on 15-alkioinen taulukko 32-bittisiä kokonaislukuja jonka sis
 \end{figure}
 
 \subsection{Hakemiston rakenne}
-Ext2:n hakemisto koostuu \emph{hakemistoalkioista} (directory entry) jotka sijaitsevat inoden datalohkoissa.
+\texttt{ext2}:n hakemisto koostuu \emph{hakemistoalkioista} (directory entry) jotka sijaitsevat inoden datalohkoissa.
 Hakemistoalkion koko on vaihtelevanmittainen riippuen hakemistoalkion sisältämän tiedostonimen pituudesta.
 Hakemistoalkio sijaitsee aina kokonaan yhden datalohkon sisällä.
 Hakemistoalkio koostuu vakiokokoisesta otsakkeesta jota välittömästi seuraa tiedostonimi.
@@ -708,9 +708,9 @@ Kenttä \texttt{rec\_len} kertoo koko hakemistoalkion koon,
 jonka perusteella voidaan paikantaa hakemiston seuraava hakemistoalkio.
 joka voi olla suurempi kuin otsakkeen koko ja tiedostonimen pituus.
 
-ext2:ssa siis hakemistoalkion paikantaminen tiedostonimen perusteella on aikavaativuudeltaan $O(n)$,
+\texttt{ext2}:ssa siis hakemistoalkion paikantaminen tiedostonimen perusteella on aikavaativuudeltaan $O(n)$,
 mikä tarkoittaa heikkoa suorituskykyä hakemiston koon kasvaessa.
-Yksi ext2:n välittömän seuraajan, ext3:n tuomista uudistuksista on hajautukseen pohjautuva hakemistorakenne.
+Yksi \texttt{ext2}:n välittömän seuraajan, \texttt{ext3}:n tuomista uudistuksista on hajautukseen pohjautuva hakemistorakenne.
 
 \subsection{Esimerkki hakemistosta}
 Tarkastellaan hakemiston rakennetta luotaessa 1024 tavun lohkokokoa käyttävän tiedostojärjestelmän juureen alihakemisto \texttt{dir} ja sinne tyhjät tiedostot \texttt{abc}, \texttt{defghijklmn} ja \texttt{opqrstuvwxyz}.
@@ -734,11 +734,11 @@ Nyt poistettaessa tiedosto \texttt{defghijklmn} muuttuu kolmannen hakemistoalkio
 
 Siis poistettavaa hakemistoalkiota edeltävän hakemistoalkion \texttt{rec\_len}-kenttää kasvatetaan ``hyppäämään'' poistetun alkion yli.
 
-\section{ext2 kaatumistilanteissa}
+\section{\texttt{ext2} kaatumistilanteissa}
 \label{ChapExt2Crash}
 
 Edellisessä luvussa käytiin lävitse \texttt{ext2}:n levyllä sijaitsevia tietorakenteita teoriatasolla.
-Selvitetään nyt käytännössä kuinka Linuxin ext2-tiedostojärjestelmäajuri toimii tarkastelemalla ajurin tekemiä levykirjoituksia tehdessä joitakin POSIX-tiedostojärjestelmäoperaatioita.
+Selvitetään nyt käytännössä kuinka Linuxin \texttt{ext2}-tiedostojärjestelmäajuri toimii tarkastelemalla ajurin tekemiä levykirjoituksia tehdessä joitakin POSIX-tiedostojärjestelmäoperaatioita.
 Lisäksi tutkitaan minkälaisia epäkonsistenssiuksia tiedostojärjestelmään voi aiheutua kaatumistilanteen sattuessa.
 
 Tiedostojärjestelmien korruptoitumiselle on muitakin mahdollisia syitä kuin kaatumistilanteet.
@@ -748,7 +748,7 @@ Tällaisia tilanteita varten tulee Unix-pohjaisissa käyttöjärjestelmissä kon
 Koska jokaisella tiedostojärjestelmällä on oma levyformaattinsa jotka voivat siten korruptoitua eri tavoilla,
 on jokaiselle tiedostojärjestelmälle kehitettävä oma työkalunsa,
 joka tyypillisesti on Unix-sovellus joka ajetaan ennen tiedostojärjestelmän liittämistä.
-Ext2:n mukana tuleekin \texttt{e2fsck}-niminen tarkistustyökalu jonka toimintaa tarkastellaan seuraavassa luvussa.
+\texttt{ext2}:n mukana tuleekin \texttt{e2fsck}-niminen tarkistustyökalu jonka toimintaa tarkastellaan seuraavassa luvussa.
 
 \subsection{\texttt{ext2}-tiedostojärjestelmän tarkistusohjelma \emph{e2fsck}}
 
@@ -882,23 +882,23 @@ Tiedostojärjestelmän käyttö tässä tilanteessa ei siis ole turvallista enne
 
 \section{Kirjaavat tiedostojärjestelmät}
 \label{ChapJournallingFs}
-Edellisissä kappaleissa kuvailtiin ext2-tiedostojärjestelmä ja sen käyttäytyminen kaatumistilanteissa.
+Edellisissä kappaleissa kuvailtiin \texttt{ext2}-tiedostojärjestelmä ja sen käyttäytyminen kaatumistilanteissa.
 Koska kaatumistilanteen aiheuttamien seuraamuksien todettiin olevan varsin ikäviä,
-ovat monet ext2:ta edistyneemmät tiedostojärjestelmät kehittäneet menetelmiä kaatumistilanteita varten.
+ovat monet \texttt{ext2}:ta edistyneemmät tiedostojärjestelmät kehittäneet menetelmiä kaatumistilanteita varten.
 Eräs varsin laajasti käytetty tekniikka on \emph{kirjaavat}tai \emph{journaloivat} tiedostojärjestelmät (\emph{journalling file system}).
-Tätä tekniikkaa käyttääkin ext2:n seuraaja ext3, sekä sen lisäksi
+Tätä tekniikkaa käyttääkin \texttt{ext2}:n seuraaja \texttt{ext3}, sekä sen lisäksi
 muun muassa IBM:n JFS sekä Microsoftin NTFS~\cite{JournalingAnalysis}.
 Kirjauksen toteuttaminen tiedostojärjestelmään voidaan tehdä muutamalla eri lähestymistavalla.
-Tässä luvussa kuitenkin tarkastellaan pääosin ext3:n toteutusta kirjauksesta.
+Tässä luvussa kuitenkin tarkastellaan pääosin \texttt{ext3}:n toteutusta kirjauksesta.
 
 \subsection{Motivaatio}
 
-Tarve ext2:n jatkokehitykselle syntyi pääosin kaatumistilanteista selviämiseen,
+Tarve \texttt{ext2}:n jatkokehitykselle syntyi pääosin kaatumistilanteista selviämiseen,
 sillä kiintolevyjen koon kasvaessa kasvoi myös \texttt{fsck}-ohjelman viemä aika samaa tahtia~\cite{Ext2Journal}.
 Tavoitteeksi asetettiin luoda menetelmä kaatumistilanteista selviämiseen joka ei vaadi pitkää palautumisaikaa jolloin tiedostojärjestelmä ei ole käytettävissä.
 Nopeuden lisäksi samalla tavoiteltiin parannuksia tiedostojärjestelmän kaatumisesta palautumiseen seuraavilla kriteereillä: säilyvyys, ennakoitavuus, ja atomisuus~\cite{Ext2Journal}.
 Säilyvyydellä tarkoitetaan että aikaisemmin onnistuneesti turvallisesti levylle kirjoitettujen tiedostojen sisällöt pysyvät sellaisenaan.
-Ext2-tiedostojärjestelmän \emph{fsck}-pohjainen palautumismekanismi täyttää tämän kriteerin jo valmiiksi,
+\texttt{ext2}-tiedostojärjestelmän \emph{fsck}-pohjainen palautumismekanismi täyttää tämän kriteerin jo valmiiksi,
 joten sen seuraajankin kuuluu täyttää tämä kriteeri.
 Atomisuuskriteeri vaatii että tietyt loogisesti yksittäiset tiedostojärjestelmäoperaatiot tapahtuvat
 joko kokonaan loppuun asti tai eivät ollenkaan.
@@ -909,7 +909,7 @@ Perinteisen \texttt{ext2}:n kohdalla näin ei ole,
 sillä levyvälimuistien takia kaatumistilanteen aikana voi olla meneillään usean loogisen POSIX-tiedostojärjestelmäoperaation aiheuttamia päivityksiä moniin levytietorakenteisiin samanaikaisesti.
 
 Yksi keino kaikkien näiden kriteereiden täyttämiseksi on lisätä tiedostojärjestelmään jokin menetelmä \emph{transaktioille}, joilla koko tiedostojärjestelmän metadataan voidaan tehdä päivityksiä atomisesti.
-Ext3 tuo tuen transaktioille käyttäen kirjausta, joka pohjautuu pääpiirteissään tietokantajärjestelmissä käytettyyn Write-Ahead Logging-menetelmään~\cite{AriesWal}.
+\texttt{ext3} tuo tuen transaktioille käyttäen kirjausta, joka pohjautuu pääpiirteissään tietokantajärjestelmissä käytettyyn Write-Ahead Logging-menetelmään~\cite{AriesWal}.
 Kirjauksen perusajatuksena on että aina ennen varsinaisten levytietorakenteiden muuttamista kirjataan ylös erilliseen \emph{journaliin} ylös kaikki muutokset jota transaktion yhteydessä tullaan tekemään.
 Nyt mahdollisen kaatumistilanteen sattuessa voidaan journalin sisällön perusteella aina toistaa kaikki muutokset ja viedä transaktio loppuun.
 
@@ -918,7 +918,7 @@ Nyt mahdollisen kaatumistilanteen sattuessa voidaan journalin sisällön peruste
 %Ennen metadatalohkojen kirjoitusta niiden varsinaisille paikalleen levyllä, kopio niistä kirjataan lokiin.
 %Kirjauksen vaatima loki on kiinteän pituinen ja tila sille on varattu piilotetun, tiedostojärjestelmän käyttäjällä näkymättömän inoden avulla.
 
-\subsection{Kirjauksen toteutus ext3:ssa}
+\subsection{Kirjauksen toteutus \texttt{ext3}:ssa}
 Aiemmin luvussa~\ref{ChapExt2Fs} nähtiin miten \texttt{ext2}:n levyformaattia voidaan laajentaa tulevaisuudessa ominaisuusbiteillä.
 Vaikka useassa yhteydessä \texttt{ext3}:sta puhutaan ikään kuin se olisi oma erillinen tiedostojärjestelmänsä,
 on se levyformaatin näkökulmasta edelleen \texttt{ext2}-tiedostojärjestelmä mutta varustettuna lisäominaisuuksilla.
@@ -926,7 +926,7 @@ Relevantteja ominaisuusbittejä ovat `taaksepäin yhteensopivat' ominaisuudet \t
 Ominaisuus \texttt{dir\_index} tuo hakemistoihin hajautukseen pohjautuvan indeksirakenteen nopeuttamaan hakemistosta hakua tiedostonimen perusteella ja voidaan sivuuttaa kaatumisturvallisuuden tutkimisen kannalta.
 
 %Ominaisuus \texttt{journal} tarkoittaa että journalille on varattu tila levyltä kun taas \texttt{needs\_recovery} asetetaan ilmaisemaan että journalin läpikäynti tarvitaan konsistenssin palautumiseen.
-Toisin kuin monille muille ext2:n levytietorakenteille, journalin sijaintia levyllä ei ole ennalta määrätty vaan tila sille varataan erityisen inoden avulla data-alueelta samaan tapaan kuin muille tiedostoille~\cite{Ext2Journal}.
+Toisin kuin monille muille \texttt{ext2}:n levytietorakenteille, journalin sijaintia levyllä ei ole ennalta määrätty vaan tila sille varataan erityisen inoden avulla data-alueelta samaan tapaan kuin muille tiedostoille~\cite{Ext2Journal}.
 Muista inodeista poiketen journalin inode ei ole paikannettavissa normaalisti hakemistorakenteen kautta vaan se paikannetaan \texttt{journal}-laajennoksen tuomasta uudesta superlohkon kentästä.
 Inoden käyttö journalin lohkojen paikantamiseen mahdollistaa journalin lisäämisen olemassa olevaan \texttt{ext2}-tiedostojärjestelmään helposti kunhan tiedostojärjestelmässä on vapaata tilaa.
 ilman että koko tiedostojärjestelmää täytyy alustaa uudelleen.
@@ -1036,8 +1036,8 @@ Sprite LFS:llä on merkittävästi yhtenäisyyksiä perinteisen Berkeley Fast Fi
 Tässä luvussa selitetään pelkät eroavaisuudet luvussa~\ref{ChapExt2Fs} esiteltyihin \texttt{ext2}:n levytietorakenteisiin.
 %Seuraavilta osin Sprite LFS toimii samoin kuin aiemmin luvussa~\ref{ChapExt2Fs} esitelty ext2:
 %\begin{itemize}
-%    \item{osoitus datalohkoihin: Kuten ext2:ssa, Sprite LFS:n inode pystyy viittaamaan suoraan kymmeneen datalohkoon ja tätä suuremmilla tiedostoilla käytetään epäsuorien lohkojen muodostamaa lohkopuuta.}
-%    \item{hakemistojen sisältö: Kuten ext2:ssa, hakemistoalkiot ...}
+%    \item{osoitus datalohkoihin: Kuten \texttt{ext2}:ssa, Sprite LFS:n inode pystyy viittaamaan suoraan kymmeneen datalohkoon ja tätä suuremmilla tiedostoilla käytetään epäsuorien lohkojen muodostamaa lohkopuuta.}
+%    \item{hakemistojen sisältö: Kuten \texttt{ext2}:ssa, hakemistoalkiot ...}
 %\end{itemize}
 
 Valtaosa tiedostojärjestelmän sisällöstä sijaitsee lokissa (\emph{log}), joka on jaettu joko 512 kilotavun tai 1 megatavun kokoisiin \emph{segmentteihin} (\emph{segment}).
@@ -1053,7 +1053,7 @@ Tiedostojärjestelmän lokialueelle kirjoitetaan seitsemää erityyppisiä lohko
     \item{Segmentin yhteenvetolohko (\emph{segment summary block}): TODO}
     \item{Hakemistojen muutoslokilohko (\emph{directory change log block}): käytetään kaatumistilanteesta palautumiseen.}
 \end{itemize}
-Huomioitavaa on että ext2:een verrattuna inodebittikarttaa eikä lohkobittikarttaa ole.
+Huomioitavaa on että \texttt{ext2}:een verrattuna inodebittikarttaa eikä lohkobittikarttaa ole.
 Sprite LFS:sä inodeille ei ole erikseen varattu tilaa vaan ne sijaitsevat lokissa datalohkojen lailla
 ja vapaiden lohkojen määrää ylläpidetään segmentin käyttöastetaulussa bittikartan sijaan.
 
@@ -1199,7 +1199,7 @@ Tässä luvussa tarkastellaan vaihtoehtoista \emph{pehmeät päivitykset} (\emph
 ja erityisesti sen toteutusta Berkeley Fast Filesystem (FFS)-tiedostojärjestelmään~\cite{SoftUpdatesFfs}.
 Pehmeiden päivitysten pääperiaatteena on käyttää edelleen FFS:n levyformaattia,
 mutta tehdä päivitykset levytietorakenteisiin järjestyksessä jossa tiedostojärjestelmä säilyy mahdollisimman konsistenttina.
-%Ext2:sta poiketen FFS-tiedostojärjestelmälle ei löydy tukea Linuxista, vaan tarkasteltavana on toteutus 90-luvun BSD 4.4-käyttöjärjestelmästä.
+%\texttt{ext2}:sta poiketen FFS-tiedostojärjestelmälle ei löydy tukea Linuxista, vaan tarkasteltavana on toteutus 90-luvun BSD 4.4-käyttöjärjestelmästä.
 
 \subsection{Johdanto pehmeisiin päivityksiin FFS-tiedostojärjestelmässä}
 Aiemmin nähty \texttt{ext2} on vahvasti FFS-tiedostojärjestelmän inspiroima
