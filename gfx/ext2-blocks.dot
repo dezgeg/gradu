@@ -21,12 +21,12 @@ digraph ext2 {
     */
 
     // Group 3: Indirect blocks
-    //subgraph {
-        //rank = same;
-        //idb1 [shape=record,label="<b13>13|<b14>14|...|<b1035>1035|<b1036>1036"];
-        //idb2_0 [shape=record,label="<b1037>1037|...|<b2060>2060"];
-        //idb2_1023 [shape=record,label="x|...|y"];
-    //}
+    subgraph {
+      rank = same;
+      idb1 [shape=record,label="<b13>13|<b14>14|...|<b1035>1035|<b1036>1036"];
+      //idb2_0 [shape=record,label="<b1037>1037|...|<b2060>2060"];
+      //idb2_1023 [shape=record,label="x|...|y"];
+    }
 
     // Group 3: Data blocks
     subgraph {
@@ -63,7 +63,7 @@ digraph ext2 {
     //idb2:idp2_1023 -> idb2_1023;
 
     // inode -> indirect block connections
-    //inode:idp1 -> idb1;
+    inode:idp1 -> idb1;
 
     // inode -> direct block connections
     inode:b0 -> b0:w;
@@ -88,12 +88,11 @@ digraph ext2 {
     b1036:s -> b1037:n [style=invis];
     b1037:s -> b2060:n [style=invis];
 
-
     // 1st indirect block -> direct block connections
-    //idb1:b13 -> b13:w;
-    //idb1:b14 -> b14:w;
-    //idb1:b1035 -> b1035:w;
-    //idb1:b1036 -> b1036:w;
+    idb1:b13 -> b13:w;
+    idb1:b14 -> b14:w;
+    idb1:b1035 -> b1035:w;
+    idb1:b1036 -> b1036:w;
 
     //idb2_0:b1037 -> b1037:w;
     //idb2_0:b2060 -> b2060:w;
