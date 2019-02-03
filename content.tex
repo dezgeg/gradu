@@ -663,16 +663,16 @@ Superlohko sisältää muun muassa seuraavanlaisia arvoja tiedostojärjestelmäs
           %Yleisimmät käytetyt sektorin koot nykypäivänä ovat 512 ja 4096 tavua.
           %Myöskin Linuxin ext2-ajurilla on lisärajoituksena että lohkon koko ei saa ylittää prosessoriarkkitehtuurin sivun kokoa,
           %mikä yleisemmin (muun muassa Intelin x86-arkkitehtuurissa) on 4096 tavua.
-    \item Ominaisuusbitit \texttt{s\_feature\_compat}, \texttt{s\_feature\_incompat} ja \texttt{s\_feature\_ro\_compat} jotka kertovat mitä laajennoksia tiedostojärjestelmässä on käytössä.
+    \item Ominaisuusbitit \texttt{s\_\-feature\_\-compat}, \texttt{s\_\-feature\_\-incompat} ja \texttt{s\_feature\_\-ro\_\-compat} jotka kertovat mitä laajennoksia tiedostojärjestelmässä on käytössä.
           Nämä ovat jaettu kolmeen eri luokkaan mikä mahdollistaa sekä taaksepäin- että eteenpäin yhteensopivuuden tietyissä rajoissa.
     \item Lohkoryhmien koot, erikseen datalohkoille ja inodeille.
-          \texttt{s\_blocks\_per\_group} kertoo datalohkojen määrän yhdessä lohkoryhmässä ja \texttt{s\_inodes\_per\_group} inodejen lukumäärän yhdessä lohkoryhmässä.
-    \item Vapaiden datalohkojen määrä \texttt{s\_free\_blocks\_count} ja datalohkojen kokonaismäärä \texttt{s\_blocks\_count}.
-    \item Niinikään samat laskurit inodeille: \texttt{s\_free\_inodes\_count} kertoo vapaiden inodejen määrän ja \texttt{s\_inodes\_count} inodejen kokonaismäärän tiedostojärjestelmässä.
+          \texttt{s\_\-blocks\_\-per\_\-group} kertoo datalohkojen määrän yhdessä lohkoryhmässä ja \texttt{s\_inodes\_\-per\_\-group} inodejen lukumäärän yhdessä lohkoryhmässä.
+    \item Vapaiden datalohkojen määrä \texttt{s\_\-free\_\-blocks\_\-count} ja datalohkojen kokonaismäärä \texttt{s\_\-blocks\_\-count}.
+    \item Niinikään samat laskurit inodeille: \texttt{s\_free\_\-inodes\_\-count} kertoo vapaiden inodejen määrän ja \texttt{s\_inodes\_count} inodejen kokonaismäärän tiedostojärjestelmässä.
 \end{itemize}
 
 \texttt{ext2}:ssa inodeille on varattu tila joka on erillinen datalohkoista.
-Tiedostojärjestelmää luodessa valitut \texttt{s\_blocks\_per\_group}- ja \texttt{s\_inodes\_per\_group}-parametrit määräävät inodejen ja datalohkojen suhteellisen osuuden koko levytilasta.
+Tiedostojärjestelmää luodessa valitut \texttt{s\_blocks\_\-per\_\-group}- ja \texttt{s\_inodes\_\-per\_\-group}-parametrit määräävät inodejen ja datalohkojen suhteellisen osuuden koko levytilasta.
 \texttt{ext2}:aa käyttäessä voikin joutua tilanteeseen, jossa käyttäjän näkökulmasta levytilaa (eli datalohkoja) on runsaasti vapaana, mutta kaikki inodet ovat käytössä, tai päinvastoin.
 
 \subsection{Lohkoryhmäkuvaajien sisältö}
@@ -731,7 +731,7 @@ Otsakkeen rakenne on seuraavanlainen:
 	uint8_t name_len;
 	uint8_t file_type;
 \end{minted}
-
+%
 Kenttä \texttt{inode} sisältää hakemistoalkion viittaavan inoden numeron,
 jossa inodenumero 0 tarkoittaa käyttämätöntä tilaa hakemistossa.
 Otsakkeen kenttä \texttt{name\_len} kertoo tiedostonimen pituuden.
@@ -1231,7 +1231,7 @@ mikä onkin tiedostojärjestelmän ainoa tietorakenne jota päivitetään pääl
 \label{ChapSoftUpdates}
 Edellisissä kappaleissa esiteltiin tekniikoita jossa tiedostojärjestelmän konsistenssiuden säilyminen kaatumistilanteessa toteutettiin tuomalla tiedostojärjestelmään menetelmä atomisten päivitysten tekemiseen.
 Tässä luvussa tarkastellaan vaihtoehtoista \emph{pehmeät päivitykset} (\emph{soft updates})-tekniikkaa,
-ja erityisesti sen toteutusta Berkeley Fast Filesystem (FFS)-tiedostojärjestelmään~\cite{SoftUpdatesFfs}.
+ja erityisesti sen toteutusta Berkeley Fast Filesystem (FFS)-tiedosto\-järjestelmään~\cite{SoftUpdatesFfs}.
 Pehmeiden päivitysten pääperiaatteena on käyttää edelleen FFS:n levyformaattia,
 mutta tehdä päivitykset levytietorakenteisiin järjestyksessä jossa tiedostojärjestelmä säilyy mahdollisimman konsistenttina.
 %\texttt{ext2}:sta poiketen FFS-tiedostojärjestelmälle ei löydy tukea Linuxista, vaan tarkasteltavana on toteutus 90-luvun BSD 4.4-käyttöjärjestelmästä.
@@ -1254,7 +1254,7 @@ mutta pehmeitä päivityksiä käytettäessä levykirjoitusten järjestys voisi 
     % sylinteriryhmä?
     % superlohko?
 \end{enumerate}
-
+%
 Tässä järjestyksessä tehtynä kaatuminen ei milloinkaan johda tilanteeseen jossa tiedostojärjestelmän käytön jatkaminen ei olisi turvallista.
 Ainoastaan kohtien 1--2 tai 2--3 välissä tapahtunut kaatuminen johtaa yhden inoden vuotamiseen.
 Sallittuja kirjoitusjärjestyksiä on yleensä useita, tässä esimerkissä kohdat 1. ja 2. voisivat vaihtaa paikkaa ilman ongelmia.
@@ -1319,11 +1319,11 @@ Nyt tiedostojärjestelmän osalta ovat voimassa seuraavat päivitysriippuvuudet:
     % inode <- dir
     \item{inodelohko täytyy kirjoittaa ennen hakemistolohkoa, jotta \texttt{newfile}:n hakemistoalkio ei osoita vapaaseen inodeen.}
     % bitmap <- inode
-    \item{inodebittikartan lohko täytyy kirjoittaa ennen inodelohkoa, jotta \texttt{newfile}:n inode ei osoita bittikartassa vapaaksi merkittyyn inodeen XXX.}
+    \item{inode\-bitti\-kartan lohko täytyy kirjoittaa ennen inode\-lohkoa, jotta \texttt{newfile}:n inode ei osoita bitti\-kartassa vapaaksi merkittyyn inodeen XXX.}
     % dir <- inode
-    \item{hakemistolohko täytyy kirjoittaa ennen inodelohkoa, jotta \texttt{oldfile}:n hakemistoalkio ei osoita vapautettuun inodeen.}
+    \item{hakemisto\-lohko täytyy kirjoittaa ennen inode\-lohkoa, jotta \texttt{oldfile}:n hakemisto\-alkio ei osoita vapautettuun inodeen.}
     % inode <- bitmap
-    \item{inodelohko täytyy kirjoittaa ennen inodebittikartan lohkoa, jotta \texttt{oldfile}:n inode ei osoita bittikartassa vapaaksi merkittyyn inodeen XXX.}
+    \item{inode\-lohko täytyy kirjoittaa ennen inode\-bitti\-kartan lohkoa, jotta \texttt{oldfile}:n inode ei osoita bitti\-kartassa vapaaksi merkittyyn inodeen XXX.}
 \end{enumerate}
 Näistä päivitysriippuvuuksista 1. ja 3. muodostavat syklisen riippuvuuden inodelohkon ja hakemistolohkon välillä ja päivitysriippuvuudet 2. ja 4. muodostavat syklin inodelohkon ja inodebittikarttalohkon välillä.
 On siis päädytty tilanteeseen, jossa mitään metadatalohkoa ei voida sellaisenaan kirjoittaa levylle ilman että jokin päivitysriippuvuus jää täyttämättä.
