@@ -9,7 +9,7 @@
 \usepackage{lmodern}
 \usepackage{microtype}
 \usepackage{minted}
-\usepackage{amsfonts,amsmath,amssymb,amsthm,booktabs,color,enumitem,graphicx,float,tikz}
+\usepackage{amsfonts,amsmath,amssymb,amsthm,booktabs,color,enumitem,graphicx,float,tikz,setspace}
 \usepackage[pdftex,hidelinks]{hyperref}
 
 \hyphenation{blk-log-writes}
@@ -67,18 +67,24 @@
 % The following commands define the information used to generate title and
 % abstract pages. The following entries should be always specified:
 
-\title{Gradu}
+\title{Kaatumistilanteet POSIX-tiedostojärjestelmissä}
 \author{Tuomas Tynkkynen}
 \date{\today}
 \level{Pro Gradu}
-\abstract{
-Abstract goes here
+\abstract{\singlespacing \noindent
+Tiedostojärjestelmät ovat tyypillisin tapa jolla sekä käyttäjät että sovellusohjelmat voivat säilöä tietoa tietokoneen kiintolevylle tai muuntyyppiseen pysyväismuistiin.
+Nykyiset tiedostojärjestelmät ovat hierarkkisia,
+eli käyttäjät ja sovellusohjelmat voivat organisoida tietoa nimettyihin tiedostoihin jotka puolestaan voivat sijaita missä kohtaa tahansa puumaista hakemistorakennetta.
+Itse tiedostojärjestelmärajapinnat ovat tyypillisesti käyttöjärjestelmän vastuulla,
+kun taas varsinainen tiedon tallennus levylle on erillisen tiedostojärjestelmätoteutuksen vastuulla.
+Tiedostojärjestelmä toimii siis myös abstraktiona erityyppisille laitteistolle,
+jonka takia esimerkiksi SQL-tietokantajärjestelmätoteutukset käyttävät usein tiedostojärjestelmää raakojen levykirjoitusten sijasta.
 }
 
 % The following can be used to specify keywords and classification of the paper:
 
 \keywords{keywords go here}
-\classification{classification goes here}
+\classification{Software and its engineering → File systems management \\ Information systems → Database recovery}
 
 % If the automatic page number counting is not working as desired in your case,
 % uncomment the following to manually set the number of pages displayed in the abstract page:
@@ -99,7 +105,6 @@ Abstract goes here
 % \city{Helsinki}
 %
 
-% ???
 \linespread{1.5}
 
 \newcommand{\fixme}[1][FIXME!]{\textcolor{red}{*}\marginpar{\colorbox{red}{\scriptsize{#1}}}}
