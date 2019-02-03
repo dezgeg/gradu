@@ -366,8 +366,10 @@ Lohkovälimuistin toiminta levyltä luettaessa esimerkiksi \texttt{read()}-kutsu
 välimuistista etsitään lohkonumerolla hakemalla lohkon sisältö.
 Pelkkien levylukujen vieminen välimuistin kautta ei vielä näy sovellusohjelmoijalle mitenkään,
 mutta lohkovälimuisti joka toimii myös levykirjoituksille tuottaa haasteita.
-Käytännössä tämä tarkoittaa että \texttt{write()}-kutsun yhteydessä tehty tiedostoon kirjoitus ei välttämättä päädy levylle asti,
+Käytännössä tämä tarkoittaa että \texttt{write()}-kutsun yhteydessä tehty tiedostoon kirjoitus ei päädy levylle asti välittömästi,
 vaan sovellusohjelman kirjoittama data ainoastaan kopioidaan levyvälimuistin puskuriin sekä merkitään kyseinen puskuri kirjoitettavaksi myöhemmin levylle~\cite{UnixPaper}.
+Itse puskureiden kirjoitus levylle tapahtuu taustalla tietyin väliajoin,
+esimerkiksi Unixin alkuaikoina 30 sekunnin välein ~\cite{SpriteRosenblumThesis}.
 Moderneissa Unix-järjestelmissä levyvälimuistien käyttö on laajennettu koskemaan myös hakemistoja ja tiedostojen metadataa.
 %Kokonaisuudessaan tästä aiheutuu seuraavia pulmia jotka sovelllusohjelmoijan täytyy ottaa huomioon:
 %\begin{itemize}
