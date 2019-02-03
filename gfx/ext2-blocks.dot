@@ -1,10 +1,11 @@
 digraph ext2 {
-    //splines = false;
+    splines = false;
     rankdir = LR;
-    nodesep = 0.0;
-    //ranksep = 0.5;
-    node[fontsize = 8,width=0.1,height=0.1];
-    size = "4.0,6.0!";
+    nodesep = 0.02;
+    ranksep = 1.0;
+    node[fontsize=7,width=0.0,height=0.0,margin=0.0,penwidth=0.3];
+    size = "8.0,6.0";
+    edge[arrowsize=0.3,penwidth=0.3];
 
     // Group 1: Inode
     subgraph {
@@ -12,26 +13,32 @@ digraph ext2 {
         inode [shape=record,label="<b0>0|<b1>1|<b2>2|<b3>3|<b4>4|<b5>5|<b6>6|<b7>7|<b8>8|<b9>9|<b10>10|<b11>11|<b12>12|<idp1>|<idp2>|<idp3>"];
     }
 
-    // Group 2: Doubly indirect blocks
-    /*
+    // Group 2: Triply indirect blocks
     subgraph {
         rank = same;
-        idb2 [shape=record,label="<idp2_0>|...|<idp2_1023>"];
+        idb3 [shape=record,label="<idp3_0>|...|<idp3_1023>"];
     }
-    */
 
-    // Group 3: Indirect blocks
+    // Group 3: Doubly indirect blocks
+    subgraph {
+        rank = same;
+        idb2   [shape=record,label="<idp2_0>|...|<idp2_1023>"];
+        idb3_0 [shape=record,label="<idp2_0>|...|<idp2_1023>"];
+    }
+
+    // Group 4: Indirect blocks
     subgraph {
       rank = same;
       idb1 [shape=record,label="<b13>13|<b14>14|...|<b1035>1035|<b1036>1036"];
-      //idb2_0 [shape=record,label="<b1037>1037|...|<b2060>2060"];
-      //idb2_1023 [shape=record,label="x|...|y"];
+      idb2_0 [shape=record,label="<b1037>1037|...|<b2060>2060"];
+      idb2_1023 [shape=record,label="x|...|y"];
+      idb3_0_0 [shape=record,label="x|...|y"];
     }
 
-    // Group 3: Data blocks
+    // Group 5: Data blocks
     subgraph {
         rank = same;
-        graph[ordering="out"];
+        node[width=0.2,height=0.0,margin=0.00];
         b0 [shape=box,label="0"];
         b1 [shape=box,label="1"];
         b2 [shape=box,label="2"];
@@ -55,12 +62,11 @@ digraph ext2 {
         b2060 [shape=box,label="2060"];
     }
 
-    // inode -> doubly indirect block connections
-    //inode:idp2 -> idb2;
+    // inode -> triply indirect block connections
+    inode:idp3 -> idb3;
 
-    // doubly indirect block -> indirect block connections
-    //idb2:idp2_0 -> idb2_0;
-    //idb2:idp2_1023 -> idb2_1023;
+    // inode -> doubly indirect block connections
+    inode:idp2 -> idb2;
 
     // inode -> indirect block connections
     inode:idp1 -> idb1;
@@ -80,6 +86,14 @@ digraph ext2 {
     inode:b11 -> b11:w;
     inode:b12 -> b12:w;
 
+    // triply indirect block -> doubly indirect block connections
+    idb3:idp3_0 -> idb3_0;
+
+    // doubly indirect block -> indirect block connections
+    idb2:idp2_0 -> idb2_0;
+    idb2:idp2_1023 -> idb2_1023;
+    idb3_0:idp2_0 -> idb3_0_0;
+
     // retarded crap
     b12:s -> b13:n [style=invis];
     b13:s -> b14:n [style=invis];
@@ -94,6 +108,6 @@ digraph ext2 {
     idb1:b1035 -> b1035:w;
     idb1:b1036 -> b1036:w;
 
-    //idb2_0:b1037 -> b1037:w;
-    //idb2_0:b2060 -> b2060:w;
+    idb2_0:b1037 -> b1037:w;
+    idb2_0:b2060 -> b2060:w;
 }

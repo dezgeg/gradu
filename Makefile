@@ -3,7 +3,7 @@
 TARGET=gradu
 
 gfx/%.pdf: gfx/%.dot
-	dot -Tpdf < $< > $@
+	dot -Tpdf < $< > $@ && pdfcrop $@ $@
 
 all: $(patsubst %.dot,%.pdf,$(wildcard gfx/*.dot))
 	latexmk $(TARGET).tex
