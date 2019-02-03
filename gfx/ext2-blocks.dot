@@ -1,18 +1,100 @@
 digraph ext2 {
     //splines = false;
-    rankdir = UD;
-    //nodesep = 0;
+    rankdir = LR;
+    nodesep = 0.0;
     //ranksep = 0.5;
-    node[fontsize = 10,width=0.3];
+    node[fontsize = 8,width=0.1,height=0.1];
     size = "4.0,6.0!";
 
-    inode [shape=record,label="0|1|2|3|4|5|6|7|8|9|10|11|12|<idp1>|<idp2>|<idp3>"];
-    idb1 [shape=record,label="13|14|...|1035|1036"];
-    idb2 [shape=record,label="<idp2_0>|...|<idp2_1023>"];
-    idb2_0 [shape=record,label="1037|...|2060"];
-    idb2_1023 [shape=record,label="x|...|y"];
-    inode:idp1 -> idb1;
-    inode:idp2 -> idb2;
-    idb2:idp2_0 -> idb2_0;
-    idb2:idp2_1023 -> idb2_1023;
+    // Group 1: Inode
+    subgraph {
+        rank = same;
+        inode [shape=record,label="<b0>0|<b1>1|<b2>2|<b3>3|<b4>4|<b5>5|<b6>6|<b7>7|<b8>8|<b9>9|<b10>10|<b11>11|<b12>12|<idp1>|<idp2>|<idp3>"];
+    }
+
+    // Group 2: Doubly indirect blocks
+    /*
+    subgraph {
+        rank = same;
+        idb2 [shape=record,label="<idp2_0>|...|<idp2_1023>"];
+    }
+    */
+
+    // Group 3: Indirect blocks
+    //subgraph {
+        //rank = same;
+        //idb1 [shape=record,label="<b13>13|<b14>14|...|<b1035>1035|<b1036>1036"];
+        //idb2_0 [shape=record,label="<b1037>1037|...|<b2060>2060"];
+        //idb2_1023 [shape=record,label="x|...|y"];
+    //}
+
+    // Group 3: Data blocks
+    subgraph {
+        rank = same;
+        graph[ordering="out"];
+        b0 [shape=box,label="0"];
+        b1 [shape=box,label="1"];
+        b2 [shape=box,label="2"];
+        b3 [shape=box,label="3"];
+        b4 [shape=box,label="4"];
+        b5 [shape=box,label="5"];
+        b6 [shape=box,label="6"];
+        b7 [shape=box,label="7"];
+        b8 [shape=box,label="8"];
+        b9 [shape=box,label="9"];
+        b10 [shape=box,label="10"];
+        b11 [shape=box,label="11"];
+        b12 [shape=box,label="12"];
+
+        b13 [shape=box,label="13"];
+        b14 [shape=box,label="14"];
+        b1035 [shape=box,label="1035"];
+        b1036 [shape=box,label="1036"];
+
+        b1037 [shape=box,label="1037"];
+        b2060 [shape=box,label="2060"];
+    }
+
+    // inode -> doubly indirect block connections
+    //inode:idp2 -> idb2;
+
+    // doubly indirect block -> indirect block connections
+    //idb2:idp2_0 -> idb2_0;
+    //idb2:idp2_1023 -> idb2_1023;
+
+    // inode -> indirect block connections
+    //inode:idp1 -> idb1;
+
+    // inode -> direct block connections
+    inode:b0 -> b0:w;
+    inode:b1 -> b1:w;
+    inode:b2 -> b2:w;
+    inode:b3 -> b3:w;
+    inode:b4 -> b4:w;
+    inode:b5 -> b5:w;
+    inode:b6 -> b6:w;
+    inode:b7 -> b7:w;
+    inode:b8 -> b8:w;
+    inode:b9 -> b9:w;
+    inode:b10 -> b10:w;
+    inode:b11 -> b11:w;
+    inode:b12 -> b12:w;
+
+    // retarded crap
+    b12:s -> b13:n [style=invis];
+    b13:s -> b14:n [style=invis];
+    b14:s -> b1035:n [style=invis];
+    b1035:s -> b1036:n [style=invis];
+    b1036:s -> b1037:n [style=invis];
+    b1037:s -> b2060:n [style=invis];
+
+
+    // 1st indirect block -> direct block connections
+    //idb1:b13 -> b13:w;
+    //idb1:b14 -> b14:w;
+    //idb1:b1035 -> b1035:w;
+    //idb1:b1036 -> b1036:w;
+
+    //idb2_0:b1037 -> b1037:w;
+    //idb2_0:b2060 -> b2060:w;
 }
