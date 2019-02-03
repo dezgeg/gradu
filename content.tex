@@ -407,6 +407,7 @@ Suoraviivaisin tapa toteuttaa tallennus on kirjoittaa koko tiedosto uudelleen se
 int fd = open("/mnt/usb/file.txt", O_CREAT | O_WRONLY | O_TRUNC);
 write(fd, uusi_sisalto, strlen(uusi_sisalto));
 close(fd);
+printf("Tallennus valmis.\n");
 \end{minted}
 %
 Tämä sekvenssi operaatioita ei kuitenkaan ole turvallinen vaikka edes tiedostojärjestelmän kaatumista ei tapahtuisi.
@@ -419,11 +420,14 @@ int fd = open("/mnt/usb/file.txt.tmp", O_CREAT | O_WRONLY | O_TRUNC);
 write(fd, uusi_sisalto, strlen(uusi_sisalto));
 close(fd);
 rename("/mnt/usb/file.txt.tmp", "/mnt/usb/file.txt");
+printf("Tallennus valmis.\n");
 \end{minted}
 %
 Tämä versio sietää sovelluksen kaatumisen mutta ei toimi tiedostojärjestelmän kaatumistilanteessa,
 sillä mikään ei takaa että \texttt{write()}-kutsun tekemät kirjoitukset ja tiedoston uudelleennimeäminen \texttt{rename()}-kutsulla kirjoitettaisiin levylle edellä mainitussa järjestyksessä.
 Tiedostojärjestelmän kaatumistilanteessa tyhjä tai osittain kirjoitettu tiedosto on siis edelleen mahdollinen.
+Myöskään operaation pysyvyydellä ei ole mitään takeita,
+vaan käyttäjä voi nähdä \texttt{Tallennus valmis.}-tulosteen ilman että levylle on tehty yhtäkään kirjoitusta.
 Sen sijaan täysin kaatumisturvallinen tallennus on toteutettu Gedit-tekstieditorissa seuraavasti~\cite{OptimisticCrashConsistency}:
 
 \begin{minted}[linenos]{c++}
@@ -435,6 +439,7 @@ rename("/mnt/usb/file.txt.tmp", "/mnt/usb/file.txt");
 int dfd = open("/mnt/usb", O_DIRECTORY | O_RDONLY);
 fsync(dfd);
 close(dfd);
+printf("Tallennus valmis.\n");
 \end{minted}
 %
 \texttt{write()}-ja \texttt{rename()}-kutsujen väliin on siis lisätty yksi \texttt{fsync()}-kutsu riville 3 takaamaan että näiden operaatioiden järjestys ei vaihdu levylle kirjoittaessa.
