@@ -1087,9 +1087,10 @@ Kokonaisuutena tiedostojärjestelmälle tehdään seuraavat operaatiot:
     \item{Uuden tiedoston \texttt{newfile} inode ja hakemiston \texttt{testdir} inodesta kirjoitetaan uusi versio jossa datalohkoksi on vaihtunut edellisessä kohdassa kirjoitettu lohko. Molemmat lisätään uuteen inodelohkoon joka kirjoitetaan lokiin.}
     \item{Inodekartan lohkoista kirjoitetaan uudet versiot lokiin joissa kerrotaan \texttt{newfile}:n ja \texttt{testdir}:n inodejen sijaitsevan nyt kohdassa 4 kirjoitetussa inodelohkossa.}
     \item{Segmentin käyttöastetaulun lohkoista kirjoitetaan uudet versiot lokiin, koska kohdissa 3.--5. tehdyt päivitykset aiheuttivat kuolleita lohkoja aiempiin lokisegmentteihin.}
-    \item{Segmentin yhteenveto kirjoitetaan lokiin. FIXME details.}
+    \item{Segmentin yhteenvetolohko kirjoitetaan lokiin. Yhteenvetolohko kertoo kohdissa 1.--3. kirjoitettujen lohkojen olevan datalohkoja ja kohdissa 4.--6. kirjoitettujen lohkojen olevan metadatalohkoja.}
     \item{Uusi tarkistuspiste kirjoitetaan, joka viittaa kohdissa 5. ja 6. kirjoitettuun inodekarttaan ja segmentin käyttöastetauluun.}
 \end{enumerate}
+%.
 Lokipohjaiselle tiedostojärjestelmälle on kaksi mahdollista tekniikkaa jota käyttää kaatumistilanteista palautumiseen.
 Yksinkertaisempi tekniikka on käyttää pelkkää tarkistuspisteitä palautumiseen ja monimutkaisempi mutta suorituskyvyltään parempi tekniikka on lisäksi käyttää \emph{eteenkiertopalautusta} (\emph{roll-forward recovery}).
 
