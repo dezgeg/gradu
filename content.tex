@@ -522,8 +522,27 @@ BOB:n voidaan siis vain todeta jonkin persistenssiominaisuuden paikkaansa pitäm
     hakemisto-operaatiot  & \no  & \no  & \yes & \yes & \yes & \yes & \yes & \yes & \yes & \yes & \yes & \yes & \no  & \yes & \yes & \yes \\
 \end{tabular}
 \egroup
-\caption{Tulokset atomisuuteen liittyvistä persistenssiominaisuuksista. FIXME lähde.}
+\caption{Tulokset atomisuuteen liittyvistä persistenssiominaisuuksista. FIXME tarkka lähde.}
 \end{table}
+
+\begin{table}
+\label{TabPersistencePropsOrdering}
+\bgroup
+%\def\arraystretch{0.9}
+\setlength{\tabcolsep}{0.3em}
+\begin{tabular}{r||c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c}
+    & \hdr{ext2} & \hdr{ext2-sync} & \hdr{ext3-writeback} & \hdr{ext3-ordered} & \hdr{ext3-datajournal} & \hdr{ext4-writeback} & \hdr{ext4-ordered} & \hdr{ext4-nodelalloc} & \hdr{ext4-datajournal} & \hdr{btrfs} & \hdr{xfs} & \hdr{xfs-wsync} & \hdr{reiserfs-nolog} & \hdr{reiserfs-writeback} & \hdr{reiserfs-ordered} & \hdr{reiserfs-datajournal} \\ \hline \hline
+    ylikirjoitus $\rightarrow$  mikä tahansa operaatio             & \no  & \yes & \no  & \no  & \yes & \no  & \no  & \no  & \yes & \yes & \no  & \no  & \no  & \no  & \no  & \yes \\
+    lisäys+uudelleennimeys $\rightarrow$  mikä tahansa operaatio   & \no  & \yes & \no  & \yes & \yes & \no  & \yes & \yes & \yes & \yes & \yes & \yes & \no  & \no  & \yes & \yes \\
+    \texttt{O\_TRUNC} lisäys $\rightarrow$  mikä tahansa operaatio & \no  & \yes & \no  & \yes & \yes & \no  & \yes & \yes & \yes & \yes & \yes & \yes & \no  & \no  & \yes & \yes \\
+    lisäys $\rightarrow$ lisäys samaan tiedostoon                  & \no  & \yes & \no  & \yes & \yes & \no  & \yes & \yes & \yes & \yes & \yes & \yes & \no  & \no  & \yes & \yes \\
+    hakemisto-op. $\rightarrow$ mikä tahansa operaatio             & \no  & \yes & \yes & \yes & \yes & \yes & \yes & \yes & \yes & \yes & \no  & \yes & \yes & \no  & \yes & \yes \\
+\end{tabular}
+\egroup
+\caption{Tulokset järjestykseen liittyvistä persistenssiominaisuuksista. FIXME tarkka lähde.}
+\end{table}
+
+
 %
 % TODO for next release
 % Jo varsin yksinkertainen operaatio, tiedoston loppuun kirjoittaminen tuottaa erilaisia tuloksia eri tiedostojärjestelmäkonfiguraatioilla
