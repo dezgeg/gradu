@@ -1159,7 +1159,7 @@ joista merkittävimmät ovat tarkistussummat sekä datalle että metadatalle, \e
 Copy-on-write-tekniikka on keskeinen useiden edellä mainittujen ominaisuuksien kannalta.
 
 \subsection{Btrfs:n levyrakenne}
-Btrfs:n levytietorakenteet poikkeavat merkittävästi perinteisistä Unix-tiedosto\-järjestelmistä.
+Btrfs:n levytietorakenteet poikkeavat merkittävästi aiemmisssa luvuissa nähdyistä perinteisten Unix-tiedosto\-järjestelmien levytietorakenteista.
 Superlohkoa lukuun ottamatta kaikki Btrfs-tiedostojärjestelmän metadata sijaitsee levyllä B-puuhun pohjautuvassa tietorakenteessa.
 Btrfs:n kaikkien B-puiden avaimena on seuraava 17 tavun kokoinen tietorakenne \texttt{btrfs\_key}:
 \begin{minted}{c}
@@ -1177,7 +1177,8 @@ Avaimen \texttt{type}-kenttä kertoo tietueen tyypin ja \texttt{offset}-kenttä 
 % josta löytyvät sekä inodet, hakemistoalkiot että viittaukset tiedoston dataan.
 Kutakin tiedostojärjestelmän inodea vastaa yksi avain-arvo-pari tyyppiä \texttt{INODE\_ITEM} jossa \texttt{objectid} sisältä inoden numeron, \texttt{offset}-kenttää ei käytetä ja alkion arvo sisältää tyypilliset inoden attribuutit kuten koon, käyttöoikeudet ja aikaleimat.
 Hakemistojen sisältö ilmaistaan liittämällä hakemistoinodeen \texttt{DIR\_ITEM}-tyyppinen avain-arvo-pari jokaista hakemistoalkiota kohden.
-Koska B-puun avaimilla on kiinteä pituus, ei tiedostonimeä voida lisätä osaksi avainta vaan tiedostonimestä lasketaan 64-bittinen hajautusarvo joka sisällytetään \texttt{offset}-kenttään ja arvo sisältää itse tiedostonimen ja inodenumeron.
+Koska B-puun avaimilla on kiinteä pituus, ei tiedostonimeä voida lisätä osaksi avainta,
+vaan tiedostonimestä lasketaan 64-bittinen hajautusarvo joka sisällytetään \texttt{offset}-kenttään ja arvo sisältää itse tiedostonimen ja inodenumeron.
 Tällä tavoin yksittäisen tiedostonimen paikannus hakemistosta voidaan edelleen tehdä yhdellä B-puu-kyselyllä vaikka tiedostonimien listaus aakkosjärjestyksessä tai osavälikyselyt eivät ole mahdollisia.
 
 Inoden datalohkoihin viitataan lohkopuun sijaan \emph{extent}-tietueilla.
