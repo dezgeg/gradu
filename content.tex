@@ -1253,13 +1253,15 @@ pehmeät päivitykset eivät edellytä mitään muutoksia tai lisäyksiä tiedos
 Sen sijaan pehmeät päivitykset perustuvat levykirjoitusten tekemiseen aina sellaisessa järjestyksessä jossa kaatumistilanteet eivät voi aiheuttaa merkittäviä epäkonsistenssiuksia tiedostojärjestelmän metadataan,
 jolloin \texttt{fsck}-ohjelman ajaminen kaatumistilanteen jälkeen ei ole enää tarpeen.
 
-\subsection{Pehmeät päivitykset}
+\subsection{Pehmeät päivitykset ja \emph{päivitysriippuvuudet}}
+Aiemmin aliluvussa~\ref{ChapExt2FileCreation} esiteltiin mahdollisia epäkonsistenssiuksia joita \texttt{ext2}-tiedostojärjestelmään voi syntyä mikäli kaatumistilanne tapahtuu kutsun \texttt{creat("new", 0755)} aikana.
+Tarkastellaan nyt miten pehmeitä päivityksiä käyttäen vältytään merkittävimmiltä epäkonsistennsiuksilta kirjoitusjärjestystä muuttamalla.
 
-Aiemmin aliluvussa~\ref{ChapExt2FileCreation} nähtiin \texttt{ext2}:n tekemät muutokset uutta tiedostoa luodessa.
 FFS-tiedostojärjestelmän tapauksessa muokataan samoja levytietorakenteita,
 mutta pehmeitä päivityksiä käytettäessä levykirjoitusten järjestys voisi olla seuraava:
 % 90-luvun BSD 4.4-käyttöjärjestelmästä löytyvä Berkeley Fast Filesystem-tiedostojärjestelmä~\cite{SoftUpdatesFfs}.
 \begin{enumerate}
+    \item{Lohkoryhmän kuvaajat}
     \item{Lohkoryhmän inodebittikartta}
     \item{Inodetaulu}
     \item{Hakemistoalkio}
