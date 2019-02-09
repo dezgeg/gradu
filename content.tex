@@ -771,9 +771,12 @@ Siis poistettavaa hakemistoalkiota edeltävän hakemistoalkion \texttt{rec\_len}
 \section{\texttt{ext2} kaatumistilanteissa}
 \label{ChapExt2Crash}
 
-Edellisessä luvussa käytiin lävitse \texttt{ext2}:n levyllä sijaitsevia tietorakenteita teoriatasolla.
-Selvitetään nyt käytännössä kuinka Linuxin \texttt{ext2}-tiedostojärjestelmäajuri toimii tarkastelemalla ajurin tekemiä levykirjoituksia tehdessä joitakin POSIX-tiedostojärjestelmäoperaatioita.
-Lisäksi tutkitaan minkälaisia epäkonsistenssiuksia tiedostojärjestelmään voi aiheutua kaatumistilanteen sattuessa.
+Edellisessä luvussa käytiin lävitse \texttt{ext2}:n levytietorakenteiden toiminta teoriatasolla.
+Keskitytään seuraavaksi kaatumistilanteisiin ja niistä syntyviin epäkonsistenttiuksiin.
+Tarkastellaan ensin tiedostojärjestelmän konsistenssiuden määrittelemiä invariantteja sekä miten niitä tarkistetaan ja korjataan \texttt{fsck}-työkalulla.
+Lisäksi tutkitaan käytännössä miten Linuxin \texttt{ext2}-tiedostojärjestelmäajuri tekee levykirjoituksia ja mitä käytännön seurauksia kaatumistilanteilla on.
+
+\subsection{\texttt{ext2}-tiedostojärjestelmän tarkistusohjelma \emph{e2fsck}}
 
 Tiedostojärjestelmien korruptoitumiselle on muitakin mahdollisia syitä kuin kaatumistilanteet.
 Laitteisto, kuten levyt tai keskusmuisti eivät ole täydellisiä vaan tilastollisesti bittivirheitä tulee tapahtumaan ennen pitkää varsinkin suurissa järjestelmissä.
@@ -783,8 +786,6 @@ Koska jokaisella tiedostojärjestelmällä on oma levyformaattinsa jotka voivat 
 on jokaiselle tiedostojärjestelmälle kehitettävä oma työkalunsa,
 joka tyypillisesti on Unix-sovellus joka ajetaan ennen tiedostojärjestelmän liittämistä.
 \texttt{ext2}:n mukana tuleekin \texttt{e2fsck}-niminen tarkistustyökalu jonka toimintaa tarkastellaan seuraavassa luvussa.
-
-\subsection{\texttt{ext2}-tiedostojärjestelmän tarkistusohjelma \emph{e2fsck}}
 
 Koska \texttt{e2fsck}:n täytyy käydä koko tiedostojärjestelmän metadata läpi,
 pitää jo koko metadatan paikantamisessa olla varovainen,
