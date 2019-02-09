@@ -1246,8 +1246,14 @@ muistuttavat niiden levytietorakenteet vahvasti toisiaan.
 Pääpiirteissään jokaiselle \texttt{ext2}:n levytietorakenteelle löytyy suora vastine FFS:tä,
 joten kaatumistilanteella on FFS:lle samanlaiset seuraukset kuin mitä \texttt{ext2}:lle nähtiin luvussa~\ref{ChapExt2Crash}.
 Erityisesti \texttt{fsck}-tarkastusohjelman ajaminen kaatumistilanteen jälkeen oli tarpeen ennen kuin tiedostojärjestelmää pystyttiin käyttämään.
+FFS-tiedostojärjestelmän kaatumisturvallisuutta alettiin parantamaan alkaen BSD-käyttöjärjestelmän versiosta 4.4, joka julkaistiin vuonna 1995.
+Käytettäväksi menetelmäksi valittiin \emph{pehmeät päivitykset} (\emph{soft updates}).
+Verrattuna muihin kilpaileviin tekniikoihin kuten journalointiin tai lokipohjaisiin tiedostojärjestelmiin,
+pehmeät päivitykset eivät edellytä mitään muutoksia tai lisäyksiä tiedostojärjestelmän levyformaattiin.
+Sen sijaan pehmeät päivitykset perustuvat levykirjoitusten tekemiseen aina sellaisessa järjestyksessä jossa kaatumistilanteet eivät voi aiheuttaa merkittäviä epäkonsistenssiuksia tiedostojärjestelmän metadataan,
+jolloin \texttt{fsck}-ohjelman ajaminen kaatumistilanteen jälkeen ei ole enää tarpeen.
 
-FFS-tiedostojärjestelmän kaatumisturvallisuutta alettiin parantamaan BSD-käyttöjärjestelmän versiosta 4.4 lähtien \emph{pehmeitä päivityksiä} käyttämällä.
+\subsection{Pehmeät päivitykset}
 
 Aiemmin aliluvussa~\ref{ChapExt2FileCreation} nähtiin \texttt{ext2}:n tekemät muutokset uutta tiedostoa luodessa.
 FFS-tiedostojärjestelmän tapauksessa muokataan samoja levytietorakenteita,
