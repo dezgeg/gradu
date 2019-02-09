@@ -1233,24 +1233,26 @@ mikä onkin tiedostojärjestelmän ainoa tietorakenne jota päivitetään pääl
 \label{ChapSoftUpdates}
 Aiemmissa luvuissa esiteltiin tekniikoita jossa tiedostojärjestelmän konsistenssiuden säilyminen kaatumistilanteessa varmistettiin oleellisesti toteuttamalla tiedostojärjestelmään jokin menetelmä metadatapäivitysten tekemiseen atomisesti.
 Vaihtoehtoisia lähestymistapojakin on kuitenkin käytetty,
-joista seuraavaksi tarkastellaan \emph{pehmeitä päivityksiä} (\emph{soft updates}) jotka perustuvat metadatakirjoitusten tekemiseen tietyssä järjestyksessä.
-Yksikään Linuxin tukema tiedostojärjestelmä ei käytä pehmeitä päivityksiä,
-joten tarkastelun kohteena on BSD 4.4-käyttöjärjestelmästä löytyvä Berkeley Fast Filestem-tiedostojärjestelmä~\cite{SoftUpdatesFfs}.
+joista yksi on \emph{pehmeät päivitykset} (\emph{soft updates}) jotka perustuvat metadatakirjoitusten tekemiseen tietyssä järjestyksessä.
+Tarkastellaankin seuraavaksi pehmeiden päivitysten toteutusta Berkeley Fast Filesystem-tiedostojärjestelmä~\cite{SoftUpdatesFfs}.
 %Pehmeiden päivitysten pääperiaatteena on käyttää edelleen FFS:n levyformaattia,
 %mutta tehdä päivitykset levytietorakenteisiin järjestyksessä jossa tiedostojärjestelmä säilyy mahdollisimman konsistenttina.
 %\texttt{ext2}:sta poiketen FFS-tiedostojärjestelmälle ei löydy tukea Linuxista, vaan tarkasteltavana on toteutus 90-luvun BSD 4.4-käyttöjärjestelmästä.
 
-\subsection{Johdanto pehmeisiin päivityksiin FFS-tiedostojärjestelmässä}
-Aiemmin nähty \texttt{ext2} on vahvasti FFS-tiedostojärjestelmän inspiroima
-ja yleisellä tasolla lähes jokaiselle FFS:n levytietorakenteelle löytyy \texttt{ext2}:sta identtinen vastine.
-FFS-tiedostojärjestelmä on jaettu \emph{sylinteriryhmiin} (\emph{cylinder group}) joka vastaa \texttt{ext2}:n lohkoryhmää.
-Kukin sylinteriryhmä sisältää \texttt{ext2}:n tapaan erillisen alueen inodelohkoille, inodebittikartan, lohkobittikartan sekä varsinaisen data-alueen.
-Samaan tapaan FFS:n inodet viittaavat datalohkoihin käyttäen lohkopuuta ja hakemistojen sisältö säilytetään hakemistoinoden data-alueella.
-Analyysi FFS:n käyttäytymisestä kaatumistilanteissa voidaan siis tehdä luvun~\ref{ChapExt2Fs} tiedoilla \texttt{ext2}:sta.
+\subsection{Berkeley Fast Filesystem-tiedostojärjestelmä}
+Berkeley Fast Filesystem (FFS) on alkuperäiseeen BSD-käyttöjärjestelmään kehitetty varsin varhainen Unix-tiedostojärjestelmä.
+Koska aiemmin esitelty \texttt{ext2} on ottanut vaikutteita FFS-tiedostojärjestelmästä,
+muistuttavat niiden levytietorakenteet vahvasti toisiaan.
+Pääpiirteissään jokaiselle \texttt{ext2}:n levytietorakenteelle löytyy suora vastine FFS:tä,
+joten kaatumistilanteella on FFS:lle samanlaiset seuraukset kuin mitä \texttt{ext2}:lle nähtiin luvussa~\ref{ChapExt2Crash}.
+Erityisesti \texttt{fsck}-tarkastusohjelman ajaminen kaatumistilanteen jälkeen oli tarpeen ennen kuin tiedostojärjestelmää pystyttiin käyttämään.
+
+FFS-tiedostojärjestelmän kaatumisturvallisuutta alettiin parantamaan BSD-käyttöjärjestelmän versiosta 4.4 lähtien \emph{pehmeitä päivityksiä} käyttämällä.
 
 Aiemmin aliluvussa~\ref{ChapExt2FileCreation} nähtiin \texttt{ext2}:n tekemät muutokset uutta tiedostoa luodessa.
 FFS-tiedostojärjestelmän tapauksessa muokataan samoja levytietorakenteita,
 mutta pehmeitä päivityksiä käytettäessä levykirjoitusten järjestys voisi olla seuraava:
+% 90-luvun BSD 4.4-käyttöjärjestelmästä löytyvä Berkeley Fast Filesystem-tiedostojärjestelmä~\cite{SoftUpdatesFfs}.
 \begin{enumerate}
     \item{Lohkoryhmän inodebittikartta}
     \item{Inodetaulu}
