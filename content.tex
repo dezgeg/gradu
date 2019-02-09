@@ -532,11 +532,11 @@ BOB:n voidaan siis vain todeta jonkin persistenssiominaisuuden paikkaansa pitäm
 \setlength{\tabcolsep}{0.3em}
 \begin{tabular}{r||c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c}
     & \hdr{ext2} & \hdr{ext2-sync} & \hdr{ext3-writeback} & \hdr{ext3-ordered} & \hdr{ext3-datajournal} & \hdr{ext4-writeback} & \hdr{ext4-ordered} & \hdr{ext4-nodelalloc} & \hdr{ext4-datajournal} & \hdr{btrfs} & \hdr{xfs} & \hdr{xfs-wsync} & \hdr{reiserfs-nolog} & \hdr{reiserfs-writeback} & \hdr{reiserfs-ordered} & \hdr{reiserfs-datajournal} \\ \hline \hline
-    ylikirjoitus $\rightarrow$  mikä tahansa operaatio             & \no  & \yes & \no  & \no  & \yes & \no  & \no  & \no  & \yes & \yes & \no  & \no  & \no  & \no  & \no  & \yes \\
-    lisäys+uudelleennimeys $\rightarrow$  mikä tahansa operaatio   & \no  & \yes & \no  & \yes & \yes & \no  & \yes & \yes & \yes & \yes & \yes & \yes & \no  & \no  & \yes & \yes \\
-    \texttt{O\_TRUNC} lisäys $\rightarrow$  mikä tahansa operaatio & \no  & \yes & \no  & \yes & \yes & \no  & \yes & \yes & \yes & \yes & \yes & \yes & \no  & \no  & \yes & \yes \\
-    lisäys $\rightarrow$ lisäys samaan tiedostoon                  & \no  & \yes & \no  & \yes & \yes & \no  & \yes & \yes & \yes & \yes & \yes & \yes & \no  & \no  & \yes & \yes \\
-    hakemisto-op. $\rightarrow$ mikä tahansa operaatio             & \no  & \yes & \yes & \yes & \yes & \yes & \yes & \yes & \yes & \yes & \no  & \yes & \yes & \no  & \yes & \yes \\
+    ylikirjoitus                                                   & \no  & \yes & \no  & \no  & \yes & \no  & \no  & \no  & \yes & \yes & \no  & \no  & \no  & \no  & \no  & \yes \\
+    lisäys+uudelleennimeys                                         & \no  & \yes & \no  & \yes & \yes & \no  & \yes & \yes & \yes & \yes & \yes & \yes & \no  & \no  & \yes & \yes \\
+    \texttt{O\_TRUNC}+lisäys                                       & \no  & \yes & \no  & \yes & \yes & \no  & \yes & \yes & \yes & \yes & \yes & \yes & \no  & \no  & \yes & \yes \\
+    lisäys saman tiedoston sisällä                  & \no  & \yes & \no  & \yes & \yes & \no  & \yes & \yes & \yes & \yes & \yes & \yes & \no  & \no  & \yes & \yes \\
+    hakemisto-operaatio                                                  & \no  & \yes & \yes & \yes & \yes & \yes & \yes & \yes & \yes & \yes & \no  & \yes & \yes & \no  & \yes & \yes \\
 \end{tabular}
 \egroup
 \caption{Tulokset järjestykseen liittyvistä persistenssiominaisuuksista. FIXME tarkka lähde.}
@@ -835,20 +835,19 @@ Taulukossa~\ref{TabExt2Creation} nähdään levykirjoitukset jota aiheutuu luota
 \end{tabular}
 \caption{Tiedoston luomisesta seuraavat levyoperaatiot.}
 \end{table}
-
+%
 Esimerkistä ilmenee selvästi miten \texttt{ext2} hyödyntää välimuistia levyn metadatarakenteille: \texttt{creat()}-kutsu palaa välittömästi eikä siitä aiheudu välittömiä levykirjoituksia.
 Vasta 30 sekuntia myöhemmin tehdään ensimmäiset kolme kirjoitusta,
 jota seuraa toinen 30 sekunnin odotus ennen kuin koko operaatio on saatettu loppuun levyllä.
 Kokonaisuudessaan esimerkki näyttää miten tiedoston luominen on varsin yksinkertaista.
 Levyltä varataan yksi vapaa inode (tässä esimerkissä 12), alustetaan se ja lisätään hakemistoalkio osoittamaan siihen.
-
 Tämän esimerkin kaatumistilanne voi aiheuttaa seuraavia inkonsistenssiuksia:
 \begin{enumerate}
     \item{Kohtien 3--4 välissä: vapaiden inodejen laskuri näyttää vapaita inodeja olevan vähemmän kuin niitä todellisuudessa on.}
     \item{Kohtien 4--5 välissä: inodebittikartta näyttää vapaita inodeja olevan vähemmän kuin niitä todellisuudessa on.}
     \item{Kohtien 5--6 välissä: juurihakemiston hakemistoalkio \texttt{new} osoittaa nyt inodetaulussa alustamattomaan inodeen.}
 \end{enumerate}
-
+%
 Näistä kaksi ensimmäistä johtaa inodejen `vuotamiseen',
 eli tiedostojärjestelmässä näyttää olevan vähemmän vapaita inodeja saatavilla kuin siellä todellisuudessa on.
 Tämä ei sinänsä ole suoraan este tiedostojärjestelmän käytölle,
@@ -894,8 +893,7 @@ Jatketaan edellisen kohdan tiedostojärjestelmästä ja kirjoitetaan \texttt{new
 
 Levyvälimuistien olemassaolo näkyy tässäkin esimerkissä,
 sillä \texttt{write()}-operaatio ei aiheuta levykirjoituksia vaan ne tehdään taustalla vasta viiden sekunnin päästä.
-
-Tämän esimerkin kaatumistilanne voi aiheuttaa seuraavia inkonsistenssiuksia:
+Tämän esimerkin kaatumistilanne voi puolestaan aiheuttaa seuraavia inkonsistenssiuksia:
 \begin{enumerate}
     \item{Kohtien 5--6 välissä: vapaiden lohkojen laskuri näyttää vapaita lohkoja olevan vähemmän kuin niitä todellisuudessa on.}
     \item{Kohtien 6--7 välissä: lohkobittikartta näyttää vapaita lohkoja olevan vähemmän kuin niitä todellisuudessa on.}
