@@ -1314,7 +1314,13 @@ Tiedostoa poistettaessa:
 
 \subsection{Sykliset riippuvuudet}
 Pehmeiden päivitysten ja levyvälimuistien yhdistelmällä voidaan joutua tilanteeseen jossa tietorakenteiden väliset riippuvuudet muodostavat syklin.
-Otetaan esimerkiksi lähtötilanne jossa muuten tyhjässä tiedostojärjestelmässä on pelkästään yksi tyhjä tiedosto \texttt{/oldfile} ja sille tehdään operaatiot \texttt{creat("/newfile", 0644); unlink("/oldfile");}.
+Otetaan esimerkiksi lähtötilanne jossa muuten tyhjässä tiedostojärjestelmässä on pelkästään yksi tyhjä tiedosto \texttt{/oldfile} ja sille tehdään seuraavat operaatiot:
+%
+\begin{minted}{c}
+open("/newfile", O_CREAT | O_WRONLY, 0644);
+unlink("/oldfile");
+\end{minted}
+%
 Oletetaan lisäksi että sekä \texttt{newfile}:n että \texttt{oldfile}:n inodet päätyvät samalle inodelohkolle ja hakemistoalkiot samalle hakemiston lohkolle.
 Nyt tiedostojärjestelmän osalta ovat voimassa seuraavat päivitysriippuvuudet:
 \begin{enumerate}
