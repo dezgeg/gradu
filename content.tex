@@ -1231,11 +1231,13 @@ mikä onkin tiedostojärjestelmän ainoa tietorakenne jota päivitetään pääl
 
 \section{Kirjoitusjärjestyksen hallintaan perustuvat tiedostojärjestelmät (``soft updates'')}
 \label{ChapSoftUpdates}
-Edellisissä luvuissa esiteltiin tekniikoita jossa tiedostojärjestelmän konsistenssiuden säilyminen kaatumistilanteessa toteutettiin tuomalla tiedostojärjestelmään menetelmä atomisten päivitysten tekemiseen.
-Tässä luvussa tarkastellaan vaihtoehtoista \emph{pehmeät päivitykset} (\emph{soft updates})-tekniikkaa,
-ja erityisesti sen toteutusta Berkeley Fast Filesystem (FFS)-tiedosto\-järjestelmään~\cite{SoftUpdatesFfs}.
-Pehmeiden päivitysten pääperiaatteena on käyttää edelleen FFS:n levyformaattia,
-mutta tehdä päivitykset levytietorakenteisiin järjestyksessä jossa tiedostojärjestelmä säilyy mahdollisimman konsistenttina.
+Aiemmissa luvuissa esiteltiin tekniikoita jossa tiedostojärjestelmän konsistenssiuden säilyminen kaatumistilanteessa varmistettiin oleellisesti toteuttamalla tiedostojärjestelmään jokin menetelmä metadatapäivitysten tekemiseen atomisesti.
+Vaihtoehtoisia lähestymistapojakin on kuitenkin käytetty,
+joista seuraavaksi tarkastellaan \emph{pehmeitä päivityksiä} (\emph{soft updates}) jotka perustuvat metadatakirjoitusten tekemiseen tietyssä järjestyksessä.
+Yksikään Linuxin tukema tiedostojärjestelmä ei käytä pehmeitä päivityksiä,
+joten tarkastelun kohteena on BSD 4.4-käyttöjärjestelmästä löytyvä Berkeley Fast Filestem-tiedostojärjestelmä~\cite{SoftUpdatesFfs}.
+%Pehmeiden päivitysten pääperiaatteena on käyttää edelleen FFS:n levyformaattia,
+%mutta tehdä päivitykset levytietorakenteisiin järjestyksessä jossa tiedostojärjestelmä säilyy mahdollisimman konsistenttina.
 %\texttt{ext2}:sta poiketen FFS-tiedostojärjestelmälle ei löydy tukea Linuxista, vaan tarkasteltavana on toteutus 90-luvun BSD 4.4-käyttöjärjestelmästä.
 
 \subsection{Johdanto pehmeisiin päivityksiin FFS-tiedostojärjestelmässä}
