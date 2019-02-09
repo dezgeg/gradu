@@ -773,15 +773,14 @@ Siis poistettavaa hakemistoalkiota edeltävän hakemistoalkion \texttt{rec\_len}
 
 Edellisessä luvussa käytiin lävitse \texttt{ext2}:n levytietorakenteiden toiminta teoriatasolla.
 Keskitytään seuraavaksi kaatumistilanteisiin ja niistä syntyviin epäkonsistenttiuksiin.
-Tarkastellaan ensin tiedostojärjestelmän konsistenssiuden määrittelemiä invariantteja sekä miten niitä tarkistetaan ja korjataan \texttt{fsck}-työkalulla.
+Tarkastellaan ensin tiedostojärjestelmän konsistenssiuden määritteleviä invariantteja sekä miten niitä tarkistetaan ja korjataan \texttt{fsck}-työkalulla.
 Lisäksi tutkitaan käytännössä miten Linuxin \texttt{ext2}-tiedostojärjestelmäajuri tekee levykirjoituksia ja mitä käytännön seurauksia kaatumistilanteilla on.
 
 \subsection{\texttt{ext2}-tiedostojärjestelmän tarkistusohjelma \emph{e2fsck}}
-
 Tiedostojärjestelmien korruptoitumiselle on muitakin mahdollisia syitä kuin kaatumistilanteet.
 Laitteisto, kuten levyt tai keskusmuisti eivät ole täydellisiä vaan tilastollisesti bittivirheitä tulee tapahtumaan ennen pitkää varsinkin suurissa järjestelmissä.
 Myöskin ohjelmointivirheet tiedostojärjestelmäajureissa on mahdollinen ongelmien lähde.
-Tällaisia tilanteita varten tulee Unix-pohjaisissa käyttöjärjestelmissä konventionaalisesti \emph{fsck (file system check)}-niminen tiedostojärjestelmän tarkastusohjelma joka pyrkii tarkistamaan koko tiedostojärjestelmän metadatan oikeellisuuden ja tarvittaessa korjaamaan kohdattuja ongelmia.
+Tällaisia tilanteita varten tulee Unix-pohjaisissa käyttöjärjestelmissä konventionaalisesti \emph{fsck} (\emph{file system check})-niminen tiedostojärjestelmän tarkastusohjelma joka pyrkii tarkistamaan koko tiedostojärjestelmän metadatan oikeellisuuden ja tarvittaessa korjaamaan kohdattuja ongelmia.
 Koska jokaisella tiedostojärjestelmällä on oma levyformaattinsa jotka voivat siten korruptoitua eri tavoilla,
 on jokaiselle tiedostojärjestelmälle kehitettävä oma työkalunsa,
 joka tyypillisesti on Unix-sovellus joka ajetaan ennen tiedostojärjestelmän liittämistä.
@@ -791,10 +790,17 @@ Koska \texttt{e2fsck}:n täytyy käydä koko tiedostojärjestelmän metadata lä
 pitää jo koko metadatan paikantamisessa olla varovainen,
 koska johonkin muuhun metadataan viittaava kenttä itsessään voi olla korruptoitunut.
 Myöskin metadataan tehtävät korjaukset on tärkeä tehdä tietyssä järjestyksessä.
-
-\texttt{e2fsck} käy tiedostojärjestelmän läpi kuudessa vaiheessa:
+Mahdollisia \texttt{e2fsck}:n tekemiä korjauksia on yli 120 ja ne tehdään kuudessa eri vaiheessa~\cite{SQCK}.
+Vaiheet ja merkittävimmät niissä tehtävät tarkistukset ja korjaukset ovat:
 \begin{enumerate}
-    \item{Superlohko}
+      \item{Superlohkon ja lohkoryhmän tarkistus.}
+      \item{Inodejen ja lohko-osoittimien tarkistus:
+            inoden ja epäsuorien lohkojen sisältämät lohko-osoittimet eivät saa osoittaa tiedostojärjestelmän ulkopuolelle,
+            kuhunkin data- tai epäsuoraan lohkoon saa olla korkeintaan yksi viittaus.}
+      \item{Hakemistolohkojen tarkistus: }
+      \item{Hakemistopuun yhtenäisyyden tarkistus: kaikilla käytössä olevilla inodeilla pitää olla vähintään yksi polku juurihakemistosta lähtien.}
+      \item{Inodeen viittaavien hakemistoalkioiden määrän laskurit päivitetään vastaamaan todellista määrää.}
+      \item{Lohko- ja inodebittikartat sekä vapaiden lohkojen ja inodejen laskurit päivitetään vastaavaan todellista tilannetta.}
 \end{enumerate}
 
 \subsection{Kaatumistilanteiden tutkiminen käytännössä}
