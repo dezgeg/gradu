@@ -795,10 +795,9 @@ Vaiheet ja merkittävimmät niissä tehtävät tarkistukset ja korjaukset ovat:
 \begin{enumerate}
       \item{Superlohkon ja lohkoryhmän tarkistus.}
       \item{Inodejen ja lohko-osoittimien tarkistus:
-            inoden ja epäsuorien lohkojen sisältämät lohko-osoittimet eivät saa osoittaa tiedostojärjestelmän ulkopuolelle,
             kuhunkin data- tai epäsuoraan lohkoon saa olla korkeintaan yksi viittaus.}
-      \item{Hakemistolohkojen tarkistus: }
-      \item{Hakemistopuun yhtenäisyyden tarkistus: kaikilla käytössä olevilla inodeilla pitää olla vähintään yksi polku juurihakemistosta lähtien.}
+        \item{Hakemistojen tarkistus: jokainen hakemistoalkio osoittaa käytössä olevaan inodeen, hakemistoinodeen saa olla korkeintaan yksi viittaava hakemistoalkio,}
+      \item{Hakemistopuun yhtenäisyyden tarkistus: kaikkiin käytössä oleviin inodeihin pitää pystyä kulkemaan juurihakemistosta lähtien.}
       \item{Inodeen viittaavien hakemistoalkioiden määrän laskurit päivitetään vastaamaan todellista määrää.}
       \item{Lohko- ja inodebittikartat sekä vapaiden lohkojen ja inodejen laskurit päivitetään vastaavaan todellista tilannetta.}
 \end{enumerate}
