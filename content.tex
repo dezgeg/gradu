@@ -822,6 +822,61 @@ ja mitkä käyttöjärjestelmä kirjoittaa taustalla.
 \label{ChapExt2FileCreation}
 Taulukossa~\ref{TabExt2Creation} nähdään levykirjoitukset jota aiheutuu luotaessa tyhjään \texttt{ext2}-tiedostojärjestelmän juurihakemistoon uusi tyhjä tiedosto kutsulla \texttt{creat("new", 0755)}:
 
+% Before:
+% debugfs 1.44.1 (24-Mar-2018)
+% debugfs:  stat /
+% Inode: 2   Type: directory    Mode:  0755   Flags: 0x0
+% Generation: 0    Version: 0x00000000:00000000
+% User:     0   Group:     0   Project:     0   Size: 4096
+% File ACL: 0
+% Links: 3   Blockcount: 8
+% Fragment:  Address: 0    Number: 0    Size: 0
+%  ctime: 0x5ba8fc96:00000000 -- Mon Sep 24 18:02:46 2018
+%  atime: 0x5ba8fc96:00000000 -- Mon Sep 24 18:02:46 2018
+%  mtime: 0x5ba8fc96:00000000 -- Mon Sep 24 18:02:46 2018
+% crtime: 0x5ba8fc96:00000000 -- Mon Sep 24 18:02:46 2018
+% Size of extra inode fields: 32
+% BLOCKS:
+% (0):516
+% TOTAL: 1
+
+
+% After:
+% debugfs 1.44.1 (24-Mar-2018)
+% debugfs:  istat <12>
+% debugfs: Unknown request "istat".  Type "?" for a request list.
+% debugfs:  stat <12>
+% Inode: 12   Type: regular    Mode:  0644   Flags: 0x0
+% Generation: 1493743292    Version: 0x00000000:00000001
+% User:     0   Group:     0   Project:     0   Size: 65536
+% File ACL: 0
+% Links: 1   Blockcount: 136
+% Fragment:  Address: 0    Number: 0    Size: 0
+%  ctime: 0x5baa3ca6:c24fa700 -- Tue Sep 25 16:48:22 2018
+%  atime: 0x5baa3ca6:c2129e00 -- Tue Sep 25 16:48:22 2018
+%  mtime: 0x5baa3ca6:c24fa700 -- Tue Sep 25 16:48:22 2018
+% crtime: 0x5baa3ca6:c2129e00 -- Tue Sep 25 16:48:22 2018
+% Size of extra inode fields: 32
+% BLOCKS:
+% (0-11):9216-9227, (IND):8722, (12-15):9228-9231
+% TOTAL: 17
+%
+% debugfs:  stat /
+% Inode: 2   Type: directory    Mode:  0755   Flags: 0x0
+% Generation: 0    Version: 0x00000000:00000001
+% User:     0   Group:     0   Project:     0   Size: 4096
+% File ACL: 0
+% Links: 3   Blockcount: 8
+% Fragment:  Address: 0    Number: 0    Size: 0
+%  ctime: 0x5baa3ca6:c24fa700 -- Tue Sep 25 16:48:22 2018
+%  atime: 0x5ba8fc96:00000000 -- Mon Sep 24 18:02:46 2018
+%  mtime: 0x5baa3ca6:c24fa700 -- Tue Sep 25 16:48:22 2018
+% crtime: 0x5ba8fc96:00000000 -- Mon Sep 24 18:02:46 2018
+% Size of extra inode fields: 32
+% BLOCKS:
+% (0):516
+% TOTAL: 1
+
 \begin{table}[H]
 \label{TabExt2Creation}
 \begin{tabular}{l | l | l | l | p{7cm}}
