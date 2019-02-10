@@ -383,8 +383,8 @@ Moderneissa Unix-järjestelmissä levyvälimuistien käyttö on laajennettu kosk
 % http://pubs.opengroup.org/onlinepubs/9699919799/functions/fdatasync.html
 Levyvälimuistin hallintaan löytyy POSIXissa kaksi keskeistä funktiota~\cite{PosixSpec}:
 \begin{minted}{c}
-int fsync(int fildes);
 int fdatasync(int fildes);
+int fsync(int fildes);
 \end{minted}
 %
 Operaatio \texttt{fdatasync()} pakottaa parametrina annettua tiedostokahvaa \texttt{fildes} vastaavan tiedoston levyvälimuistin kirjoittamisen.
