@@ -980,31 +980,33 @@ Tiedostojärjestelmän käyttö tässä tilanteessa ei siis ole turvallista enne
 
 \section{Kirjaavat tiedostojärjestelmät}
 \label{ChapJournallingFs}
-Edellisissä luvuissa kuvailtiin \texttt{ext2}-tiedostojärjestelmä ja sen käyttäytyminen kaatumistilanteissa.
-Koska kaatumistilanteen aiheuttamien seuraamuksien todettiin olevan varsin ikäviä,
-ovat monet \texttt{ext2}:ta edistyneemmät tiedostojärjestelmät kehittäneet menetelmiä kaatumistilanteita varten.
-Eräs varsin laajasti käytetty tekniikka on \emph{kirjaavat}tai \emph{journaloivat} tiedostojärjestelmät (\emph{journalling file system}).
-Tätä tekniikkaa käyttääkin \texttt{ext2}:n seuraaja \texttt{ext3}, sekä sen lisäksi
-muun muassa IBM:n JFS sekä Microsoftin NTFS~\cite{JournalingAnalysis}.
-Kirjauksen toteuttaminen tiedostojärjestelmään voidaan tehdä muutamalla eri lähestymistavalla.
-Tässä luvussa kuitenkin tarkastellaan pääosin \texttt{ext3}:n toteutusta kirjauksesta.
+Edellisessä luvuissa nähtiin mitä seurauksia kaatumistilanteilla on \texttt{ext2}-tiedostojärjestelmälle,
+joiden johdosta koko tiedostojärjestelmän metadata täytyy käydä läpi \texttt{e2fsck}-ohjelmalla konsistenssin palauttamiseksi.
+Tarkastellaan seuraavaksi miten \texttt{ext2}:n seuraaja \texttt{ext3} käyttää \emph{kirjausta} (\emph{journalling}) varmistamaan että tiedostojärjestelmä säilyy konsistenssina kaatumistilanteiden aikanakin.
 
-\subsection{Motivaatio}
-
+\subsection{Motivaatio \texttt{ext3}:lle}
 Tarve \texttt{ext2}:n jatkokehitykselle syntyi pääosin kaatumistilanteista selviämiseen,
 sillä kiintolevyjen koon kasvaessa kasvoi myös \texttt{fsck}-ohjelman viemä aika samaa tahtia~\cite{Ext2Journal}.
 Tavoitteeksi asetettiin luoda menetelmä kaatumistilanteista selviämiseen joka ei vaadi pitkää palautumisaikaa jolloin tiedostojärjestelmä ei ole käytettävissä.
-Nopeuden lisäksi samalla tavoiteltiin parannuksia tiedostojärjestelmän kaatumisesta palautumiseen seuraavilla kriteereillä: säilyvyys, ennakoitavuus, ja atomisuus~\cite{Ext2Journal}.
-Säilyvyydellä tarkoitetaan että aikaisemmin onnistuneesti turvallisesti levylle kirjoitettujen tiedostojen sisällöt pysyvät sellaisenaan.
-\texttt{ext2}-tiedostojärjestelmän \emph{fsck}-pohjainen palautumismekanismi täyttää tämän kriteerin jo valmiiksi,
-joten sen seuraajankin kuuluu täyttää tämä kriteeri.
-Atomisuuskriteeri vaatii että tietyt loogisesti yksittäiset tiedostojärjestelmäoperaatiot tapahtuvat
-joko kokonaan loppuun asti tai eivät ollenkaan.
-Kuten aiemmin nähtiin, tämä kriteeri ei täyty \texttt{ext2}:n kohdalla uudelleennimettäessä tiedostoa hakemistosta toiseen,
-vaan fsck-ohjelman ajamisesta huolimatta voidaan päätyä joko tiedoston katoamiseen tai tilanteeseen jossa sekä uusi että tiedostonimi ovat olemassa.
-Ennakoitavuus tarkoittaa että kaikkien tilanteiden josta tiedostojärjestelmä joutuu palautumaan kaatumistilanteessa ovat ennakoitavissa.
-Perinteisen \texttt{ext2}:n kohdalla näin ei ole,
-sillä levyvälimuistien takia kaatumistilanteen aikana voi olla meneillään usean loogisen POSIX-tiedostojärjestelmäoperaation aiheuttamia päivityksiä moniin levytietorakenteisiin samanaikaisesti.
+Nopeuden lisäksi samalla tavoiteltiin parannuksia tiedostojärjestelmän kaatumisesta palautumiseen seuraavilla kriteereillä~\cite{Ext2Journal}:
+\begin{itemize}
+    \item{Säilyvyys: kaatumistilanteesta palautuminen ei saa vaikuttaa dataan tai metadataan joka on onnistuneesti kertaalleen päätynyt levylle asti ennen kaatumistilannetta.}
+    \item{Ennakoitavuus: kaatumistilanteesta palautuessa tehtävät vaiheet täytyy olla ennakoitavissa.}
+    \item{Atomisuus: sovellusohjelmoijan näkökulmasta atomiset operaatiot, kuten esimerkiksi tiedoston uudelleennimeäminen \texttt{rename()}-kutsulla säilyvät atomisena kaatumistilanteissakin.}
+\end{itemize}
+Näistä kriteereistä \texttt{ext2} täyttää ainoastaan säilyvyyden.
+Levyvälimuistien takia kaatumistilanteen aikana meneillään on voinut olla useaan POSIX-tiedostojärjestelmäoperaation liittyviä levytietorakenteiden päivityksiä,
+joten \texttt{e2fsck}:n täytyy varautua tekemään merkittävä määrä erityyppisiä korjauksia.
+Atomisuuden osalta \texttt{ext2} rajoittuu vain siihen mitä levyjärjestelmä pystyy,
+eli hakemistoalkion uudelleennimeäminen toisella levysektorilla sijaitsevaan hakemistolohkon sektoriin ei ole atomisesti mahdollista.
+%Koska kaatumistilanteen aiheuttamien seuraamuksien todettiin olevan varsin ikäviä,
+%ovat monet \texttt{ext2}:ta edistyneemmät tiedostojärjestelmät kehittäneet menetelmiä kaatumistilanteita varten.
+%Eräs varsin laajasti käytetty tekniikka on \emph{kirjaavat}tai \emph{journaloivat} tiedostojärjestelmät (\emph{journalling file system}).
+%Tätä tekniikkaa käyttääkin \texttt{ext2}:n seuraaja \texttt{ext3}, sekä sen lisäksi
+%muun muassa IBM:n JFS sekä Microsoftin NTFS~\cite{JournalingAnalysis}.
+%Kirjauksen toteuttaminen tiedostojärjestelmään voidaan tehdä muutamalla eri lähestymistavalla.
+%Tässä luvussa kuitenkin tarkastellaan pääosin \texttt{ext3}:n toteutusta kirjauksesta.
+%
 
 Yksi keino kaikkien näiden kriteereiden täyttämiseksi on lisätä tiedostojärjestelmään jokin menetelmä \emph{transaktioille}, joilla koko tiedostojärjestelmän metadataan voidaan tehdä päivityksiä atomisesti.
 \texttt{ext3} tuo tuen transaktioille käyttäen kirjausta, joka pohjautuu pääpiirteissään tietokantajärjestelmissä käytettyyn Write-Ahead Logging-menetelmään~\cite{AriesWal}.
