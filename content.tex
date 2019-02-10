@@ -1008,8 +1008,10 @@ eli hakemistoalkion uudelleennimeäminen toisella levysektorilla sijaitsevaan ha
 %Tässä luvussa kuitenkin tarkastellaan pääosin \texttt{ext3}:n toteutusta kirjauksesta.
 %
 
-Yksi keino kaikkien näiden kriteereiden täyttämiseksi on lisätä tiedostojärjestelmään jokin menetelmä \emph{transaktioille}, joilla koko tiedostojärjestelmän metadataan voidaan tehdä päivityksiä atomisesti.
-\texttt{ext3} tuo tuen transaktioille käyttäen kirjausta, joka pohjautuu pääpiirteissään tietokantajärjestelmissä käytettyyn Write-Ahead Logging-menetelmään~\cite{AriesWal}.
+Yksi keino kaikkien näiden kriteereiden täyttämiseksi on lisätä tiedostojärjestelmään jokin menetelmä \emph{transaktioille},
+joilla koko tiedostojärjestelmän metadataan voidaan tehdä päivityksiä atomisesti.
+\texttt{ext3} toteuttaa transaktioille käyttäen kirjausta,
+joka pohjautuu pääpiirteissään tietokantajärjestelmissä käytettyyn Write-Ahead Logging-menetelmään~\cite{AriesWal}.
 Kirjauksen perusajatuksena on että aina ennen varsinaisten levytietorakenteiden muuttamista kirjataan ylös erilliseen \emph{journaliin} ylös kaikki muutokset jota transaktion yhteydessä tullaan tekemään.
 Nyt mahdollisen kaatumistilanteen sattuessa voidaan journalin sisällön perusteella aina toistaa kaikki muutokset ja viedä transaktio loppuun.
 
