@@ -774,7 +774,7 @@ Keskitytään seuraavaksi kaatumistilanteisiin ja niistä syntyviin mahdollisiin
 Tarkastellaan ensin tiedostojärjestelmän konsistenssiuden määritteleviä invariantteja sekä miten niitä tarkistetaan ja korjataan \texttt{fsck}-työkalulla.
 Lisäksi tutkitaan käytännössä miten Linuxin \texttt{ext2}-tiedostojärjestelmäajuri tekee levykirjoituksia ja mitä käytännön seurauksia kaatumistilanteilla on.
 
-\subsection{\texttt{ext2}-tiedostojärjestelmän tarkistusohjelma \emph{e2fsck}}
+\subsection{Tiedostojärjestelmän invariantit ja tarkistus- ja korjausohjelma \emph{fsck}}
 
 Kuten edellisen luvun kuvauksesta \texttt{ext2}:n levytietorakenteista selvisi,
 yksinkertainenkin tiedostojärjestelmä koostuu useasta eri levylle kirjoitettavasta tietorakenteesta.
@@ -784,24 +784,20 @@ Konsistentissa tiedostojärjestelmässä täytyy siis esimerkiksi päteä seuraa
 jonka täytyy olla edelleen sama määrä kuin mitä jokaisen lohkoryhmän vapaiden lohkojen laskurin summa on.
 Koska jokainen näistä tietorakenteista sijaitsee levyn eri sektorilla ja saattaa olla usean sektorin kokoinen,
 ei kaikkia tietorakenteita ole mahdollista päivittää atomisesti.
-Eri sektoreiden kirjoitusten välissä tapahtuva kaatumistilanne voi siis johtaa tilanteeseen jossa vain osa kirjoituksista on valmistunut
+Eri sektoreiden kirjoitusten välissä tapahtuva kaatumistilanne voi siis johtaa tilanteeseen jossa vain osa kirjoituksista on päätynyt levylle asti
 ja tiedostojärjestelmä ei ole enää konsistentissa tilassa.
 
-Tiedostojärjestelmien korruptoitumiselle on muitakin mahdollisia syitä kuin kaatumistilanteet.
-Laitteisto, kuten levyt tai keskusmuisti eivät ole täydellisiä vaan tilastollisesti bittivirheitä tulee tapahtumaan ennen pitkää varsinkin suurissa järjestelmissä.
-Myöskin ohjelmointivirheet tiedostojärjestelmäajureissa on mahdollinen ongelmien lähde.
-Tällaisia tilanteita varten tulee Unix-pohjaisissa käyttöjärjestelmissä konventionaalisesti \emph{fsck} (\emph{file system check})-niminen tiedostojärjestelmän tarkastusohjelma joka pyrkii tarkistamaan koko tiedostojärjestelmän metadatan oikeellisuuden ja tarvittaessa korjaamaan kohdattuja ongelmia.
-Koska jokaisella tiedostojärjestelmällä on oma levyformaattinsa jotka voivat siten korruptoitua eri tavoilla,
-on jokaiselle tiedostojärjestelmälle kehitettävä oma työkalunsa,
-joka tyypillisesti on Unix-sovellus joka ajetaan ennen tiedostojärjestelmän liittämistä.
-\texttt{ext2}:n mukana tuleekin \texttt{e2fsck}-niminen tarkistustyökalu jonka toimintaa tarkastellaan seuraavassa luvussa.
-
-Koska \texttt{e2fsck}:n täytyy käydä koko tiedostojärjestelmän metadata läpi,
-pitää jo koko metadatan paikantamisessa olla varovainen,
-koska johonkin muuhun metadataan viittaava kenttä itsessään voi olla korruptoitunut.
-Myöskin metadataan tehtävät korjaukset on tärkeä tehdä tietyssä järjestyksessä.
-Mahdollisia \texttt{e2fsck}:n tekemiä korjauksia on yli 120 ja ne tehdään kuudessa eri vaiheessa~\cite{SQCK}.
+Tiedostojärjestelmien konsistenssiuden tarkastamiseen ja korjaamiseen käytetään perinteisesti \texttt{fsck} (\emph{file system check})-nimistä työkalua.
+Koska jokaisella tiedostojärjestelmällä on oma levyformaattinsa,
+on jokaiselle tiedostojärjestelmälle oma \texttt{fsck}-työkalu,
+joka \texttt{ext2}:n tapauksessa on \texttt{e2fsck}.
+Kaatumistilanteiden lisäksi \texttt{fsck}-työkalun tulee kyetä tunnistamaan ja korjaamaan parhaansa mukaan muitakin mahdollisia korruptioita,
+kuten esimerkiksi laitteistosta tai tiedostojärjestelmäajurin ohjelmointivirheistä aiheutuneita virheitä.
+Tämä tekee prosessista varsin monimutkaisen ja edellyttää koko tiedostojärjestelmän metadatan läpikäyntiä,
+mikä voi suurella tiedostojärjestelmällä kestää pitkään.
+\texttt{e2fsck}:n tapauksessa mahdollisia tiedostojärjestelmään tehtäviä korjauksia on yli 120 ja ne tehdään kuudessa eri vaiheessa~\cite{SQCK}.
 Vaiheet ja merkittävimmät niissä tehtävät tarkistukset ja korjaukset ovat:
+%
 \begin{enumerate}
       \item{Superlohkon ja lohkoryhmän tarkistus.}
       \item{Inodejen ja lohko-osoittimien tarkistus:
@@ -811,6 +807,7 @@ Vaiheet ja merkittävimmät niissä tehtävät tarkistukset ja korjaukset ovat:
       \item{Inodeen viittaavien hakemistoalkioiden määrän laskurit päivitetään vastaamaan todellista määrää.}
       \item{Lohko- ja inodebittikartat sekä vapaiden lohkojen ja inodejen laskurit päivitetään vastaavaan todellista tilannetta.}
 \end{enumerate}
+%
 
 \subsection{Kaatumistilanteiden tutkiminen käytännössä}
 \texttt{ext2}-tiedostojärjestelmän käyttäytymistä kaatumistilanteessa testattiin käytännössä QEMU-virtuaalikoneen \texttt{blk\-log\-writes}-lohkolaitteen avulla.
