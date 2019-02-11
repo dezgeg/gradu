@@ -522,8 +522,8 @@ joista mielekkäitä tilanteita ovat levyn sektorin koon (tai vähemmän) verran
 \bgroup
 %\def\arraystretch{0.9}
 \setlength{\tabcolsep}{0.3em}
-\begin{tabular}{r||c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c}
-    & \hdr{ext2} & \hdr{ext2-sync} & \hdr{ext3-writeback} & \hdr{ext3} & \hdr{ext3-datajournal} & \hdr{ext4-writeback} & \hdr{ext4} & \hdr{ext4-nodelalloc} & \hdr{ext4-datajournal} & \hdr{btrfs} & \hdr{xfs} & \hdr{xfs-wsync} & \hdr{reiserfs-nolog} & \hdr{reiserfs-writeback} & \hdr{reiserfs} & \hdr{reiserfs-datajournal} \\ \hline \hline
+\begin{tabular}{r|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c}
+    & \hdr{ext2} & \hdr{ext2-sync} & \hdr{ext3-writeback} & \hdr{ext3} & \hdr{ext3-datajournal} & \hdr{ext4-writeback} & \hdr{ext4} & \hdr{ext4-nodelalloc} & \hdr{ext4-datajournal} & \hdr{btrfs} & \hdr{xfs} & \hdr{xfs-wsync} & \hdr{reiserfs-nolog} & \hdr{reiserfs-writeback} & \hdr{reiserfs} & \hdr{reiserfs-datajournal} \\ \hline
     ylikirjoitus          & \atS & \atS & \atS & \atS & \atB & \atS & \atS & \atS & \atB & \atB & \atS & \atS & \atS & \atS & \atS & \atB \\
     loppuun lisäys        & \atN & \atS & \atN & \atB & \atB & \atN & \atB & \atB & \atB & \atB & \atB & \atB & \atS & \atN & \atS & \atB \\
     hakemisto-operaatiot  & \atN  & \atN  & \atY & \atY & \atY & \atY & \atY & \atY & \atY & \atY & \atY & \atY & \atN  & \atY & \atY & \atY \\
@@ -560,8 +560,8 @@ todetaan operaatioiden uudelleenjärjestymisen olevan mahdollista \texttt{operaa
 \bgroup
 %\def\arraystretch{0.9}
 \setlength{\tabcolsep}{0.3em}
-\begin{tabular}{r||c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c}
-    & \hdr{ext2} & \hdr{ext2-sync} & \hdr{ext3-writeback} & \hdr{ext3} & \hdr{ext3-datajournal} & \hdr{ext4-writeback} & \hdr{ext4} & \hdr{ext4-nodelalloc} & \hdr{ext4-datajournal} & \hdr{btrfs} & \hdr{xfs} & \hdr{xfs-wsync} & \hdr{reiserfs-nolog} & \hdr{reiserfs-writeback} & \hdr{reiserfs} & \hdr{reiserfs-datajournal} \\ \hline \hline
+\begin{tabular}{r|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c}
+    & \hdr{ext2} & \hdr{ext2-sync} & \hdr{ext3-writeback} & \hdr{ext3} & \hdr{ext3-datajournal} & \hdr{ext4-writeback} & \hdr{ext4} & \hdr{ext4-nodelalloc} & \hdr{ext4-datajournal} & \hdr{btrfs} & \hdr{xfs} & \hdr{xfs-wsync} & \hdr{reiserfs-nolog} & \hdr{reiserfs-writeback} & \hdr{reiserfs} & \hdr{reiserfs-datajournal} \\ \hline
     ylikirjoitus                                                   & \ordN & \ordY & \ordN & \ordN & \ordY & \ordN & \ordN & \ordN & \ordY & \ordY & \ordN & \ordN & \ordN & \ordN & \ordN & \ordY \\
     \texttt{\{}lisäys\texttt{;}uudelleennimeäminen\texttt{\}}      & \ordN & \ordY & \ordN & \ordY & \ordY & \ordN & \ordY & \ordY & \ordY & \ordY & \ordY & \ordY & \ordN & \ordN & \ordY & \ordY \\
     \texttt{\{open(O\_TRUNC);}lisäys\texttt{\}}                    & \ordN & \ordY & \ordN & \ordY & \ordY & \ordN & \ordY & \ordY & \ordY & \ordY & \ordY & \ordY & \ordN & \ordN & \ordY & \ordY \\
@@ -643,6 +643,29 @@ Mahdollisissa kaatumistilanteissa perusajatuksena on,
 että mikäli rollback journal-tiedostoa ei ole tai sen otsakkeen perusteella sitä ei ole kirjoitettu kokonaan loppuun,
 on itse tietokanta konsistentissa tilassa ja palautumiseen riittää ainoastaan poistaa mahdollinen osittain kirjoitettu rollback journal.
 Muuten palautetaan tietokanta konsistentiksi peruuttamalla rollback journalin 
+
+\begin{table}[h!]
+\label{TabAppVulnerabilities}
+\bgroup
+%\def\arraystretch{0.9}
+\setlength{\tabcolsep}{0.3em}
+\begin{tabular}{r|c|c|c|c|c|}
+             & \hdr{ext3-writeback} & \hdr{ext3} & \hdr{ext3-datajournal} & \hdr{ext4-ordered} & \hdr{btrfs} \\ \hline
+    LevelDB 1.10     & 3 & 1 & 1 & 2 & 4 \\
+    LevelDD 1.15     & 2 & 1 & 1 & 2 & 3 \\
+    LMDB             &   &   &   &   &   \\
+    GDBM             & 3 & 3 & 2 & 3 & 4 \\
+    HSQLDB           &   &   &   &   & 4 \\
+    SQLite-Rollback  & 1 & 1 & 1 & 1 & 1 \\
+    SQLite-WAL       &   &   &   &   &   \\
+    PostgreSQL       &   &   &   &   &   \\
+    HDFS             &   &   &   &   & 1 \\
+    ZooKeeper        & 1 & 1 &   & 1 & 1 \\
+%Total 16 12 10 17 31
+\end{tabular}
+\egroup
+    \caption{Joidenkin sovellusten haavoittuuvuudet kaatumistilanteissa eri tiedostojärjestelmillä~\cite[taulukko 3(c), s. 11]{PosixDataConsistency}.}
+\end{table}
 
 \section{\texttt{ext2}-tiedostojärjestelmä}
 \label{ChapExt2Fs}
