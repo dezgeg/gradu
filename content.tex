@@ -451,28 +451,41 @@ mikä takaa että \texttt{rename()}-kutsun tekemän muutokset itse hakemiston si
 
 \section{POSIX-tiedostojärjestelmien kaatumistilanteet käytännössä}
 \label{ChapPosixSafetyStudy}
+%Edellisen luvun esimerkistä nähtiin miten yksinkertaisenkin koostetun tiedostojärjestelmäoperaation toteuttaminen kaatumisturvallisesti on verrattaen haastavaa,
+%koska POSIX-standardi tarjoaa tiedostojärjestelmätoteutuksille merkittävät vapaudet uudelleenjärjestellä tai lykätä levykirjoitusten tekemistä ellei sitä erikseen pakoteta \texttt{fsync()}- tai \texttt{fdatasync()}-kutsuja käyttämällä.
+Edellisen luvun esimerkistä nähtiin miten POSIX-standardin sallimat levyvälimuistit hankaloittavat merkittävästi kaatumisturvallisen sovelluksen toteuttamista.
+Tarkastellaankin seuraavaksi levyvälimuistien vaikutusta kaatumistilanteisiin tarkemmin.
+tutkimusta siitä millaisia vaikutuksia kaatumistilanteilla on tosimaailman tiedostojärjestelmille ja sovelluksille.
+% Tutkimuksesta selviää myös joidenkin avoimen lähdekoodin sovelluksien kaatumisturvallisuus.
+%Onkin siis mielekästä tutkia kokeellisesti miten kaatumistilanteet vaikuttavat tosimaailman sovelluksiin ja tiedostojärjestelmiin.
+%Koska sovellusohjelmoijan täytyy erikseen osata käyttää POSIX-rajapintoja oikein jotta sovelluksesta saadaan kaatumisturvallinen,
+%herääkin kysymys, että kuinka moni sovellus ylipäätään on pyritty toteuttamaan kaatumisturvallisesti ja että onko niiden toteutus oikein.
+%Tiedostojärjestelmätoteutusten kannalta taas on relevanttia selvittää miten eri tiedostojärjestelmät käytännössä käyttäytyvät kaatumistilanteessa sovellusohjelmoijan näkökulmasta.
+%Molempia näistä aiheista on tutkittu kokeellisesti artikkelissa ``All File Systems Are Not Created Equal: On the Complexity of Crafting Crash-consistent Applications''~\cite{PosixDataConsistency} vuodelta 2014,
+%joten tarkastellaan aiheita seuraavissa aliluvuissa.
 
-Edellisen luvun esimerkistä nähtiin miten yksinkertaisenkin koostetun tiedostojärjestelmäoperaation toteuttaminen kaatumisturvallisesti on verrattaen haastavaa,
-koska POSIX-standardi tarjoaa tiedostojärjestelmätoteutuksille merkittävät vapaudet uudelleenjärjestellä tai lykätä levykirjoitusten tekemistä ellei sitä erikseen pakoteta \texttt{fsync()}- tai \texttt{fdatasync()}-kutsuja käyttämällä.
-Onkin siis mielekästä tutkia kokeellisesti miten kaatumistilanteet vaikuttavat tosimaailman sovelluksiin ja tiedostojärjestelmiin.
-Koska sovellusohjelmoijan täytyy erikseen osata käyttää POSIX-rajapintoja oikein jotta sovelluksesta saadaan kaatumisturvallinen,
-herääkin kysymys, että kuinka moni sovellus ylipäätään on pyritty toteuttamaan kaatumisturvallisesti ja että onko niiden toteutus oikein.
-Tiedostojärjestelmätoteutusten kannalta taas on relevanttia selvittää miten eri tiedostojärjestelmät käytännössä käyttäytyvät kaatumistilanteessa sovellusohjelmoijan näkökulmasta.
-Molempia näistä aiheista on tutkittu kokeellisesti artikkelissa ``All File Systems Are Not Created Equal: On the Complexity of Crafting Crash-consistent Applications''~\cite{PosixDataConsistency} vuodelta 2014,
-joten tarkastellaan aiheita seuraavissa aliluvuissa.
-
-\subsection{Tiedostojärjestelmän persistenssiominaisuudet}
-Kuten edellä nähtiin, POSIXin konsistenssimalli tarjoaa tiedostojärjestelmätoteutuksille vapauksia suorituskyvyn parantamiseen,
-mutta jotka samalla tuottavat haasteita sovellusohjelmoijille mikäli tavoitteena on käyttää tiedostojärjestelmää kaatumisturvallisesti.
-Ensimmäinen osuus ``All File Systems Are Not Created Equal: On the Complexity of Crafting Crash-consistent Applications''-artikkelista keskittyykin tutkimaan kokeellisesti
-miten eri Linux-tiedostojärjestelmät käyttäytyvät kaatumistilanteissa.
-Tutkittavana oli kuusi Linux-tiedostojärjestelmää: \texttt{btrfs}, \texttt{ext2}, \texttt{ext3}, \texttt{ext4}, \texttt{reiserfs} sekä \texttt{xfs}.
+\subsection{Tutkimus tiedostojärjestelmien käyttäytymisestä kaatumistilanteessa}
+POSIX-standardi tarjoaa siis tiedostojärjestelmätoteutukselle merkittävät vapaudet esimerkiksi uudelleenjärjestellä tai lykätä levykirjoitusten tekemistä suorituskyvyn parantamiseksi,
+ellei sovellusohjelma ole erikseen pakottanut sitä \texttt{fsync()}- tai \texttt{fdatasync()}-kutsuja käyttämällä.
+Itse tiedostojärjestelmätoteutuksen ei tietenkään ole mikään pakko hyödyntää näitä vapauksia,
+joten herääkin kysymys ilmeneekö tiedostojärjestelmien käyttäytymisessä eroavaisuuksia.
+Tätä aihetta on tutkittu kokeellisesti ``All File Systems Are Not Created Equal: On the Complexity of Crafting Crash-consistent Applications''\cite{PosixDataConsistency}-artikkelissa,
+jossa on vertailtu kuutta eri Linux-tiedostojärjestelmää: \texttt{btrfs}, \texttt{ext2}, \texttt{ext3}, \texttt{ext4}, \texttt{reiserfs} sekä \texttt{xfs}.
 Lisäksi useimpia tiedostojärjestelmiä testattiin eri tiedostojärjestelmäkohtaisilla optioilla,
-joten testattavia kombinaatioita saatiin 16 kappaletta.
+joten kombinaatioita saatiin yhteensä 16 kappaletta.
 
-Tiedostojärjestelmien vertailu tapahtuu niiden \emph{persistenssiominaisuuksia} vertailemalla.
+Tiedostojärjestelmien vertailua varten määriteltiin \emph{persistenssiominaisuuden} (\emph{persistence property}) käsite.
 Persistenssiominaisuudet ovat käytöksiä joita ilmenee tiedostojärjestelmän kaatumistilanteessa,
-kuten operaatioiden uudelleenjärjestyminen tai atomisuuden puute.
+jotka jakautuvat kohteen kategoriaan: operaatioiden atomisuuteen ja operaatioiden uudelleenjärjestelyyn.
+Esimerkiksi \texttt{write()}-kutsun osalta voidaan tutkia tapahtuuko kirjoitus atomisesti kaatumistilanteen sattuessa ja voiko kirjoitus tapahtua eri järjestyksessä suhteessa johonkin toiseen tiedostojärjestelmäkutsuun.
+Persistenssiominaisuuksien testaus tehtiin BOB-työkalulla (\emph{Block Order Breaker}),
+Sen periaatteena on nauhoittaa testattavan tiedostojärjestelmän tekemiä levykirjoituksia lokitiedostoon,
+josta voidaan jälkikäteen käydä läpi kaikki mahdolliset kaatumistilanteet läpi.
+Nyt kaatumistilanteista voidaan etsiä vastaesimerkkejä joissa testattava persistenssiominaisuus ei päde.
+BOB:n voidaan siis vain todeta jonkin persistenssiominaisuuden paikkaansa pitämättömyys, mutta ei toisinpäin.
+
+\subsection{Tutkittujen tiedostojärjestelmien persistenssiominaisuudet}
+
 Seuraavien operaatioiden osalta tutkittiin niiden atomisuutta:
 %
 \begin{itemize}
@@ -486,13 +499,6 @@ Lisäksi molempia kokeiltiin vaihtelevilla kirjoitettavan datan määrillä,
 joista mielekkäitä tilanteita ovat levyn sektorin koon (tai vähemmän) verran, yhden tiedostojärjestelmälohkon sekä tätä suuremmat määrät.
 
 Toinen tutkittu persistenssiominaisuuksien kategoria on mahdollinen tiedostojärjestelmäoperaatioiden järjestyksen vaihtuminen levylle kirjoittaessa.
-
-\subsection{Koejärjestely}
-Persistenssiominaisuuksien testaus tapahtuu tutkijaryhmän kehittämällä BOB:ksi (\emph{Block Order Breaker}) kutsutulla työkalulla.
-Sen periaatteena on nauhoittaa testattavan tiedostojärjestelmän tekemiä levykirjoituksia lokitiedostoon,
-jonka avulla voidaan jälkikäteen käydä kaikki mahdolliset levyn tilat (joista siis jokainen vastaa mahdollista kaatumistilannetta) läpi.
-Nyt kaatumistilanteista voidaan etsiä vastaesimerkkejä joissa testattava persistenssiominaisuus ei päde.
-BOB:n voidaan siis vain todeta jonkin persistenssiominaisuuden paikkaansa pitämättömyys, mutta ei toisinpäin.
 
 \newcommand{\hdr}[1]{\rotatebox[origin=l]{90}{\small \texttt{#1}}}
 % ei atomisuutta    x  \atN
@@ -541,7 +547,6 @@ BOB:n voidaan siis vain todeta jonkin persistenssiominaisuuden paikkaansa pitäm
 \egroup
 \caption{Tulokset järjestykseen liittyvistä persistenssiominaisuuksista. FIXME tarkka lähde.}
 \end{table}
-
 
 %
 % TODO for next release
