@@ -1479,9 +1479,17 @@ BSD-käyttöjärjestelmän tarjoama ratkaisu tähän on taustalla toimiva tiedos
 Tutkielmassa tarkasteltiin kaatumistilanteita Unix-tiedostojärjestelmissä alkaen POSIX-tiedostojärjestelmärajapintojen perusteista.
 Vaikka tiedostojärjestelmää käyttävän sovelluksen toteuttaminen onnistuu aloittelevalta ohjelmoijaltakin,
 paljastui ettei kaatumisturvallisen ohjelman toteutus olekaan enää yksinkertaista.
-%...
+%... , joten abstraktio epäonnistuu.
 Tilannetta monimutkaistaa entisestään se,
 että eri tiedostojärjestelmät käyttäytyvät kaatumistilanteissa eri tavalla.
 
-Myös muutaman tiedostojärjestelmän sisäiseen rakenteeseen perehdyttiin.
+Myös muutaman tiedostojärjestelmän sisäiseen rakenteeseen perehdyttiin lähtien liikkeelle perinteisestä mutta yksinkertaisesta \texttt{ext2}:sta.
+Kaatumistilanteita simuloimalla QEMU-virtuaalikoneella pystyttiin näyttämään käytännössä mitä seurauksia kaatumistilanteilla on \texttt{ext2}:n levyrakenteille
+ja toisaalta myös havainnollistamaan levyvälimuistien vaikutusta levykirjoituksiin.
+Tällä pystyttiin osoittamaan,
+että \texttt{ext2}-tiedostojärjestelmää käytettäessä jokaisen kaatumistilanteen jälkeen on pakko ajaa \texttt{e2fsck}-tarkastusohjelma,
+tai muuten on olemassa riski että koko tiedostojärjestelmä korruptoituu pidemmälle.
+Lopuksi esiteltiin eri tekniikoita joilla modernimmat tiedostojärjestelmät säilyvät konsistenssina kaatumistilanteiden aikanakin.
+% Valtaosa tekniikoista perustui atomisiin tekniikoihin ...
+
 \texttt{ext2}:sta.
