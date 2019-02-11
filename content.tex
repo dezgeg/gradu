@@ -485,6 +485,23 @@ Nyt kaatumistilanteista voidaan etsiä vastaesimerkkejä joissa testattava persi
 BOB:n voidaan siis vain todeta jonkin persistenssiominaisuuden paikkaansa pitämättömyys, mutta ei toisinpäin.
 
 \subsection{Tutkittujen tiedostojärjestelmien persistenssiominaisuudet}
+\newcommand{\atY}{$\bullet$}
+\newcommand{\atN}{{\small $\times$}}
+
+\newcommand{\hdr}[1]{\rotatebox[origin=l]{90}{\small \texttt{#1}}}
+% ei atomisuutta    x  \atN
+% 1 sektori        1/3 \atS
+% 1 lohko          2/3 \atB
+% mielivaltainen   3/3 \atF
+\pgfmathsetlengthmacro\sideA{0.8mm}
+\pgfmathsetlengthmacro\sideB{2 * \sideA}
+\pgfmathsetlengthmacro\sideC{3 * \sideA}
+\def\side{1}
+%\newcommand{\atN}{\tikz{\draw       (0,0) rectangle (\sideA, \sideA); \draw       (\sideA,0) rectangle (\sideB, \sideB); \draw       (\sideB,0) rectangle (\sideC, \sideC); }}
+\DeclareRobustCommand{\atS}{\tikz{\draw[fill] (0,0) rectangle (\sideA, \sideA); \draw       (\sideA,0) rectangle (\sideB, \sideB); \draw       (\sideB,0) rectangle (\sideC, \sideC); }}
+\DeclareRobustCommand{\atB}{\tikz{\draw[fill] (0,0) rectangle (\sideA, \sideA); \draw[fill] (\sideA,0) rectangle (\sideB, \sideB); \draw       (\sideB,0) rectangle (\sideC, \sideC); }}
+\DeclareRobustCommand{\atF}{\tikz{\draw[fill] (0,0) rectangle (\sideA, \sideA); \draw[fill] (\sideA,0) rectangle (\sideB, \sideB); \draw[fill] (\sideB,0) rectangle (\sideC, \sideC); }}
+
 
 Seuraavien operaatioiden osalta tutkittiin niiden atomisuutta:
 %
@@ -498,55 +515,72 @@ Seuraavien operaatioiden osalta tutkittiin niiden atomisuutta:
 Lisäksi molempia kokeiltiin vaihtelevilla kirjoitettavan datan määrillä,
 joista mielekkäitä tilanteita ovat levyn sektorin koon (tai vähemmän) verran, yhden tiedostojärjestelmälohkon sekä tätä suuremmat määrät.
 
-Toinen tutkittu persistenssiominaisuuksien kategoria on mahdollinen tiedostojärjestelmäoperaatioiden järjestyksen vaihtuminen levylle kirjoittaessa.
-
-\newcommand{\hdr}[1]{\rotatebox[origin=l]{90}{\small \texttt{#1}}}
-% ei atomisuutta    x  \atN
-% 1 sektori        1/3 \atS
-% 1 lohko          2/3 \atB
-% mielivaltainen   3/3 \atA
-\pgfmathsetlengthmacro\sideA{0.8mm}
-\pgfmathsetlengthmacro\sideB{2 * \sideA}
-\pgfmathsetlengthmacro\sideC{3 * \sideA}
-\def\side{1}
-\newcommand{\atN}{\tikz{\draw       (0,0) rectangle (\sideA, \sideA); \draw       (\sideA,0) rectangle (\sideB, \sideB); \draw (\sideB,0) rectangle (\sideC, \sideC); }}
-\newcommand{\atS}{\tikz{\draw[fill] (0,0) rectangle (\sideA, \sideA); \draw[fill] (\sideA,0) rectangle (\sideB, \sideB); \draw (\sideB,0) rectangle (\sideC, \sideC); }}
-\newcommand{\atB}{\tikz{\draw[fill] (0,0) rectangle (\sideA, \sideA); \draw[fill] (\sideA,0) rectangle (\sideB, \sideB); \draw (\sideB,0) rectangle (\sideC, \sideC); }}
-
-\newcommand{\yes}{$\bullet$}
-\newcommand{\no}{\small $\times$}
-
-\begin{table}
+\newcommand{\ordY}{$\bullet$}
+\newcommand{\ordN}{{\small $\times$}}
+\begin{table}[h!]
 \label{TabPersistencePropsAtomicity}
 \bgroup
 %\def\arraystretch{0.9}
 \setlength{\tabcolsep}{0.3em}
 \begin{tabular}{r||c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c}
-    & \hdr{ext2} & \hdr{ext2-sync} & \hdr{ext3-writeback} & \hdr{ext3-ordered} & \hdr{ext3-datajournal} & \hdr{ext4-writeback} & \hdr{ext4-ordered} & \hdr{ext4-nodelalloc} & \hdr{ext4-datajournal} & \hdr{btrfs} & \hdr{xfs} & \hdr{xfs-wsync} & \hdr{reiserfs-nolog} & \hdr{reiserfs-writeback} & \hdr{reiserfs-ordered} & \hdr{reiserfs-datajournal} \\ \hline \hline
+    & \hdr{ext2} & \hdr{ext2-sync} & \hdr{ext3-writeback} & \hdr{ext3} & \hdr{ext3-datajournal} & \hdr{ext4-writeback} & \hdr{ext4} & \hdr{ext4-nodelalloc} & \hdr{ext4-datajournal} & \hdr{btrfs} & \hdr{xfs} & \hdr{xfs-wsync} & \hdr{reiserfs-nolog} & \hdr{reiserfs-writeback} & \hdr{reiserfs} & \hdr{reiserfs-datajournal} \\ \hline \hline
     ylikirjoitus          & \atS & \atS & \atS & \atS & \atB & \atS & \atS & \atS & \atB & \atB & \atS & \atS & \atS & \atS & \atS & \atB \\
     loppuun lisäys        & \atN & \atS & \atN & \atB & \atB & \atN & \atB & \atB & \atB & \atB & \atB & \atB & \atS & \atN & \atS & \atB \\
-    hakemisto-operaatiot  & \no  & \no  & \yes & \yes & \yes & \yes & \yes & \yes & \yes & \yes & \yes & \yes & \no  & \yes & \yes & \yes \\
+    hakemisto-operaatiot  & \atN  & \atN  & \atY & \atY & \atY & \atY & \atY & \atY & \atY & \atY & \atY & \atY & \atN  & \atY & \atY & \atY \\
 \end{tabular}
 \egroup
-\caption{Tulokset atomisuuteen liittyvistä persistenssiominaisuuksista. FIXME tarkka lähde.}
+\caption{Atomisuutta koskevat persistenssiominaisuudet eri tiedostojärjestelmillä~\cite[taulukko 1, s. 3]{PosixDataConsistency}.
+    \texttt{write()}:n kohdalla \atN $ = $ ei atominen millään datamäärillä,
+    \atS~$ = $ atominen korkeintaan levysektorin kokoisilla kirjoituksilla,
+    \atB~$ = $ atominen korkeintaan tiedostojärjestelmälohkon kokoisilla kirjoituksilla,
+    ja \atF~$ = $ atominen millä tahansa datamäärillä.
+    Muiden operaatioiden osalta \atY~ilmaisee atomista operaatiota ja \atN~atomisuuden puutetta.
+}
 \end{table}
+%
+Taulukossa~\ref{TabPersistencePropsAtomicity} on tulokset tutkituista atomisuuteen liittyvistä persistenssiominaisuuksista.
+\texttt{write()}-kutsun osalta ainoa kaikissa tiedostojärjestelmissä atomiseksi havaittu operaatio on yksittäisen levysektorin kokoinen ylikirjoitus.
+Tämä on ongelmallista, koska nyt tiedostojärjestelmä ei enää toimikaan kunnollisena abstraktiona laitteistolle.
+Tiedoston loppuun tapahtuu tiedostojärjestelmän sisällä tyypillisesti kahdesta alioperaatiosta: ensin tiedostolle varataan lisää datalohkoja ja kasvatetaan sen kokoa, jonka jälkeen lisättävä data kirjoitetaan.
+Tämä toteutusyksityiskohta ilmenee siten ettei tiedoston loppuun lisääminen pienilläkään datamäärillä välttämättä ole atominen \texttt{ext2}, \texttt{ext3-writeback}, \texttt{ext4-writeback} ja \texttt{reiserfs-writeback}-tiedostojärjestelmissä.
+Voidaan päätyä tilanteeseen jossa tiedoston kokoa on ehditty kasvattamaan mutta itse dataa ei ole vielä kirjoitettu,
+jolloin kaatumistilanteen jälkeen tiedoston lopusta voidaan havaita nollatavuja lisätyn datan sijaan.
 
-\begin{table}
+Toinen tutkittu persistenssiominaisuuksien kategoria on tiedostojärjestelmäoperaatioiden järjestyksen vaihtuminen levylle kirjoittaessa.
+Tilanteissa jossa ohjelmakoodissa tehdään peräkkäin toisistaan riippumattomat operaatiot
+\begin{minted}{c}
+    operaatio1();
+    operaatio2();
+\end{minted}
+mutta kaatumistilanteen jälkeen havaitaan tilanne jossa ainoastaan \texttt{operaatio2()} on suoritettu loppuun,
+todetaan operaatioiden uudelleenjärjestymisen olevan mahdollista \texttt{operaatio1()}:n ja \texttt{operaatio2()}:n välillä.
+
+\begin{table}[h!]
 \label{TabPersistencePropsOrdering}
 \bgroup
 %\def\arraystretch{0.9}
 \setlength{\tabcolsep}{0.3em}
 \begin{tabular}{r||c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c}
-    & \hdr{ext2} & \hdr{ext2-sync} & \hdr{ext3-writeback} & \hdr{ext3-ordered} & \hdr{ext3-datajournal} & \hdr{ext4-writeback} & \hdr{ext4-ordered} & \hdr{ext4-nodelalloc} & \hdr{ext4-datajournal} & \hdr{btrfs} & \hdr{xfs} & \hdr{xfs-wsync} & \hdr{reiserfs-nolog} & \hdr{reiserfs-writeback} & \hdr{reiserfs-ordered} & \hdr{reiserfs-datajournal} \\ \hline \hline
-    ylikirjoitus                                                   & \no  & \yes & \no  & \no  & \yes & \no  & \no  & \no  & \yes & \yes & \no  & \no  & \no  & \no  & \no  & \yes \\
-    lisäys+uudelleennimeys                                         & \no  & \yes & \no  & \yes & \yes & \no  & \yes & \yes & \yes & \yes & \yes & \yes & \no  & \no  & \yes & \yes \\
-    \texttt{O\_TRUNC}+lisäys                                       & \no  & \yes & \no  & \yes & \yes & \no  & \yes & \yes & \yes & \yes & \yes & \yes & \no  & \no  & \yes & \yes \\
-    lisäys saman tiedoston sisällä                  & \no  & \yes & \no  & \yes & \yes & \no  & \yes & \yes & \yes & \yes & \yes & \yes & \no  & \no  & \yes & \yes \\
-    hakemisto-operaatio                                                  & \no  & \yes & \yes & \yes & \yes & \yes & \yes & \yes & \yes & \yes & \no  & \yes & \yes & \no  & \yes & \yes \\
+    & \hdr{ext2} & \hdr{ext2-sync} & \hdr{ext3-writeback} & \hdr{ext3} & \hdr{ext3-datajournal} & \hdr{ext4-writeback} & \hdr{ext4} & \hdr{ext4-nodelalloc} & \hdr{ext4-datajournal} & \hdr{btrfs} & \hdr{xfs} & \hdr{xfs-wsync} & \hdr{reiserfs-nolog} & \hdr{reiserfs-writeback} & \hdr{reiserfs} & \hdr{reiserfs-datajournal} \\ \hline \hline
+    ylikirjoitus                                                   & \ordN & \ordY & \ordN & \ordN & \ordY & \ordN & \ordN & \ordN & \ordY & \ordY & \ordN & \ordN & \ordN & \ordN & \ordN & \ordY \\
+    \texttt{\{}lisäys\texttt{;}uudelleennimeäminen\texttt{\}}      & \ordN & \ordY & \ordN & \ordY & \ordY & \ordN & \ordY & \ordY & \ordY & \ordY & \ordY & \ordY & \ordN & \ordN & \ordY & \ordY \\
+    \texttt{\{open(O\_TRUNC);}lisäys\texttt{\}}                    & \ordN & \ordY & \ordN & \ordY & \ordY & \ordN & \ordY & \ordY & \ordY & \ordY & \ordY & \ordY & \ordN & \ordN & \ordY & \ordY \\
+    %lisäys saman tiedoston sisällä                                 & \ordN & \ordY & \ordN & \ordY & \ordY & \ordN & \ordY & \ordY & \ordY & \ordY & \ordY & \ordY & \ordN & \ordN & \ordY & \ordY \\
+    lisäys tiedoston loppuun                                       & \ordN & \ordY & \ordN & \ordY & \ordY & \ordN & \ordN & \ordY & \ordY & \ordN & \ordN & \ordY & \ordN & \ordN & \ordY & \ordY \\
+    hakemisto-operaatio                                            & \ordN & \ordY & \ordY & \ordY & \ordY & \ordY & \ordY & \ordY & \ordY & \ordN & \ordY & \ordY & \ordY & \ordN & \ordY & \ordY \\
 \end{tabular}
 \egroup
-\caption{Tulokset järjestykseen liittyvistä persistenssiominaisuuksista. FIXME tarkka lähde.}
+    \caption{Uudelleenjärjestelyä koskevat peristenssioperaatiot eri tiedostojärjestelmillä~\cite[taulukko 1, s. 3]{PosixDataConsistency}.
+             \ordN-symbolilla merkityt operaatiot saatetaan kirjoittaa levylle eri myöhemmin kuin sitä ohjelmakoodissa seuraavat operaatiot.
+             \ordY~tarkoittaa järjestyksen säilyvän.
+            }
 \end{table}
+Taulukossa~\ref{TabPersistencePropsOrdering} on listattu operaatioita joiden kirjoitusjärjestys saattaa vaihtua myöhempien tiedostojärjestelmä-operaatioiden kanssa.
+Merkintä \texttt{\{}$X$\texttt{;}$Y$\texttt{\}} tarkoittaa että
+operaatiot $X$ ja $Y$ ovat perättäisiä operaatioita samalle tiedostolle, ja että kummankaan operaation järjestys ei vaihdu myöhempien operaatioiden kanssa.
+Uudelleenjärjestelyiden suhteen jotkut tiedostojärjestelmät on erikseen mahdollista konfiguroida tekemään kaikki kirjoitukset järjestyksessä:
+\texttt{ext2}:n tapauksessa optiolla \texttt{sync} ja journaloivien tiedostojärjestelmien kohdalla optiolla \texttt{datajournal}.
+Toisaalta paremman suorituskyvyn omaava \texttt{writeback}-optio aiheuttaa enemmän mahdollisia operaatioiden välisiä uudelleenjärjestelyjä.
 
 %
 % TODO for next release
@@ -555,11 +589,12 @@ Toinen tutkittu persistenssiominaisuuksien kategoria on mahdollinen tiedostojär
 % Jo yhden sektorin (tai vähemmän) lisääminen tiedostoon ei ole atominen operaatio muutamalla tiedostojärjestelmällä: \texttt{ext2} sekä
 % \texttt{ext3}, \texttt{ext4} ja \texttt{reiserfs} mikäli käytetään writeback-journalointitilaa.
 %
-Kuten edellisessä luvussa nähtiin,
-jo pelkästään Linuxin mukana tulevat tiedostojärjestelmät omaavat erilaisia persistenssiominaisuuksia,
-jotka saattoivat riippua myös tiedostojärjestelmälle annetuista optioista.
-Tästä seuraakin suoraan kysymys siitä kuinka nämä erot vaikuttavat sovellusohjelmiin,
-ja onkin samalla toinen ``All File Systems Are Not Created Equal: On the Complexity of Crafting Crash-consistent Applications''-artikkelin tutkima aihe.
+
+%Kuten edellisessä luvussa nähtiin,
+%jo pelkästään Linuxin mukana tulevat tiedostojärjestelmät omaavat erilaisia persistenssiominaisuuksia,
+%jotka saattoivat riippua myös tiedostojärjestelmälle annetuista optioista.
+%Tästä seuraakin suoraan kysymys siitä kuinka nämä erot vaikuttavat sovellusohjelmiin,
+%ja onkin samalla toinen ``All File Systems Are Not Created Equal: On the Complexity of Crafting Crash-consistent Applications''-artikkelin tutkima aihe.
 
 \subsection{Sovellusten päivitysprotokollat}
 
