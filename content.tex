@@ -163,22 +163,22 @@ Tiedoston avaus tapahtuu \texttt{open}-funktiolla:
 int open(const char *path, int oflag, ...);
 \end{minted}
 %
-Parametri \texttt{path} on tiedoston polku merkkijonona
-ja \texttt{oflag} on kasa lippuja jotka määräävät miten tiedosto avataan.
+Parametri \texttt{path} kertoo avattavan tiedoston polku merkkijonona
+ja parametri \texttt{oflag} sisältää lippuja jotka määräävät miten tiedosto avataan.
 Yksi lipuista \texttt{O\_RDONLY}, \texttt{O\_WRONLY} ja \texttt{O\_RDWR} on pakko antaa.
 Ne määräävät avataanko tiedosto vain lukua, vain kirjoitusta tai sekä lukua että
 kirjoitusta varten.
 Muita mahdollisia lippuja on esimerkiksi \texttt{O\_TRUNC},
-joka tyhjentää tiedoston sisällön (truncate).
-Tiedoston voi myös luoda antamalla lipun \texttt{O\_CREAT},
-jolloin kolmas parametri määrittelee luodun tiedoston oikeudet.
+joka tyhjentää (\emph{truncate}) tiedoston sisällön.
+Mikäli lippu \texttt{O\_CREAT} on annettu,
+tiedosto luodaan jos sitä ei ollut aikaisemmin olemassa.
+Tällöin kolmas parametri määrittelee luodun tiedoston oikeudet.
 Funktio palauttaa onnistuessaan \texttt{int}-tyyppisen \emph{tiedostokahvan},
 joka viittaa kyseiseen avattuun tiedostoon.
 Tiedostokahvat ovat prosessikohtaisia,
 eli yrittämällä lukea samalla tiedostokahvan numeerisella arvolla
 jossakin toisessa prosessissa tapahtuu jotain odottamatonta.
-
-Tiedoston sulkeminen tapahtuu \texttt{close}-funktiolla,
+Avattu tiedostokahva suljetaan \texttt{close}-funktiolla,
 jolle annetaan auki oleva tiedostokahva ainoana parametrina:
 
 % http://pubs.opengroup.org/onlinepubs/9699919799/functions/close.html#tag_16_67
@@ -211,7 +211,7 @@ tiedosto loppui kesken.
 
 Jokaisella tavalliseen tiedostoon viittaavalla tiedostokahvalla on sijainti tavuina missä kohtaa tiedostoa ollaan ja josta lukeminen tai kirjoittaminen aloitetaan.
 Tiedostoa avatessa tiedostokahvan sijainti on normaalisti tiedoston alussa ja luku- ja kirjoitusoperaatiot onnistuessaan sijainti tiedostossa siirtyy eteenpäin paluuarvon verran.
-Tiedostokahvan sijaintia tiedostossa voi siirtää \texttt{lseek}-kutsulla:
+Tiedostokahvan sijaintia tiedostossa voi siirtää \texttt{lseek()}-kutsulla:
 
 % http://pubs.opengroup.org/onlinepubs/9699919799/functions/lseek.html#tag_16_310
 \begin{minted}{c}
@@ -274,21 +274,16 @@ josta löytyy muun muassa seuraavia kenttiä:
 % blkcnt_t st_blocks      Number of blocks allocated for this object.
 %
 
-Tiedoston (mutta ei hakemistoa) voi poistaa \texttt{unlink()}-funktiolla:
+Tiedoston, mutta ei hakemistoa, voi poistaa \texttt{unlink()}-funktiolla.
+Hakemiston poistamiseen käytetään funktiota \texttt{rmdir()} ja poistettavan hakemiston täytyy olla tyhjä:
+%
 \begin{minted}{c}
 int unlink(const char *path);
-\end{minted}
-%
-Hakemiston poistamiselle on oma funktio \texttt{rmdir()}:
-%
-\begin{minted}{c}
 int rmdir(const char *path);
 \end{minted}
 %
-Hakemiston poistaminen onnistuu vain mikäli hakemisto on tyhjä.
-
 %%% % http://pubs.opengroup.org/onlinepubs/9699919799/functions/unlink.html#tag_16_635
-Tiedoston voi uudelleen nimetä \texttt{rename()}-funktiolla:
+Tiedoston voi uudelleennimetä \texttt{rename()}-funktiolla:
 % http://pubs.opengroup.org/onlinepubs/9699919799/functions/rename.html#tag_16_487
 %
 \begin{minted}{c}
@@ -300,7 +295,7 @@ vaan esimerkiksi \texttt{rename("/tmp/file.tmp", "/home/foo/file.txt")} on salli
 mutta sekä lähde- että kohdepolun täytyy sijaita samalla tiedostojärjestelmällä.
 Kohdepolku voi viitata myös olemassa olevaan tiedostoon,
 jolloin kyseinen olemassa oleva tiedosto poistetaan operaation yhteydessä ikään kuin \texttt{unlink()}-kutsua olisi käytetty ennen uudelleennimeämistä.
-Kaikissa tapauksissa operaatio on atominen.
+% Kaikissa tapauksissa operaatio on atominen.
 
 %%% % FIXME: hard links
 %%%
