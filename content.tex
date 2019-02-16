@@ -964,7 +964,7 @@ Vasta 30 sekuntia myöhemmin tehdään ensimmäiset kolme kirjoitusta,
 jota seuraa toinen 30 sekunnin odotus ennen kuin koko operaatio on saatettu loppuun levyllä.
 Kokonaisuudessaan esimerkki näyttää miten tiedoston luominen on varsin yksinkertaista.
 Levyltä varataan yksi vapaa inode (tässä esimerkissä 12), alustetaan se ja lisätään hakemistoalkio osoittamaan siihen.
-Tämän esimerkin kaatumistilanne voi aiheuttaa seuraavia inkonsistenssiuksia:
+Tämän esimerkin kaatumistilanne voi aiheuttaa seuraavia epäkonsistenssiuksia:
 \begin{enumerate}
     \item{Kohtien 3--4 välissä: vapaiden inodejen laskuri näyttää vapaita inodeja olevan vähemmän kuin niitä todellisuudessa on.}
     \item{Kohtien 4--5 välissä: inodebittikartta näyttää vapaita inodeja olevan vähemmän kuin niitä todellisuudessa on.}
@@ -1016,7 +1016,7 @@ Jatketaan edellisen kohdan tiedostojärjestelmästä ja kirjoitetaan \texttt{new
 
 Levyvälimuistien olemassaolo näkyy tässäkin esimerkissä,
 sillä \texttt{write()}-operaatio ei aiheuta levykirjoituksia vaan ne tehdään taustalla vasta viiden sekunnin päästä.
-Tämän esimerkin kaatumistilanne voi puolestaan aiheuttaa seuraavia inkonsistenssiuksia:
+Tämän esimerkin kaatumistilanne voi puolestaan aiheuttaa seuraavia epäkonsistenssiuksia:
 \begin{enumerate}
     \item{Kohtien 5--6 välissä: vapaiden lohkojen laskuri näyttää vapaita lohkoja olevan vähemmän kuin niitä todellisuudessa on.}
     \item{Kohtien 6--7 välissä: lohkobittikartta näyttää vapaita lohkoja olevan vähemmän kuin niitä todellisuudessa on.}
@@ -1421,19 +1421,19 @@ eivät kaatumistilanteet aiheuta pahoja epäkonsistenssiuksia.
 
 Uutta tiedostoa luodessa:
 \begin{itemize}
-    \item{Inode täytyy merkitä varatuksi inodebittikartassa ennen kuin hakemistolohkoon lisätään hakemistoalkio viittaamaan uuden tiedoston inodeen.}
+    \item{Inode täytyy merkitä varatuksi inodebittikartassa ennen kuin inoden levytietorakenne alustetaan inodetaulussa.}
     \item{Inoden levytietorakenne täytyy alustaa ennen kuin hakemistolohkoon lisätään hakemistoalkio viittaamaan uuden tiedoston inodeen.}
     \item{Uutta hakemistoa luodessa täytyy lisäksi varata ja alustaa datalohko hakemiston sisällölle.}
 \end{itemize}
 Uutta kovaa linkkiä luodessa:
 \begin{itemize}
-    \item{Inodeen viittaavien nimien lukumäärää täytyy kasvattaa inodessa ennen kuin hakemistolohkoon lisätään uusi hakemistoalkio inodelle.}
+    \item{Inodeen viittaavien hakemistoalkioiden lukumäärää täytyy kasvattaa inodessa ennen kuin hakemistolohkoon lisätään uusi hakemistoalkio inodelle.}
 \end{itemize}
 Tiedostoon lohkoja lisättäessä:
 \begin{itemize}
     \item{Datalohkon sisältö täytyy kirjoittaa levylle ennen kuin epäsuoraan lohkoon tai inodeen lisätään viittaus datalohkoon.}
     \item{Datalohko täytyy merkitä varatuksi lohkobittikartassa ennen kuin epäsuoraan lohkoon tai inodeen lisätään viittaus datalohkoon.}
-    \item{Mikäli lohkojen lisääminen vaatii uuden epäsuoran lohkon varaamista, samat säännöt pätevät.}
+    \item{Mikäli lohkojen lisääminen vaatisi uusien epäsuorien lohkojen varaamista, sovelletaan kahta edellistä uuden epäsuoran lohkon varaamisessa ja lohkopuuhun liittämisessä..}
 \end{itemize}
 Kovaa linkkiä poistaessa:
 \begin{itemize}
@@ -1447,9 +1447,9 @@ Lohkojen poistaminen tiedostosta:
 Tiedostoa poistettaessa:
 \begin{itemize}
     \item{Hakemistoalkio täytyy poistaa hakemistolohkosta ennen kuin inoden rakenne nollataan.}
-    \item{Hakemistoalkio täytyy poistaa hakemistolohkosta ennen kuin inode merkitään vapautetuksi inodebittikartassa.}
+    %\item{Hakemistoalkio täytyy poistaa hakemistolohkosta ennen kuin inode merkitään vapautetuksi inodebittikartassa.}
     \item{Poistetun tiedoston inodea ei voida vapauttaa inodebittikartasta ennen kuin inoden rakenne on nollattu.}
-    \item{Poistetun tiedoston inodea ei voida uudelleenkäyttää ennen kuin olemassa olevat hakemistoalkiot on poistettu.}
+    \item{Poistetun tiedoston inodea ei voida uudelleenkäyttää ennen kuin kaikki siihen viittaavat hakemistoalkiot on poistettu ja hakemistoalkioiden sisältämät hakemistolohkot kirjoitettu levylle.}
 \end{itemize}
 
 % Ennen kuin lohkoon lisätään viittaus joko epäsuoran lohkoon tai inoden kautta on 
@@ -1468,13 +1468,13 @@ Oletetaan lisäksi että sekä \texttt{newfile}:n että \texttt{oldfile}:n inode
 Nyt tiedostojärjestelmän osalta ovat voimassa seuraavat päivitysriippuvuudet:
 \begin{enumerate}
     % inode <- dir
-    \item{inodelohko täytyy kirjoittaa ennen hakemistolohkoa, jotta \texttt{newfile}:n hakemistoalkio ei osoita vapaaseen inodeen.}
+    \item{inodelohko täytyy kirjoittaa ennen hakemistolohkoa, jotta \texttt{newfile}:n hakemistoalkio ei osoita alustamattomaan inodeen.}
     % bitmap <- inode
-    \item{inode\-bitti\-kartan lohko täytyy kirjoittaa ennen inode\-lohkoa, jotta \texttt{newfile}:n inode ei osoita bitti\-kartassa vapaaksi merkittyyn inodeen XXX.}
+    \item{inode\-bitti\-kartan lohko täytyy kirjoittaa ennen inode\-lohkoa, jotta \texttt{newfile}:n inodea ei alusteta ennen kuin se on varattu bittikartassa.}
     % dir <- inode
     \item{hakemisto\-lohko täytyy kirjoittaa ennen inode\-lohkoa, jotta \texttt{oldfile}:n hakemisto\-alkio ei osoita vapautettuun inodeen.}
     % inode <- bitmap
-    \item{inode\-lohko täytyy kirjoittaa ennen inode\-bitti\-kartan lohkoa, jotta \texttt{oldfile}:n inode ei osoita bitti\-kartassa vapaaksi merkittyyn inodeen XXX.}
+    \item{inode\-lohko täytyy kirjoittaa ennen inode\-bitti\-kartan lohkoa, jotta \texttt{oldfile}:n inode ei ole samanaikaisesti alustettuna inodetaulussa ja vapaana bitti\-kartassa.}
 \end{enumerate}
 Näistä päivitysriippuvuuksista 1. ja 3. muodostavat syklisen riippuvuuden inodelohkon ja hakemistolohkon välillä ja päivitysriippuvuudet 2. ja 4. muodostavat syklin inodelohkon ja inodebittikarttalohkon välillä.
 On siis päädytty tilanteeseen, jossa mitään metadatalohkoa ei voida sellaisenaan kirjoittaa levylle ilman että jokin päivitysriippuvuus jää täyttämättä.
@@ -1482,8 +1482,9 @@ On siis päädytty tilanteeseen, jossa mitään metadatalohkoa ei voida sellaise
 Pehmeiden päivitysten ratkaisu sykleihin on väliaikaisesti perua päivitysriippuvuuden aiheuttanut muutos metadatalohkoon ennen sen kirjoittamista levylle.
 Siis käyttöjärjestelmä voi kirjoittaa levylle minkä tahansa muokatun metadatalohkon,
 mutta täyttämättömien päivitysriippuvuuksien tapauksessa perutaan muutos väliaikaisesti.
-Esimerkiksi edellä nähdyistä päivitysriippuvuuksista kukin voidaan perua seuraavasti:
+Esimerkiksi edellä nähdyistä päivitysriippuvuuksista kukin voidaan perua seuraavasti: TODO.
 % XXX
+
 Käyttäen perumisinformaatiota metadatapäivitykset voidaan viedä esimerkiksi seuraavassa järjestyksessä:
 \begin{enumerate}
     \item{inodelohkosta kirjoitetaan versio jossa \texttt{oldfile}:n inoden poistaminen on kumottu.}
@@ -1532,11 +1533,9 @@ Kaatumistilanteen seurauksena tiedostojärjestelmään voi kuitenkin aiheutua se
 \end{itemize}
 Mikään näistä ei estä tiedostojärjestelmän käytön jatkamista turvallisesti vaan näkyy käyttäjälle pääasiassa ``vuotaneina'' resursseina,
 eli tiedostojärjestelmässä on näennäisesti vähemmän vapaata tilaa tai inodeja kuin siellä pitäisi olla.
-Ennen pitkää tämä ongelma täytyy kuitenkin korjata,
+Ennen pitkää nämä ongelmat täytyy kuitenkin korjata,
 jotta vuotaneen levytilan osuus ei kasva suuremmaksi jokaisen kaatumistilanteen seurauksena.
-BSD-käyttöjärjestelmän tarjoama ratkaisu tähän on taustalla toimiva tiedostojärjestelmän tarkastusohjelma.
-
-...
+Tämä on toteutettu mahdollistamalla \texttt{fsck}-tarkistusohjelman ajamisen taustalla.
 
 \section{Yhteenveto}
 Tutkielmassa tarkasteltiin kaatumistilanteita Unix-tiedostojärjestelmissä alkaen POSIX-tiedostojärjestelmärajapintojen perusteista.
