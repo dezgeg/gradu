@@ -766,14 +766,13 @@ Kenttä \texttt{i\_blocks} viittaa lohkoihin jossa inoden data sijaitsee.
 Kentän formaatti on 15-alkioinen taulukko 32-bittisiä kokonaislukuja jonka sisältö tulkitaan seuraavasti:
 \begin{itemize}
     \item Taulukon ensimmäiset 12 alkiota sisältävät lohkonumerot tiedoston ensimmäiselle 12 lohkolle (lohkot 0--11).
-          Nämä ovat \emph{suoria lohkoja} (direct blocks).
-    \item Taulukon seuraava (13.) alkio kertoo lohkonumeron, joka viittaa ensimmäiseen \emph{epäsuoraan lohkoon} (indirect block).
+          Nämä ovat \emph{suoria lohkoja} (\emph{direct blocks}).
+    \item Taulukon seuraava (13.) alkio kertoo lohkonumeron, joka viittaa ensimmäiseen \emph{epäsuoraan lohkoon} (\emph{indirect block}).
           Itse epäsuora lohko taas sisältää taulukon lohkonumeroita, jotka kertovat inoden seuraavat datalohkojen numerot.
           Esimerkiksi jos tiedostojärjestelmän lohkokoko on 4096, sisältää epäsuora lohko 1024 lohkonumeroa,
           jolloin lohkot 12 -- 1035 löytyvät ensimmäisen epäsuoran lohkon kautta.
-    \item Taulukon seuraava (14.) alkio kertoo lohkonumeron, joka viittaa ensimmäiseen \emph{toisen tason epäsuoraan lohkoon} (doubly indirect block).
-
-    \item Taulukon seuraava (15.) alkio kertoo lohkonumeron, joka viittaa ensimmäiseen \emph{kolmannen tason epäsuoraan lohkoon} (triply indirect block).
+    \item Taulukon seuraava (14.) alkio kertoo lohkonumeron, joka viittaa ensimmäiseen \emph{toisen tason epäsuoraan lohkoon} (\emph{doubly indirect block}).
+    \item Taulukon seuraava (15.) alkio kertoo lohkonumeron, joka viittaa ensimmäiseen \emph{kolmannen tason epäsuoraan lohkoon} (\emph{triply indirect block}).
 \end{itemize}
 
 \begin{figure}
@@ -823,14 +822,14 @@ Linux-ajurin luoma rakenne on seuraavanlainen:
     14 & 20  & 11 & \texttt{"defghijklmn"}  sekä 1 0-tavu. \\
     15 & 968 & 12 & \texttt{"opqrstuvwxyz"} sekä loput alkiosta ovat 0-tavuja. \\
 \end{tabular}
-
+%
 Nyt poistettaessa tiedosto \texttt{defghijklmn} muuttuu kolmannen hakemistoalkion (nimen \texttt{abc}) sisällöksi:
 
 \begin{tabular}{llll}
     \texttt{inode} & \texttt{rec\_len} & \texttt{name\_len} & tiedostonimi \\ \hline
     13 & 20  & 3  & "abc"\\
 \end{tabular}
-
+%
 Siis poistettavaa hakemistoalkiota edeltävän hakemistoalkion \texttt{rec\_len}-kenttää kasvatetaan ``hyppäämään'' poistetun alkion yli.
 
 \section{\texttt{ext2} kaatumistilanteissa}
@@ -966,6 +965,7 @@ Vasta 30 sekuntia myöhemmin tehdään ensimmäiset kolme kirjoitusta,
 jota seuraa toinen 30 sekunnin odotus ennen kuin koko operaatio on saatettu loppuun levyllä.
 Kokonaisuudessaan esimerkki näyttää miten tiedoston luominen on varsin yksinkertaista.
 Levyltä varataan yksi vapaa inode (tässä esimerkissä 12), alustetaan se ja lisätään hakemistoalkio osoittamaan siihen.
+%
 Tämän esimerkin kaatumistilanne voi aiheuttaa seuraavia epäkonsistenssiuksia:
 \begin{enumerate}
     \item{Kohtien 3--4 välissä: vapaiden inodejen laskuri näyttää vapaita inodeja olevan vähemmän kuin niitä todellisuudessa on.}
@@ -1018,6 +1018,7 @@ Jatketaan edellisen kohdan tiedostojärjestelmästä ja kirjoitetaan \texttt{new
 
 Levyvälimuistien olemassaolo näkyy tässäkin esimerkissä,
 sillä \texttt{write()}-operaatio ei aiheuta levykirjoituksia vaan ne tehdään taustalla vasta viiden sekunnin päästä.
+%
 Tämän esimerkin kaatumistilanne voi puolestaan aiheuttaa seuraavia epäkonsistenssiuksia:
 \begin{enumerate}
     \item{Kohtien 5--6 välissä: vapaiden lohkojen laskuri näyttää vapaita lohkoja olevan vähemmän kuin niitä todellisuudessa on.}
