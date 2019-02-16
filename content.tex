@@ -349,16 +349,18 @@ Kaikissa tapauksissa operaatio on atominen.
 %%% int closedir(DIR *dirp);
 %%% \end{minted}
 
-\section{POSIX-rajapintojen käyttö kaatumisturvallisesti}
+\section{POSIX-rajapintojen kaatumisturvallinen käyttö}
 \label{ChapPosixDataConsistency}
 Tietokoneiden massamuistit ovat tyypillisesti keskusmuistia merkittävästi hitaampia lukea ja kirjoittaa.
 Tyypillinen tapa parantaa tiedostojärjestelmän suorituskykyä onkin käyttää osaa keskusmuistista välimuistina tiedostojärjestelmälle,
 ja POSIX-standardi antaakin tiedostojärjestelmätoteutuksille reilusti vapauksia erilaisten välimuistien käyttöön.
-Muun muassa Linux-tiedostojärjestelmät hyödyntävätkin levyvälimuisteja merkittävissä määrin,
-mikä nähdään myöhemmin luvussa~\ref{ChapExt2Crash}.
-Tämänkaltaisilla optimoinneilla on kuitenkin varjopuolensa,
-sillä ne hankaloittavat kaatumistilanteita kestävien sovellusten, kuten tietokantajärjestelmien toteuttamista.
-Tässä luvussa tarkastellaankin POSIXin tarjoamia rajapintoja tiedostojärjestelmän välimuistien hallintaan sekä muita sovellusohjelmoijan kannalta huomioon otettavia seikkoja.
+Tämä kuitenkin hankaloittaa kaatumistilanteita kestävien sovellusten toteuttamista.
+Tarkastellaankin seuraavaksi POSIXin tarjoamia rajapintoja tiedostojärjestelmän välimuistien hallintaan sekä muita sovellusohjelmoijan kannalta huomioon otettavia seikkoja.
+
+% ??? needed?
+% Muun muassa Linux-tiedostojärjestelmät hyödyntävätkin levyvälimuisteja merkittävissä määrin,
+% mikä nähdään myöhemmin luvussa~\ref{ChapExt2Crash}.
+\subsection{Tiedostojärjestelmien levyvälimuistit}
 
 Erinäiset levyvälimuistit olivat käytössä jo hyvin varhain Unixissa.
 Jo Ritchien ja Thompsonin alkuperäisestä ``The UNIX time-sharing system''~\cite{UnixPaper}-artikkelista vuodelta 1974 löytyy lyhyt selostus Unixin \emph{lohkovälimuistista} (\emph{buffer cache}).
