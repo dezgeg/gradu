@@ -575,7 +575,7 @@ todetaan operaatioiden uudelleenjärjestymisen olevan mahdollista \texttt{operaa
              \ordY~tarkoittaa järjestyksen säilyvän.
             }
 \end{table}
-Taulukossa~\ref{TabPersistencePropsOrdering} on listattu operaatioita joiden kirjoitusjärjestys saattaa vaihtua myöhempien tiedostojärjestelmä-operaatioiden kanssa.
+Taulukossa~\ref{TabPersistencePropsOrdering} on listattu operaatioita joiden kirjoitusjärjestys saattaa vaihtua myöhempien tiedostojärjestelmäoperaatioiden kanssa.
 Merkintä \texttt{\{}$X$\texttt{;}$Y$\texttt{\}} tarkoittaa että
 operaatiot $X$ ja $Y$ ovat perättäisiä operaatioita samalle tiedostolle, ja että kummankaan operaation järjestys ei vaihdu myöhempien operaatioiden kanssa.
 Uudelleenjärjestelyiden suhteen jotkut tiedostojärjestelmät on erikseen mahdollista konfiguroida tekemään kaikki kirjoitukset järjestyksessä:
@@ -885,7 +885,7 @@ jossa jokainen välitilanne vastaa yhtä mahdollista kaatumistilannetta testitil
 Koeasetelmassa käytettiin Linuxin versiota 4.14, QEMUn versiota 3.0.0 ja 1 gigatavun levyä.
 Lisäksi tiedostojärjestelmäoperaatioita ei tehdä peräjälkeen tai heti liittämisen jälkeen,
 vaan niiden välissä odotetaan 3 minuuttia.
-Tällä lailla voidaan erottaa levykirjoitukset jotka tapahtuvat suoraan tiedostojärjestelmä-operaation seurauksena
+Tällä lailla voidaan erottaa levykirjoitukset jotka tapahtuvat suoraan tiedostojärjestelmäoperaation seurauksena
 ja mitkä käyttöjärjestelmä kirjoittaa taustalla. 
 
 \subsubsection{Tiedoston luominen}
@@ -976,7 +976,7 @@ eli tiedostojärjestelmässä näyttää olevan vähemmän vapaita inodeja saata
 Tämä ei sinänsä ole suoraan este tiedostojärjestelmän käytölle,
 mutta \texttt{fsck}-ohjelma täytyy ajaa jotta resurssit saadaan takaisin käyttöön.
 Kolmannessa tapauksessa seuraukset ovat merkittävästi ikävämpiä.
-Hakemistoalkio \texttt{new} näkyy hakemistolistauksessa mutta kaikki siihen vaikuttavat tiedostojärjestelmä-operaatiot epäonnistuvat virheellä ``Input/output error''.
+Hakemistoalkio \texttt{new} näkyy hakemistolistauksessa mutta kaikki siihen vaikuttavat tiedostojärjestelmäoperaatiot epäonnistuvat virheellä ``Input/output error''.
 Käyttäjän näkökulmasta tiedostojärjestelmään on siis syntynyt `viallinen' tiedosto jolle ei voi tehdä mitään, edes poistaa.
 
 %%%%% Levyn liittämisen yhteydessä tehdään yksi levykirjoitus superlohkoon, jossa asetetaan lippu että tiedostojärjestelmä on käytössä.
@@ -1348,7 +1348,7 @@ Pienien tiedostojen sisältö on myös mahdollista säilyttää suoraan B-puun l
 mikä välttää hukkatilan syntymisen tilanteissa missä tiedoston koko on tiedostojärjestelmän lohkokokoa pienempi.
 
 \subsection{Levyrakenteiden päivitys copy-on-write-tekniikalla}
-Kuten aiemmin nähtiin, kaikki tiedostojärjestelmä-operaatiot ovat oleellisesti vain muokkauksia tiedostojärjestelmän pohjalla olevana B-puu-tietorakenteeseen.
+Kuten aiemmin nähtiin, kaikki tiedostojärjestelmäoperaatiot ovat oleellisesti vain muokkauksia tiedostojärjestelmän pohjalla olevana B-puu-tietorakenteeseen.
 Muutoksien vieminen levylle palautuukin siis oleellisesti B-puun levyversion päivittämiseen kaatumisturvallisesti.
 Tähän Btrfs käyttää kirjoittaessa kopioivaa tekniikkaa,
 jonka perusajatuksena on että levylle aiemmin kirjoitettuja datalohkoja tai B-puun lohkoja ei ylikirjoiteta niitä muokattaessa,
