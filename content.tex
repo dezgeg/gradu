@@ -518,7 +518,6 @@ joista mielekkäitä tilanteita ovat levyn sektorin koon (tai vähemmän) verran
 \newcommand{\ordY}{$\bullet$}
 \newcommand{\ordN}{{\small $\times$}}
 \begin{table}[h!]
-\label{TabPersistencePropsAtomicity}
 \bgroup
 %\def\arraystretch{0.9}
 \setlength{\tabcolsep}{0.3em}
@@ -536,6 +535,7 @@ joista mielekkäitä tilanteita ovat levyn sektorin koon (tai vähemmän) verran
     ja \atF~$ = $ atominen millä tahansa datamäärillä.
     Muiden operaatioiden osalta \atY~ilmaisee atomista operaatiota ja \atN~atomisuuden puutetta.
 }
+\label{TabPersistencePropsAtomicity}
 \end{table}
 %
 Taulukossa~\ref{TabPersistencePropsAtomicity} on tulokset tutkituista atomisuuteen liittyvistä persistenssiominaisuuksista.
@@ -556,7 +556,6 @@ mutta kaatumistilanteen jälkeen havaitaan tilanne jossa ainoastaan \texttt{oper
 todetaan operaatioiden uudelleenjärjestymisen olevan mahdollista \texttt{operaatio1()}:n ja \texttt{operaatio2()}:n välillä.
 
 \begin{table}[h!]
-\label{TabPersistencePropsOrdering}
 \bgroup
 %\def\arraystretch{0.9}
 \setlength{\tabcolsep}{0.3em}
@@ -574,6 +573,7 @@ todetaan operaatioiden uudelleenjärjestymisen olevan mahdollista \texttt{operaa
              \ordN-symbolilla merkityt operaatiot saatetaan kirjoittaa levylle eri myöhemmin kuin sitä ohjelmakoodissa seuraavat operaatiot.
              \ordY~tarkoittaa järjestyksen säilyvän.
             }
+\label{TabPersistencePropsOrdering}
 \end{table}
 Taulukossa~\ref{TabPersistencePropsOrdering} on listattu operaatioita joiden kirjoitusjärjestys saattaa vaihtua myöhempien tiedostojärjestelmäoperaatioiden kanssa.
 Merkintä \texttt{\{}$X$\texttt{;}$Y$\texttt{\}} tarkoittaa että
@@ -647,7 +647,6 @@ on itse tietokanta konsistentissa tilassa ja palautumiseen riittää ainoastaan 
 Muuten palautetaan tietokanta konsistentiksi peruuttamalla rollback journalin 
 
 \begin{table}[h!]
-\label{TabAppVulnerabilities}
 \bgroup
 %\def\arraystretch{0.9}
 \setlength{\tabcolsep}{0.3em}
@@ -667,6 +666,7 @@ Muuten palautetaan tietokanta konsistentiksi peruuttamalla rollback journalin
 \end{tabular}
 \egroup
     \caption{Joidenkin sovellusten haavoittuuvuudet kaatumistilanteissa eri tiedostojärjestelmillä~\cite[taulukko 3(c), s. 11]{PosixDataConsistency}.}
+\label{TabAppVulnerabilities}
 \end{table}
 
 \section{\texttt{ext2}-tiedostojärjestelmä}
@@ -951,7 +951,6 @@ jota aiheutuu luotaessa tyhjään \texttt{ext2}-tiedostojärjestelmän juurihake
 % => type, mode, size, blkcount, timestamps, block pointers
 
 \begin{table}[H]
-\label{TabExt2Creation}
 \begin{tabular}{l | l | l | l | p{7cm}}
     \# & $t$ (s) & $\Delta t$ (s) & lohkot & kuvaus \\ \hline \hline
     1  & 0.000    &          &     & \texttt{creat()}-kutsu alkaa   \\ \hline %
@@ -962,6 +961,7 @@ jota aiheutuu luotaessa tyhjään \texttt{ext2}-tiedostojärjestelmän juurihake
     6  & 61.567   & +30.721  & 4   & Lohkoryhmän 0 inodetaulu: inoden 12 käyttöoikeudet, aikaleimat, koko sekä lohkoviittaukset alustetaan. Juurihakemistoinoden aikaleimoja päivitetään. \\        % 4
 \end{tabular}
 \caption{Tiedoston luomisesta seuraavat levyoperaatiot.}
+\label{TabExt2Creation}
 \end{table}
 %
 Esimerkistä ilmenee selvästi miten \texttt{ext2} hyödyntää välimuistia levyn metadatarakenteille: \texttt{creat()}-kutsu palaa välittömästi eikä siitä aiheudu välittömiä levykirjoituksia.
@@ -1137,7 +1137,6 @@ Molemmat testiohjelman tekemät tiedostojärjestelmäkutsut valmistuvat aiheutta
 eli \texttt{ext2}:n tapaan operaation tehdään ensin pelkästään muistissa ja kirjoitetaan vasta myöhemmin taustalla levylle:
 
 \begin{table}[H]
-\label{TabExt3CreatAndWrite}
 \begin{tabular}{l | l | l | l | l | p{7cm}}
     \# & aika (s) & $\Delta t$ & lohko & lkm & kuvaus \\ \hline \hline
     1  & 0.000    & +0.000   &      &      & \texttt{creat()}-kutsu alkaa   \\ \hline %
@@ -1157,6 +1156,7 @@ eli \texttt{ext2}:n tapaan operaation tehdään ensin pelkästään muistissa ja
     15 & 36.131   & +0.000   & 8722 & 1    & Tiedoston \texttt{new} epäsuora lohko: tiedoston lohkot 12--15 merkitään viittaamaan lohkoihin 9228--9231 \\        % 8
 \end{tabular}
 \caption{Tiedoston luonnista ja sinne kirjoittamisesta seuraavat levyoperaatiot \texttt{ext3}-tiedostojärjestelmässä.}
+\label{TabExt3CreatAndWrite}
 \end{table}
 
 %%%%% \begin{enumerate}
