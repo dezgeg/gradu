@@ -72,13 +72,16 @@
 \date{\today}
 \level{Pro Gradu}
 \abstract{\singlespacing \noindent
-Tiedostojärjestelmät ovat tyypillisin tapa jolla sekä käyttäjät että sovellusohjelmat voivat säilöä tietoa tietokoneen kiintolevylle tai muuntyyppiseen pysyväismuistiin.
-Nykyiset tiedostojärjestelmät ovat hierarkkisia,
-eli käyttäjät ja sovellusohjelmat voivat organisoida tietoa nimettyihin tiedostoihin jotka puolestaan voivat sijaita missä kohtaa tahansa puumaista hakemistorakennetta.
-Itse tiedostojärjestelmärajapinnat ovat tyypillisesti käyttöjärjestelmän vastuulla,
-kun taas varsinainen tiedon tallennus levylle on erillisen tiedostojärjestelmätoteutuksen vastuulla.
-Tiedostojärjestelmä toimii siis myös abstraktiona erityyppisille laitteistolle,
-jonka takia esimerkiksi SQL-tietokantajärjestelmätoteutukset käyttävät usein tiedostojärjestelmää raakojen levykirjoitusten sijasta.
+Hierarkkiset tiedostojärjestelmät ovat tyypillisin tapa,
+jolla tietoa voidaan säilöä tietokoneen kiintolevylle tai muuntyyppiseen pysyväismuistiin.
+Sekä käyttöliittymä että ohjelmointirajapinnat tiedostojärjestelmien kuuluukin nykyisten käyttöjärjestelmien perustoiminnallisuuksin.
+Unix-tyyppisissä käyttöjärjestelmissä, kuten Linuxissa, tiedostojärjestelmän käyttö tapahtuu POSIX-standardissa määriteltyjen työkalujen ja rajapintojen avulla.
+POSIXin tarjoamilla komentorivikomennoilla tiedostoja voidaan muun muassa kopioida, poistaa sekä organisoida hakemistoihin,
+ja sovelluksilla puolestaan on käytettävissä C-kielinen rajapinta.
+Käyttöjärjestelmän rooliin kuuluu toimia abstraktiona laitteistolle,
+eikä tiedostojärjestelmä ole tästä poikkeus -- tiedostojärjestelmärajapintoja voidaan käyttää samalla tavoin riippumatta siitä millaista levyjärjestelmää käytetään.
+Tämän takia monimutkaisemmatkin tietokantajärjestelmät,
+kuten esimerkiksi SQL-tietokannat käyttävät usein tiedostojärjestelmää raakojen levykirjoitusten sijaan.
 }
 
 % The following can be used to specify keywords and classification of the paper:
