@@ -41,7 +41,7 @@ Toisaalta itse tiedostojärjestelmätoteutuksen täytyy huolehtia siitä että t
 Tämän tutkielman tavoitteena on tarkastella kaatumisturvallisuutta molemmista näkökulmista.
 Ensimmäisessä osuudessa keskitytään tarkastelemaan sovellusten näkökulmasta:
 luvussa~\ref{ChapUnixFsBasics} tarkastellaan Unix-tiedosto\-järjestelmärajapintojen perusteita ja luvussa~\ref{ChapPosixDataConsistency} kuinka niitä tulisi käyttää kaatumisturvallisuuden takaamiseksi.
-Luvussa~\ref{ChapPosixSafetyStudy} tarkastellaan käytännön tutkimusta siitä miten kaatumistilanteet vaikuttavat eri tiedostojärjestelmillä ja kuinka hyvin olemassaolevat sovellukset ottavat ne huomioon.
+Luvussa~\ref{ChapPosixSafetyStudy} tarkastellaan käytännön tutkimusta siitä miten kaatumistilanteet vaikuttavat eri tiedostojärjestelmillä ja kuinka hyvin olemassa olevat sovellukset ottavat ne huomioon.
 Tutkielman toisessa osuudessa keskitytään tarkastelemaan tiedostojärjestelmien sisäisten tietorakenteiden eheyden säilymistä.
 Luvussa~\ref{ChapExt2Fs} esitellään perinteisen mutta ei kovin kaatumisturvallisen Linux-tiedostojärjestelmän, \texttt{ext2}:n, sisäistä rakennetta ja luvussa~\ref{ChapExt2Crash} mitä seurauksia kaatumistilanteilla on \texttt{ext2}:lle.
 Lopuksi esitellään tekniikoita joita modernit tiedostojärjestelmät käyttävät tiedostojärjestelmän eheyden säilyttämiseen kaatumistilanteissa: kirjaavia tiedostojärjestelmiä luvussa~\ref{ChapJournallingFs}, lokipohjaisia tiedostojärjestelmiä luvussa~\ref{ChapLogStructured}, kirjoittaessa kopioivia tiedostojärjestelmiä luvussa~\ref{ChapCopyOnWrite} ja kirjoitusjärjestyksen hallintaan perustuvia tiedostojärjestelmiä luvussa~\ref{ChapSoftUpdates}.
@@ -449,7 +449,7 @@ mikä takaa että \texttt{rename()}-kutsun tekemän muutokset itse hakemiston si
 \section{POSIX-tiedostojärjestelmien kaatumistilanteet käytännössä}
 \label{ChapPosixSafetyStudy}
 %Edellisen luvun esimerkistä nähtiin miten yksinkertaisenkin koostetun tiedostojärjestelmäoperaation toteuttaminen kaatumisturvallisesti on verrattaen haastavaa,
-%koska POSIX-standardi tarjoaa tiedostojärjestelmätoteutuksille merkittävät vapaudet uudelleenjärjestellä tai lykätä levykirjoitusten tekemistä ellei sitä erikseen pakoteta \texttt{fsync()}- tai \texttt{fdatasync()}-kutsuja käyttämällä.
+%koska POSIX-standardi tarjoaa tiedostojärjestelmätoteutuksille merkittävät vapaudet uudelleen järjestellä tai lykätä levykirjoitusten tekemistä ellei sitä erikseen pakoteta \texttt{fsync()}- tai \texttt{fdatasync()}-kutsuja käyttämällä.
 Edellisen luvun esimerkistä nähtiin miten POSIX-standardin sallimat levyvälimuistit hankaloittavat merkittävästi kaatumisturvallisen sovelluksen toteuttamista.
 Tarkastellaankin seuraavaksi levyvälimuistien vaikutusta kaatumistilanteisiin tarkemmin.
 tutkimusta siitä millaisia vaikutuksia kaatumistilanteilla on tosimaailman tiedostojärjestelmille ja sovelluksille.
@@ -462,7 +462,7 @@ tutkimusta siitä millaisia vaikutuksia kaatumistilanteilla on tosimaailman tied
 %joten tarkastellaan aiheita seuraavissa aliluvuissa.
 
 \subsection{Tutkimus tiedostojärjestelmien käyttäytymisestä kaatumistilanteessa}
-POSIX-standardi tarjoaa siis tiedostojärjestelmätoteutukselle merkittävät vapaudet esimerkiksi uudelleenjärjestellä tai lykätä levykirjoitusten tekemistä suorituskyvyn parantamiseksi,
+POSIX-standardi tarjoaa siis tiedostojärjestelmätoteutukselle merkittävät vapaudet esimerkiksi uudelleen järjestellä tai lykätä levykirjoitusten tekemistä suorituskyvyn parantamiseksi,
 ellei sovellusohjelma ole erikseen pakottanut sitä \texttt{fsync()}- tai \texttt{fdatasync()}-kutsuja käyttämällä.
 Itse tiedostojärjestelmätoteutuksen ei tietenkään ole mikään pakko hyödyntää näitä vapauksia,
 joten herääkin kysymys ilmeneekö tiedostojärjestelmien käyttäytymisessä eroavaisuuksia.
@@ -503,12 +503,12 @@ BOB:n voidaan siis vain todeta jonkin persistenssiominaisuuden paikkaansa pitäm
 Seuraavien operaatioiden osalta tutkittiin niiden atomisuutta:
 %
 \begin{itemize}
-    \item{Tiedoston olemassaolevan sisällön ylikirjoitus erikokoisilla \texttt{write()}-kutsulla.}
+    \item{Tiedoston olemassa olevan sisällön ylikirjoitus erikokoisilla \texttt{write()}-kutsulla.}
     \item{Sisällön lisääminen tiedoston loppuun erikokoisilla \texttt{write()}-kutsulla.}
     \item{Hakemisto-operaatioita, kuten \texttt{link()}, \texttt{unlink()} ja \texttt{rename()}.}
 \end{itemize}
 %
-\texttt{write()}-kutsun tapauksessa on siis erikseen tutkittu tilanteita jossa tiedoston pituus kasvaa ja tilanteita jossa pelkästään ylikirjoitetaan olemassaolevaa sisältöä.
+\texttt{write()}-kutsun tapauksessa on siis erikseen tutkittu tilanteita jossa tiedoston pituus kasvaa ja tilanteita jossa pelkästään ylikirjoitetaan olemassa olevaa sisältöä.
 Lisäksi molempia kokeiltiin vaihtelevilla kirjoitettavan datan määrillä,
 joista mielekkäitä tilanteita ovat levyn sektorin koon (tai vähemmän) verran, yhden tiedostojärjestelmälohkon sekä tätä suuremmat määrät.
 
@@ -603,14 +603,15 @@ joiden avulla relaatiotietokannassa voidaan atomisesti päivittää useita, mahd
 Jo yksittäiset tietokannat voivat nykyään kuitenkin olla useiden teratavujen kokoisia ja käsitellä useita toisistaan riippumattomia kirjoitustransaktioita rinnakkain~\cite{DatabaseFundamentals}.
 Selvästikin kelvollisen suorituskyvyn saavuttamiseksi koko tietokannan uudelleen kirjoitus joka transaktion yhteydessä ei tule kysymykseen tällaisessa käyttötapauksessa,
 vaan tietokannan ohjelmoijan täytyy itse suunnitella jokin mekanismi jolla kaatumistilanteessa voidaan palauttaa tietokannan tila konsistentiksi.
-Näitä sovellusten käyttämiä mekanismejä kutsutaan \emph{päivitysprotokolliksi} (\emph{update protocol})~\cite{PosixDataConsistency}.
+Näitä sovellusten käyttämiä mekanismeja kutsutaan \emph{päivitysprotokolliksi} (\emph{update protocol})~\cite{PosixDataConsistency}.
 %%% Erinäisten sovellusten päivitysprotokollien tutkimista varten kehitetty työkalu ALICE (\emph{Application-Level Intelligent Crash Explorer}) toimii samantyyppisellä periaatteella kuin aiemmin kuvattu BOB:
 %%% testattavan sovelluksen tekemät tiedostojärjestelmäkutsut nauhoitetaan lokitiedostoon,
 %%% joista voidaan jälkikäteen simuloida mahdollisia kaatumistilanteita.
 %%% Big FIXME...
 
 Tarkastellaan nyt lähemmin ALICEn löytämää haavoittuvuutta SQLite-tietokantakirjastosta.
-SQLite on laajasti käytetty SQL-kyselykieleen pohjautuva tietokanta joka tarjoaa täyden tuen SQL-kielen transaktioille.
+SQLite on laajasti käytetty SQL-kyselykieleen pohjautuva tietokanta,
+joka tarjoaa täyden tuen SQL-kielen transaktioille.
 Transaktionaalisten päivitysten tekemiseen SQLite käyttää sisäisesti joko historiallista rollback journal-menetelmää tai uudempaa Write-Ahead Logging-menetelmää~\cite{SqliteAnalysis},
 missä käytettävä menetelmä on käyttäjän valittavissa.
 ALICEn löytävä haavoittuvuus koskee yksinomaan rollback journal-tilaa,
@@ -1384,7 +1385,7 @@ jolloin \texttt{fsck}-ohjelman ajaminen kaatumistilanteen jälkeen ei ole enää
 
 \subsection{Pehmeät päivitykset ja \emph{päivitysriippuvuudet}}
 Aiemmin aliluvussa~\ref{ChapExt2FileCreation} esiteltiin mahdollisia epäkonsistenssiuksia joita \texttt{ext2}-tiedostojärjestelmään voi syntyä mikäli kaatumistilanne tapahtuu kutsun \texttt{creat("new", 0755)} aikana.
-Tarkastellaan nyt miten pehmeitä päivityksiä käyttäen vältytään merkittävimmiltä epäkonsistennsiuksilta kirjoitusjärjestystä muuttamalla.
+Tarkastellaan nyt miten pehmeitä päivityksiä käyttäen vältytään merkittävimmiltä epäkonsistenssiuksilta kirjoitusjärjestystä muuttamalla.
 
 FFS-tiedostojärjestelmän tapauksessa muokataan samoja levytietorakenteita,
 mutta pehmeitä päivityksiä käytettäessä levykirjoitusten järjestys voisi olla seuraava:
@@ -1431,7 +1432,7 @@ Tiedostoon lohkoja lisättäessä:
 \begin{itemize}
     \item{Datalohkon sisältö täytyy kirjoittaa levylle ennen kuin epäsuoraan lohkoon tai inodeen lisätään viittaus datalohkoon.}
     \item{Datalohko täytyy merkitä varatuksi lohkobittikartassa ennen kuin epäsuoraan lohkoon tai inodeen lisätään viittaus datalohkoon.}
-    \item{Mikäli lohkojen lisääminen vaatisi uusien epäsuorien lohkojen varaamista, sovelletaan kahta edellistä uuden epäsuoran lohkon varaamisessa ja lohkopuuhun liittämisessä..}
+    \item{Mikäli lohkojen lisääminen vaatisi uusien epäsuorien lohkojen varaamista, sovelletaan kahta edellistä uuden epäsuoran lohkon varaamisessa ja lohkopuuhun liittämisessä.}
 \end{itemize}
 Kovaa linkkiä poistaessa:
 \begin{itemize}
@@ -1549,7 +1550,8 @@ ja toisaalta myös havainnollistamaan levyvälimuistien vaikutusta levykirjoituk
 Tällä pystyttiin osoittamaan,
 että \texttt{ext2}-tiedostojärjestelmää käytettäessä jokaisen kaatumistilanteen jälkeen on pakko ajaa \texttt{e2fsck}-tarkastusohjelma,
 tai muuten on olemassa riski että koko tiedostojärjestelmä korruptoituu pidemmälle.
-Lopuksi esiteltiin eri tekniikoita joilla modernimmat tiedostojärjestelmät säilyvät konsistenssina kaatumistilanteiden aikanakin.
+Lopuksi esiteltiin eri tekniikoita,
+joilla modernimmat tiedostojärjestelmät säilyvät konsistenssina kaatumistilanteiden aikanakin.
 % Valtaosa tekniikoista perustui atomisiin tekniikoihin ...
 
 \texttt{ext2}:sta.
