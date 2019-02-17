@@ -144,18 +144,19 @@ Hakemistot sen sijaan sisältävät vain viitteen nimestä inodeen.
 Jokaisella inodella on yksilöivä numero jolla inodeen viitataan.
 Sovellusohjelmoijan tai käyttäjän kannalta inoden numerolla ei tosin ole muuta käyttöä kuin että sillä voidaan selvittää viittaavatko kaksi eri tiedostonimeä samaan inodeen.
 
+(FIXME mihin kohtaan tämä)
 Unixissa tavallisia tiedostoja voi käsitellä vain tavupohjaisina,
 eli mikäli sovellus tarvitsee esimerkiksi tietuepohjaista tiedostonkäsittelyä jää sen toteutus sovelluksen vastuulle.
 
 Tavallisten tiedostojen ja hakemistojen lisäksi Unix-tiedostojärjestelmä tukee viittä eri erikoistiedostotyyppiä.
 Merkittävin näistä on \emph{symbolinen linkki} (\emph{symbolic link}). (todo).
 
-Muita tuettuja erikoistiedostoja ovat \emph{nimetty putki} (\emph{named pipe}) ja \emph{paikallinen pistoke} (\emph{domain socket}).
-Kumpikaan näistä ei persistoi mitään dataa levylle,
-vaan niitä käytetään Unix-sovellusohjelmoinnissa mekanismina \emph{prosessien väliseen kommunikointiin} (\emph{IPC}, \emph{Inter-Process Communication}).
-Periaatteessa siis vastaava toiminnallisuus voitaisiin toteuttaa käyttöjärjestelmään täysin tiedostojärjestelmästä riippumattomasti,
-mutta tämä Unixin tapa tuoda IPC-mekanismit ikään kun tiedostojärjestelmäobjekteiksi mahdollistaa niiden käsittelyn samoilla työkaluilla ja rajapinnoilla kuin tavallisia tiedostoja.
-Esimerkiksi aiemmin esitellyt tiedostojen käyttöoikeudet toimivat nimetyille putkille ja paikallisille pistokkeille täsmälleen samoilla tavoilla kuin muillekin tiedostoille.
+Muita tuettuja erikoistiedostoja ovat prosessien väliseen kommunikaatioon käytetyt \emph{nimetty putki} (\emph{named pipe}) ja \emph{paikallinen pistoke} (\emph{domain socket}),
+sekä laitetiedostot \emph{merkkilaite} (\emph{character device}) ja \emph{lohkolaite} (\emph{block device}).
+Erikoistiedoston voi avata ja useissä yhteyksissä käsitellä kuten tavallisiakin tiedostoja,
+mutta luku- ja kirjoitusoperaatioilla on jokin muu merkitys.
+Esimerkiksi tulostinta vastaavaan merkkilaitetiedostoon tehty kirjoitus saatetaankin tulostaa paperille.
+Erikoistiedostojen käyttäminen tähän tarkoitukseen mahdollistaa esimerkiksi käyttöoikeuksien asettamisen laitteille täsmälleen samaan tapaan kuin muillekin tiedostoille.
 
 \subsection{Tiedoston avaus ja sulkeminen}
 Tiedoston avaus tapahtuu \texttt{open}-funktiolla:
