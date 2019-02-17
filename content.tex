@@ -41,10 +41,12 @@ Toisaalta itse tiedostojärjestelmätoteutuksen täytyy huolehtia siitä että t
 Tämän tutkielman tavoitteena on tarkastella kaatumisturvallisuutta molemmista näkökulmista.
 Ensimmäisessä osuudessa keskitytään tarkastelemaan sovellusten näkökulmasta:
 luvussa~\ref{ChapUnixFsBasics} tarkastellaan Unix-tiedosto\-järjestelmärajapintojen perusteita ja luvussa~\ref{ChapPosixDataConsistency} kuinka niitä tulisi käyttää kaatumisturvallisuuden takaamiseksi.
-Luvussa~\ref{ChapPosixSafetyStudy} tarkastellaan käytännön tutkimusta siitä miten kaatumistilanteet vaikuttavat eri tiedostojärjestelmillä ja kuinka hyvin olemassa olevat sovellukset ottavat ne huomioon.
+Luvussa~\ref{ChapPosixSafetyStudy} tarkastellaan käytännön tutkimusta siitä,
+miten kaatumistilanteet vaikuttavat eri tiedostojärjestelmillä ja kuinka hyvin olemassa olevat sovellukset ottavat ne huomioon.
 Tutkielman toisessa osuudessa keskitytään tarkastelemaan tiedostojärjestelmien sisäisten tietorakenteiden eheyden säilymistä.
 Luvussa~\ref{ChapExt2Fs} esitellään perinteisen mutta ei kovin kaatumisturvallisen Linux-tiedostojärjestelmän, \texttt{ext2}:n, sisäistä rakennetta ja luvussa~\ref{ChapExt2Crash} mitä seurauksia kaatumistilanteilla on \texttt{ext2}:lle.
-Lopuksi esitellään tekniikoita joita modernit tiedostojärjestelmät käyttävät tiedostojärjestelmän eheyden säilyttämiseen kaatumistilanteissa: kirjaavia tiedostojärjestelmiä luvussa~\ref{ChapJournallingFs}, lokipohjaisia tiedostojärjestelmiä luvussa~\ref{ChapLogStructured}, kirjoittaessa kopioivia tiedostojärjestelmiä luvussa~\ref{ChapCopyOnWrite} ja kirjoitusjärjestyksen hallintaan perustuvia tiedostojärjestelmiä luvussa~\ref{ChapSoftUpdates}.
+Lopuksi esitellään tekniikoita,
+joita modernit tiedostojärjestelmät käyttävät tiedostojärjestelmän eheyden säilyttämiseen kaatumistilanteissa: kirjaavia tiedostojärjestelmiä luvussa~\ref{ChapJournallingFs}, lokipohjaisia tiedostojärjestelmiä luvussa~\ref{ChapLogStructured}, kirjoittaessa kopioivia tiedostojärjestelmiä luvussa~\ref{ChapCopyOnWrite} ja kirjoitusjärjestyksen hallintaan perustuvia tiedostojärjestelmiä luvussa~\ref{ChapSoftUpdates}.
 % FIXME: motivaatio etc.
 
 \section{Unix-tiedostojärjestelmien perusteet}
@@ -632,7 +634,8 @@ jonka päivitysprotokolla on seuraavanlainen~\cite{PosixDataConsistency}:
 \end{enumerate}
 
 Transaktion alkaessa luodaan kohdassa 1. tietokantatiedostosta erillinen tiedosto rollback journalille.
-Ennen varsinaisen tietokantatiedoston päivitystä kirjoitetaan kohdassa 2 rollback journaliin tieto siitä mitä tietokantasivuja transaktiossa ollaan muokkaamassa sekä kunkin muokatun sivun alkuperäinen sisältö.
+Ennen varsinaisen tietokantatiedoston päivitystä kirjoitetaan kohdassa 2 rollback journaliin tieto siitä,
+mitä tietokantasivuja transaktiossa ollaan muokkaamassa sekä kunkin muokatun sivun alkuperäinen sisältö.
 Kohdissa 3 ja 4 pakotetaan rollback journalin kirjoitus levylle ja että sen hakemistoalkio on pakotettu levylle.
 Kohdat 5--6 päivittävät rollback journalin otsakkeeseen, että sen kirjoitus on suoritettu loppuun.
 Kohdassa 7 tehdään muutokset itse tietokantaan, ja pakotetaan tietokannan muutosten kirjoitus levylle kohdassa 8.
@@ -687,7 +690,7 @@ MINIX-tiedostojärjestelmä kuitenkin sisälsi erinäisiä rajoitteita jotka alk
 Esimerkiksi tiedostonimen pituus oli rajoitettu 14 merkkiin ja tiedoston koko 64 megatavuun~\cite{Ext2Design}.
 \texttt{ext2} ei ainoastaan korjaa näitä puutteita,
 mutta on lisäksi suunniteltu siten että tiedostojärjelmän levyformaattia voidaan laajentaa taaksepäin yhteensopivasti.
-\texttt{ext2}:lle onkin kehitetty seuraajat \texttt{ext3} ja \texttt{ext4} joissa olemassaoleva \texttt{ext2}- tai \texttt{ext3}-osio voidaan päivittää seuraavaan
+\texttt{ext2}:lle onkin kehitetty seuraajat \texttt{ext3} ja \texttt{ext4}, joissa olemassa oleva \texttt{ext2}- tai \texttt{ext3}-osio voidaan päivittää seuraavaan
 versioon ilman tiedostojärjestelmän uudelleenformatointia~\cite{Ext4Status}.
 Merkittävin näiden seuraajien tuoma parannus on \texttt{ext3}:n kirjaus,
 joka parantaa huomattavasti tiedostojärjestelmän kykyä säilyä konsistenttina kaatumistilanteessa \texttt{ext2}:n verrattuna.
@@ -740,10 +743,10 @@ Tiedostojärjestelmää luodessa valitut \texttt{s\_blocks\_\-per\_\-group}- ja 
 Kuten superlohkon kohdalla, lohkoryhmäkuvaajista säilytetään kopioita useassa kohtaa levyä.
 Lohkoryhmäkuvaajat on yksinkertaisesti taulukko seuraavista tietorakenteesta:
 \begin{itemize}
-    \item \texttt{bg\_block\_bitmap} kertoo lohkon josta kyseisen lohkoryhmän lohkobittikartta alkaa.
+    \item \texttt{bg\_block\_bitmap} kertoo lohkon, josta kyseisen lohkoryhmän lohkobittikartta alkaa.
           Bittikartan bitit kertovat mitkä lohkoryhmän datalohkoista ovat käytössä.
           Ykkösbitti tarkoittaa käytössä olevaa lohkoa ja nollabitti vapaata lohkoa.
-    \item \texttt{bg\_inode\_bitmap} kertoo lohkon josta kyseisen lohkoryhmän inodebittikartta sijaitsee.
+    \item \texttt{bg\_inode\_bitmap} kertoo lohkon, josta kyseisen lohkoryhmän inodebittikartta sijaitsee.
           Inodebittikartta kertoo mitkä kyseisen lohkoryhmän inodeista on käytössä.
           Samaan tapaan kuin lohkobittikartan kanssa, 1 tarkoittaa käytössä olevaa inodea ja 0 vapaata inodea.
     \item \texttt{bg\_free\_blocks\_count} ja \texttt{bg\_free\_inodes\_count} kertovat vapaiden lohkojen ja inodejen lukumäärän kyseisessä lohkoryhmässä.
@@ -882,12 +885,14 @@ jossa jokainen välitilanne vastaa yhtä mahdollista kaatumistilannetta testitil
 Koeasetelmassa käytettiin Linuxin versiota 4.14, QEMUn versiota 3.0.0 ja 1 gigatavun levyä.
 Lisäksi tiedostojärjestelmäoperaatioita ei tehdä peräjälkeen tai heti liittämisen jälkeen,
 vaan niiden välissä odotetaan 3 minuuttia.
-Tällä lailla voidaan erottaa levykirjoitukset jotka tapahtuvat suoraan tiedostojärjestelmäoperaation seurauksena
+Tällä lailla voidaan erottaa levykirjoitukset,
+jotka tapahtuvat suoraan tiedostojärjestelmäoperaation seurauksena
 ja mitkä käyttöjärjestelmä kirjoittaa taustalla. 
 
 \subsubsection{Tiedoston luominen}
 \label{ChapExt2FileCreation}
-Taulukossa~\ref{TabExt2Creation} nähdään levykirjoitukset jota aiheutuu luotaessa tyhjään \texttt{ext2}-tiedostojärjestelmän juurihakemistoon uusi tyhjä tiedosto kutsulla \texttt{creat("new", 0755)}:
+Taulukossa~\ref{TabExt2Creation} nähdään levykirjoitukset,
+jota aiheutuu luotaessa tyhjään \texttt{ext2}-tiedostojärjestelmän juurihakemistoon uusi tyhjä tiedosto kutsulla \texttt{creat("new", 0755)}:
 
 % Before:
 % debugfs 1.44.1 (24-Mar-2018)
@@ -1024,7 +1029,8 @@ Tämän esimerkin kaatumistilanne voi puolestaan aiheuttaa seuraavia epäkonsist
 %
 Näistä tilanteista kaksi ensimmäistä johtaa datalohkojen vuotamiseen,
 eli samantyyppiseen tilanteeseen kuten edellisen aliluvun esimerkissä josta aiheutui vapaiden inodejen vuotaminen.
-Kolmannessa kaatumistilanteessa taas päädytään tilanteeseen missä tiedoston \texttt{new} inoden kokoa on kasvatettu onnistuneesti ja siihen on lisätty viittaukset datalohkoihin sekä epäsuoraan lohkoon,
+Kolmannessa kaatumistilanteessa taas päädytään tilanteeseen,
+missä tiedoston \texttt{new} inoden kokoa on kasvatettu onnistuneesti ja siihen on lisätty viittaukset datalohkoihin sekä epäsuoraan lohkoon,
 mutta itse lohkojen sisältö jäi kirjoittamatta.
 Datalohkojen osalta tämä tietää mahdollista tietoturvaongelmaa,
 sillä alustamattomat datalohkot ovat voineet olla osa jotakin jonkun toisen käyttäjän omistamaa sittemmin poistettua tiedostoa.
@@ -1074,7 +1080,8 @@ Yksi keino kaikkien näiden kriteereiden täyttämiseksi on lisätä tiedostojä
 joilla koko tiedostojärjestelmän metadataan voidaan tehdä päivityksiä atomisesti.
 \texttt{ext3} toteuttaa transaktioille käyttäen kirjausta,
 joka pohjautuu pääpiirteissään tietokantajärjestelmissä käytettyyn Write-Ahead Logging-menetelmään~\cite{AriesWal}.
-Kirjauksen perusajatuksena on että aina ennen varsinaisten levytietorakenteiden muuttamista kirjataan ylös erilliseen \emph{journaliin} ylös kaikki muutokset jota transaktion yhteydessä tullaan tekemään.
+Kirjauksen perusajatuksena on että aina ennen varsinaisten levytietorakenteiden muuttamista kirjataan ylös erilliseen \emph{journaliin} ylös kaikki muutokset,
+jota transaktion yhteydessä tullaan tekemään.
 Nyt mahdollisen kaatumistilanteen sattuessa voidaan journalin sisällön perusteella aina toistaa kaikki muutokset ja viedä transaktio loppuun.
 
 %\subsection{Kirjauksen toimintaperiaate}
@@ -1242,9 +1249,12 @@ Kokonaisuutena tiedostojärjestelmälle tehdään seuraavat operaatiot:
     \item{Hakemiston muutoslokilohko joka kertoo \texttt{testdir}:iin tapahtuvan hakemistoalkion luomisen kirjoitetaan lokiin.}
     \item{Uuden tiedoston \texttt{newfile} datalohko kirjoitetaan lokiin.}
     \item{Hakemiston \texttt{testdir} datalohkosta kirjoitetaan uusi versio lokiin johon on lisätty hakemistoalkio \texttt{newfile}.}
-    \item{Uuden tiedoston \texttt{newfile} inode ja hakemiston \texttt{testdir} inodesta kirjoitetaan uusi versio jossa datalohkoksi on vaihtunut edellisessä kohdassa kirjoitettu lohko. Molemmat lisätään uuteen inodelohkoon joka kirjoitetaan lokiin.}
-    \item{Inodekartan lohkoista kirjoitetaan uudet versiot lokiin joissa kerrotaan \texttt{newfile}:n ja \texttt{testdir}:n inodejen sijaitsevan nyt kohdassa 4 kirjoitetussa inodelohkossa.}
-    \item{Segmentin käyttöastetaulun lohkoista kirjoitetaan uudet versiot lokiin, koska kohdissa 3.--5. tehdyt päivitykset aiheuttivat kuolleita lohkoja aiempiin lokisegmentteihin.}
+    \item{Uuden tiedoston \texttt{newfile} inode ja hakemiston \texttt{testdir} inodesta kirjoitetaan uusi versio,
+          jossa datalohkoksi on vaihtunut edellisessä kohdassa kirjoitettu lohko. Molemmat lisätään uuteen inodelohkoon joka kirjoitetaan lokiin.}
+    \item{Inodekartan lohkoista kirjoitetaan uudet versiot lokiin,
+          joissa kerrotaan \texttt{newfile}:n ja \texttt{testdir}:n inodejen sijaitsevan nyt kohdassa 4 kirjoitetussa inodelohkossa.}
+    \item{Segmentin käyttöastetaulun lohkoista kirjoitetaan uudet versiot lokiin,
+          koska kohdissa 3.--5. tehdyt päivitykset aiheuttivat kuolleita lohkoja aiempiin lokisegmentteihin.}
     \item{Segmentin yhteenvetolohko kirjoitetaan lokiin. Yhteenvetolohko kertoo kohdissa 1.--3. kirjoitettujen lohkojen olevan datalohkoja ja kohdissa 4.--6. kirjoitettujen lohkojen olevan metadatalohkoja.}
     \item{Uusi tarkistuspiste kirjoitetaan, joka viittaa kohdissa 5. ja 6. kirjoitettuun inodekarttaan ja segmentin käyttöastetauluun.}
 \end{enumerate}
@@ -1266,7 +1276,8 @@ Kokonaisen tarkistuspisteen luominen vaatii kuitenkin suhteellisen monta levykir
 joten Sprite LFS käyttää lisäksi monimutkaisempaa \emph{eteenkiertopalautusta} (\emph{roll forward recovery}) joka tuo samantasoisen kaatumisturvallisuuden mutta pienemmällä määrällä levykirjoituksia.
 Eteenkiertopalautuksen perusajatuksena on lähteä liikkeelle viimeisimmästä tarkistuspisteestä samoin kuin aiemmin,
 mutta tämän jälkeen aletaan lukemaan lokia eteenpäin tarkistuspisteen osoittamasta kohdasta.
-Tavoitteena on viedä tiedostojärjestelmä viimeisimmästä tarkistuspisteestä tilaan jossa mahdollisimman paljon viimeisen tarkistuspisteen luomisen jälkeenkin tehdyistä muutoksista on toteutunut.
+Tavoitteena on viedä tiedostojärjestelmä viimeisimmästä tarkistuspisteestä tilaan,
+jossa mahdollisimman paljon viimeisen tarkistuspisteen luomisen jälkeenkin tehdyistä muutoksista on toteutunut.
 
 Tekniikan selkeänä etuna on että kaatumistilanteen aikana katoaa vähemmän meneillään olevia tiedostojärjestelmämuutoksia,
 mutta myös esimerkiksi \texttt{fsync()}-operaatio voidaan nyt toteuttaa tehokkaammin.
@@ -1361,7 +1372,8 @@ mikä onkin tiedostojärjestelmän ainoa tietorakenne jota päivitetään pääl
 
 \section{Kirjoitusjärjestyksen hallintaan perustuvat tiedostojärjestelmät (``soft updates'')}
 \label{ChapSoftUpdates}
-Aiemmissa luvuissa esiteltiin tekniikoita jossa tiedostojärjestelmän konsistenssiuden säilyminen kaatumistilanteessa varmistettiin oleellisesti toteuttamalla tiedostojärjestelmään jokin menetelmä metadatapäivitysten tekemiseen atomisesti.
+Aiemmissa luvuissa esiteltiin tekniikoita,
+jossa tiedostojärjestelmän konsistenssiuden säilyminen kaatumistilanteessa varmistettiin oleellisesti toteuttamalla tiedostojärjestelmään jokin menetelmä metadatapäivitysten tekemiseen atomisesti.
 Vaihtoehtoisia lähestymistapojakin on kuitenkin käytetty,
 joista yksi on \emph{pehmeät päivitykset} (\emph{soft updates}) jotka perustuvat metadatakirjoitusten tekemiseen tietyssä järjestyksessä.
 Tarkastellaankin seuraavaksi pehmeiden päivitysten toteutusta Berkeley Fast Filesystem-tiedostojärjestelmä~\cite{SoftUpdatesFfs}.
@@ -1456,7 +1468,8 @@ Tiedostoa poistettaessa:
 
 \subsection{Sykliset riippuvuudet}
 Pehmeiden päivitysten ja levyvälimuistien yhdistelmällä voidaan joutua tilanteeseen jossa tietorakenteiden väliset riippuvuudet muodostavat syklin.
-Otetaan esimerkiksi lähtötilanne jossa muuten tyhjässä tiedostojärjestelmässä on pelkästään yksi tyhjä tiedosto \texttt{/oldfile} ja sille tehdään seuraavat operaatiot:
+Otetaan esimerkiksi lähtötilanne,
+jossa muuten tyhjässä tiedostojärjestelmässä on pelkästään yksi tyhjä tiedosto \texttt{/oldfile} ja sille tehdään seuraavat operaatiot:
 %
 \begin{minted}{c}
 open("/newfile", O_CREAT | O_WRONLY, 0644);
@@ -1486,8 +1499,10 @@ Esimerkiksi edellä nähdyistä päivitysriippuvuuksista kukin voidaan perua seu
 
 Käyttäen perumisinformaatiota metadatapäivitykset voidaan viedä esimerkiksi seuraavassa järjestyksessä:
 \begin{enumerate}
-    \item{inodelohkosta kirjoitetaan versio jossa \texttt{oldfile}:n inoden poistaminen on kumottu.}
-    \item{inodebittikartan lohkosta kirjoitetaan versio jossa \texttt{oldfile}:n inoden vapautus on kumottu.}
+    \item{inodelohkosta kirjoitetaan versio,
+          jossa \texttt{oldfile}:n inoden poistaminen on kumottu.}
+    \item{inodebittikartan lohkosta kirjoitetaan versio,
+          jossa \texttt{oldfile}:n inoden vapautus on kumottu.}
     \item{hakemistolohkon lopullinen versio kirjoitetaan.}
     \item{inodelohkon lopullinen versio kirjoitetaan.}
     \item{inodebittikartan lohkon lopullinen versio kirjoitetaan.}
