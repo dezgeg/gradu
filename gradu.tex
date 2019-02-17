@@ -81,7 +81,22 @@ ja sovelluksilla puolestaan on käytettävissä C-kielinen rajapinta.
 Käyttöjärjestelmän rooliin kuuluu toimia abstraktiona laitteistolle,
 eikä tiedostojärjestelmä ole tästä poikkeus -- tiedostojärjestelmärajapintoja voidaan käyttää samalla tavoin riippumatta siitä millaista levyjärjestelmää käytetään.
 Tämän takia monimutkaisemmatkin tietokantajärjestelmät,
-kuten esimerkiksi SQL-tietokannat käyttävät usein tiedostojärjestelmää raakojen levykirjoitusten sijaan.
+kuten esimerkiksi SQL-tietokannat käyttävät nykyään usein tiedostojärjestelmää raakojen levykirjoitusten sijaan.
+
+Tietokonetta käyttäessä tapahtuu toisinaan erinäisiä järjestelmän kaatumistilanteita,
+eli järjestelmä on käynnistettävä uudelleen esimerkiksi sähkökatkon tai käyttöjärjestelmävirheen takia.
+Koska kaatumistilanne voi tapahtua samalla hetkellä kun tiedostojärjestelmä on tekemässä levykirjoituksia,
+herää kysymys, mitä seurauksia tällä on tiedostojärjestelmän sekä niitä käyttävien sovellusten kannalta.
+Esimerkiksi levyllä säilytetään käyttäjän datan lisäksi tiedostojärjestelmän omia tietorakenteita,
+joiden konsistenssi saattaa olla vaarantunut.
+Toisaalta, POSIX sallii tiedostojärjestelmän käyttää erinäisiä levyvälimuisteja suorituskyvyn parantamiseksi,
+jotka sovelluskehittäjän täytyy ottaa huomioon kaatumisturvallista sovellusta toteuttaessa.
+Tässä tutkielmassa tarkastellaan tiedostojärjestelmien kaatumistilanteita molemmista näistä näkökulmista.
+% XXX
+Sovellusten osalta perehdytään POSIX-standardin tiedostojärjestelmärajapintoihin,
+sekä miten niitä kuuluu käyttää kaatumisturvallista sovellusta toteutettaessa.
+Tiedostojärjestelmien osalta tarkastellaan viiden eri tiedostojärjestelmän levytietorakenteita,
+ja sitä miten ne varautuvat kaatumistilanteisiin.
 }
 
 % The following can be used to specify keywords and classification of the paper:
