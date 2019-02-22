@@ -887,7 +887,8 @@ Vaiheet ja merkittävimmät niissä tehtävät tarkistukset ja korjaukset ovat:
 
 \subsection{Kaatumistilanteiden tutkiminen käytännössä}
 \texttt{ext2}-tiedostojärjestelmän käyttäytymistä kaatumistilanteessa testattiin käytännössä QEMU-virtuaalikoneen \texttt{blk\-log\-writes}-lohkolaitteen avulla.
-\texttt{blk\-log\-writes} on virtuaalinen lohkolaite joka näkyy käyttöjärjestelmälle muuten tavallisena levynä,
+\texttt{blk\-log\-writes} on virtuaalinen lohkolaite,
+joka näkyy käyttöjärjestelmälle muuten tavallisena levynä,
 mutta jokaisen kirjoitusoperaation yhteydessä tehdään lisäksi lokimerkintä joka sisältää aikaleiman, kirjoitettavan sektorin numeron sekä lohkon uuden sisällön.
 Koeasetelmassa virtuaalikoneessa käynnistetään Linux,
 liitetään tiedostojärjestelmä \texttt{blklogwrites}:in päälle ja tehdään sille haluttuja tiedostojärjestelmäoperaatioita,
@@ -965,7 +966,7 @@ jota aiheutuu luotaessa tyhjään \texttt{ext2}-tiedostojärjestelmän juurihake
     \# & $t$ (s) & $\Delta t$ (s) & lohkot & kuvaus \\ \hline \hline
     1  & 0.000    &          &     & \texttt{creat()}-kutsu alkaa   \\ \hline %
     2  & 0.001    & +0.001   &     & \texttt{creat()}-kutsu loppuu  \\ \hline %
-    3  & 30.847   & +30.846  & 1   & Lohkoryhmien kuvaajat: vähennetään vapaiden inodejen määrää (8181 -> 8180)         \\ \hline % 3
+    3  & 30.847   & +30.846  & 1   & Lohkoryhmien kuvaajat: vähennetään vapaiden inodejen määrää (8181 $\rightarrow$ 8180)         \\ \hline % 3
     4  & 30.847   & +0.000   & 3   & Lohkoryhmän 0 inodebittikartta: merkitään inode 12 varatuksi \\ \hline % 2
     5  & 30.847   & +0.000   & 516 & Juurihakemisto: lisätään hakemistoalkio \texttt{new} osoittamaan inodeen 12                 \\ \hline % 1
     6  & 61.567   & +30.721  & 4   & Lohkoryhmän 0 inodetaulu: inoden 12 käyttöoikeudet, aikaleimat, koko sekä lohkoviittaukset alustetaan. Juurihakemistoinoden aikaleimoja päivitetään. \\        % 4
@@ -992,7 +993,7 @@ eli tiedostojärjestelmässä näyttää olevan vähemmän vapaita inodeja saata
 Tämä ei sinänsä ole suoraan este tiedostojärjestelmän käytölle,
 mutta \texttt{fsck}-ohjelma täytyy ajaa jotta resurssit saadaan takaisin käyttöön.
 Kolmannessa tapauksessa seuraukset ovat merkittävästi ikävämpiä.
-Hakemistoalkio \texttt{new} näkyy hakemistolistauksessa mutta kaikki siihen vaikuttavat tiedostojärjestelmäoperaatiot epäonnistuvat virheellä ``Input/output error''.
+Hakemistoalkio \texttt{new} näkyy hakemistolistauksessa mutta kaikki siihen vaikuttavat tiedostojärjestelmäoperaatiot epäonnistuvat virheellä \texttt{Input/output error}.
 Käyttäjän näkökulmasta tiedostojärjestelmään on siis syntynyt `viallinen' tiedosto jolle ei voi tehdä mitään, edes poistaa.
 
 %%%%% Levyn liittämisen yhteydessä tehdään yksi levykirjoitus superlohkoon, jossa asetetaan lippu että tiedostojärjestelmä on käytössä.
@@ -1022,7 +1023,7 @@ Jatketaan edellisen kohdan tiedostojärjestelmästä ja kirjoitetaan \texttt{new
     2  & 0.028    & +0.028   &            & \texttt{open()}-kutsu loppuu   \\ \hline %
     3  & 0.028    & +0.000   &            & \texttt{write()}-kutsu alkaa   \\ \hline %
     4  & 0.028    & +0.000   &            & \texttt{write()}-kutsu loppuu  \\ \hline %
-    5  & 5.226    & +5.198   & 1          & Lohkoryhmien kuvaajat: vapaiden lohkojen määrää vähennetään (32247 -> 32230)                             \\ \hline % 1
+    5  & 5.226    & +5.198   & 1          & Lohkoryhmien kuvaajat: vapaiden lohkojen määrää vähennetään (32247 $\rightarrow$ 32230)                             \\ \hline % 1
     6  & 5.226    & +0.000   & 2          & Lohkoryhmän 0 lohkobittikartta: varataan lohkot 8192 -- 8208         \\ \hline % 2
     7  & 5.226    & +0.000   & 4          & Lohkoryhmän 0 inodetaulu: inoden \texttt{new} attribuuteista päivitetään sen koko, aikaleima ja viittaukset data- ja epäsuoriin lohkoihin               \\ \hline % 2
     8  & 5.226    & +0.000   & 8192 -- 8208 & Tiedoston \texttt{new} 16 datalohkoa sekä yksi epäsuora lohko                            \\        % 3
