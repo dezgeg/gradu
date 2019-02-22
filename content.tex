@@ -397,7 +397,8 @@ Tämä tapahtuu kutsumalla \texttt{fsync()}-funktiota hakemistolle jossa tiedost
 
 \subsection{Esimerkki tiedoston tallentamisesta tekstieditorissa}
 Tarkastellaan nyt esimerkin avulla miten POSIXin levyvälimuistin käsittelyfunktioilla voidaan toteuttaa kaatumisturvallisia sovelluksia.
-Melkeinpä yksinkertaisin mahdollinen sovellus jossa kaatumisturvallisuus on tärkeää on perus tekstieditori.
+Melkeinpä yksinkertaisin mahdollinen sovellus,
+jossa kaatumisturvallisuus on tärkeää on perus tekstieditori.
 Tyypillinen käyttötapaus on, että käyttäjä avaa editorissa tiedoston, muokkaa sitä, ja tallentaa muokatun sisällön samalla nimellä alkuperäisen tiedoston päälle.
 Luotettavan editorin kuuluu tehdä tiedoston tallennus atomisesti,
 eli kaatumistilanteen sattuessa joko tiedoston täytyy sisältää joko uusi tai alkuperäinen sisältö.
@@ -405,18 +406,21 @@ Lisäksi voidaan odottaa tallennusoperaation olevan \emph{pysyvä} (\emph{durabl
 eli editorin ilmoittaessa tallennuksen olevan valmis täytyy tiedoston uuden version olla kirjoitettuna levylle.
 Suoraviivaisin tapa toteuttaa tallennus on kirjoittaa koko tiedosto uudelleen seuraavasti:
 
+\begin{samepage}
 \begin{minted}[linenos]{c++}
 int fd = open("/mnt/usb/file.txt", O_CREAT | O_WRONLY | O_TRUNC);
 write(fd, uusi_sisalto, strlen(uusi_sisalto));
 close(fd);
 printf("Tallennus valmis.\n");
 \end{minted}
+\end{samepage}
 %
 Tämä sekvenssi operaatioita ei kuitenkaan ole turvallinen vaikka edes tiedostojärjestelmän kaatumista ei tapahtuisi.
 Jo pelkkä tekstieditorin kaatuminen \texttt{open()}- ja \texttt{write()}- kutsujen välissä jättää jäljelleen tyhjän tiedoston.
 Yksinkertainen yritys välttyä tältä ongelmalta on ensin kirjoittaa tallennettava sisältö väliaikaistiedostoon,
 ja hyödyntää \texttt{rename()}-kutsun kykyä atomisesti korvata tiedosto toisella:
 
+\begin{samepage}
 \begin{minted}[linenos]{c++}
 int fd = open("/mnt/usb/file.txt.tmp", O_CREAT | O_WRONLY | O_TRUNC);
 write(fd, uusi_sisalto, strlen(uusi_sisalto));
@@ -424,14 +428,17 @@ close(fd);
 rename("/mnt/usb/file.txt.tmp", "/mnt/usb/file.txt");
 printf("Tallennus valmis.\n");
 \end{minted}
+\end{samepage}
 %
-Tämä versio sietää sovelluksen kaatumisen mutta ei toimi tiedostojärjestelmän kaatumistilanteessa,
+Tämä versio sietää sovelluksen kaatumisen,
+mutta ei toimi tiedostojärjestelmän kaatumistilanteessa,
 sillä mikään ei takaa että \texttt{write()}-kutsun tekemät kirjoitukset ja tiedoston uudelleennimeäminen \texttt{rename()}-kutsulla kirjoitettaisiin levylle edellä mainitussa järjestyksessä.
 Tiedostojärjestelmän kaatumistilanteessa tyhjä tai osittain kirjoitettu tiedosto on siis edelleen mahdollinen.
 Myöskään operaation pysyvyydellä ei ole mitään takeita,
 vaan käyttäjä voi nähdä \texttt{Tallennus valmis.}-tulosteen ilman että levylle on tehty yhtäkään kirjoitusta.
 Sen sijaan täysin kaatumisturvallinen tallennus on toteutettu Gedit-tekstieditorissa seuraavasti~\cite{OptimisticCrashConsistency}:
 
+\begin{samepage}
 \begin{minted}[linenos]{c++}
 int fd = open("/mnt/usb/file.txt.tmp", O_CREAT | O_WRONLY | O_TRUNC);
 write(fd, uusi_sisalto, strlen(uusi_sisalto));
@@ -443,6 +450,7 @@ fsync(dfd);
 close(dfd);
 printf("Tallennus valmis.\n");
 \end{minted}
+\end{samepage}
 %
 \texttt{write()}-ja \texttt{rename()}-kutsujen väliin on siis lisätty yksi \texttt{fsync()}-kutsu riville 3 takaamaan että näiden operaatioiden järjestys ei vaihdu levylle kirjoittaessa.
 Tämä tekee tiedoston tallennusoperaatiosta atomisen mutta ei vielä takaa pysyvyyttä.
@@ -451,11 +459,12 @@ mikä takaa että \texttt{rename()}-kutsun tekemän muutokset itse hakemiston si
 
 \section{POSIX-tiedostojärjestelmien kaatumistilanteet käytännössä}
 \label{ChapPosixSafetyStudy}
+Edellisen luvun esimerkistä nähtiin miten POSIX-standardin sallimat levyvälimuistit hankaloittavat merkittävästi kaatumisturvallisen sovelluksen toteuttamista.
+Perehdytäänkin seuraavaksi selvittämään levyvälimuistien vaikutusta kaatumistilanteisiin tarkemmin tarkastelemalla tutkimusta siitä,
+millaisia seurauksia kaatumistilanteilla on tosimaailman tiedostojärjestelmille ja sovelluksille.
+
 %Edellisen luvun esimerkistä nähtiin miten yksinkertaisenkin koostetun tiedostojärjestelmäoperaation toteuttaminen kaatumisturvallisesti on verrattaen haastavaa,
 %koska POSIX-standardi tarjoaa tiedostojärjestelmätoteutuksille merkittävät vapaudet uudelleen järjestellä tai lykätä levykirjoitusten tekemistä ellei sitä erikseen pakoteta \texttt{fsync()}- tai \texttt{fdatasync()}-kutsuja käyttämällä.
-Edellisen luvun esimerkistä nähtiin miten POSIX-standardin sallimat levyvälimuistit hankaloittavat merkittävästi kaatumisturvallisen sovelluksen toteuttamista.
-Tarkastellaankin seuraavaksi levyvälimuistien vaikutusta kaatumistilanteisiin tarkemmin.
-tutkimusta siitä millaisia vaikutuksia kaatumistilanteilla on tosimaailman tiedostojärjestelmille ja sovelluksille.
 % Tutkimuksesta selviää myös joidenkin avoimen lähdekoodin sovelluksien kaatumisturvallisuus.
 %Onkin siis mielekästä tutkia kokeellisesti miten kaatumistilanteet vaikuttavat tosimaailman sovelluksiin ja tiedostojärjestelmiin.
 %Koska sovellusohjelmoijan täytyy erikseen osata käyttää POSIX-rajapintoja oikein jotta sovelluksesta saadaan kaatumisturvallinen,
@@ -633,7 +642,7 @@ jonka päivitysprotokolla on seuraavanlainen~\cite{PosixDataConsistency}:
     \item{\texttt{unlink(journal)}}
     \item{\texttt{stdout(done)}}
 \end{enumerate}
-
+%
 Transaktion alkaessa luodaan kohdassa 1. tietokantatiedostosta erillinen tiedosto rollback journalille.
 Ennen varsinaisen tietokantatiedoston päivitystä kirjoitetaan kohdassa 2 rollback journaliin tieto siitä,
 mitä tietokantasivuja transaktiossa ollaan muokkaamassa sekä kunkin muokatun sivun alkuperäinen sisältö.
@@ -735,7 +744,7 @@ Superlohko sisältää muun muassa seuraavanlaisia arvoja tiedostojärjestelmäs
     \item Vapaiden datalohkojen määrä \texttt{s\_\-free\_\-blocks\_\-count} ja datalohkojen kokonaismäärä \texttt{s\_\-blocks\_\-count}.
     \item Niinikään samat laskurit inodeille: \texttt{s\_free\_\-inodes\_\-count} kertoo vapaiden inodejen määrän ja \texttt{s\_inodes\_count} inodejen kokonaismäärän tiedostojärjestelmässä.
 \end{itemize}
-
+%
 \texttt{ext2}:ssa inodeille on varattu tila joka on erillinen datalohkoista.
 Tiedostojärjestelmää luodessa valitut \texttt{s\_blocks\_\-per\_\-group}- ja \texttt{s\_inodes\_\-per\_\-group}-parametrit määräävät inodejen ja datalohkojen suhteellisen osuuden koko levytilasta.
 \texttt{ext2}:aa käyttäessä voikin joutua tilanteeseen, jossa käyttäjän näkökulmasta levytilaa (eli datalohkoja) on runsaasti vapaana, mutta kaikki inodet ovat käytössä, tai päinvastoin.
@@ -783,7 +792,8 @@ Kentän formaatti on 15-alkioinen taulukko 32-bittisiä kokonaislukuja jonka sis
 \end{figure}
 
 \subsection{Hakemiston rakenne}
-\texttt{ext2}:n hakemisto koostuu \emph{hakemistoalkioista} (directory entry) jotka sijaitsevat inoden datalohkoissa.
+\texttt{ext2}:n hakemisto koostuu \emph{hakemistoalkioista} (\emph{directory entry}),
+jotka sijaitsevat inoden datalohkoissa.
 Hakemistoalkion koko on vaihtelevanmittainen riippuen hakemistoalkion sisältämän tiedostonimen pituudesta.
 Hakemistoalkio sijaitsee aina kokonaan yhden datalohkon sisällä.
 Hakemistoalkio koostuu vakiokokoisesta otsakkeesta jota välittömästi seuraa tiedostonimi.
