@@ -722,13 +722,13 @@ joka parantaa huomattavasti tiedostojärjestelmän kykyä säilyä konsistenttin
 \texttt{ext3}:a ja kirjaavia tiedostojärjestelmiä yleisesti käsitelläänkin myöhemmin luvussa~\ref{ChapJournallingFs}.
 
 \begin{figure}
-    \label{FigExt2DiskFormat}
     \centering
     \includegraphics[width=0.7\textwidth]{gfx/ext2-structure.pdf}
     \caption{\texttt{ext2}:n rakenne levyllä~\cite{LinuxKernelBook}.}
+    \label{FigExt2DiskFormat}
 \end{figure}
 
-\texttt{ext2}:n levyrakenne korkealla tasolla on esitetty kuvaajassa~\ref{FigExt2DiskFormat}~\cite{LinuxKernelBook}.
+\texttt{ext2}:n levyrakenne korkealla tasolla on esitetty kuvassa~\ref{FigExt2DiskFormat}~\cite{LinuxKernelBook}.
 Korkeimmalla tasolla \texttt{ext2}:n rakenne on jaettu kahteen osaan: on \emph{käynnistyslohkoon} sekä useisiin \emph{lohkoryhmiin}.
 Käynnistyslohkon tarkoitus on yksinkertaisesti varattua tilaa jollekin \texttt{ext2}:ta riippumattomalle käynnistyslataajalle,
 itse tiedostojärjestelmä ei käytä tätä tilaa mitenkään.
