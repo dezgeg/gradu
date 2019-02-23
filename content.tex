@@ -148,10 +148,6 @@ Jokaisella inodella on yksilöivä numero,
 jolla inodeen viitataan.
 Sovellusohjelmoijan tai käyttäjän kannalta inoden numerolla ei tosin ole muuta käyttöä kuin että sillä voidaan selvittää viittaavatko kaksi eri tiedostonimeä samaan inodeen.
 
-(FIXME mihin kohtaan tämä)
-Unixissa tavallisia tiedostoja voi käsitellä vain tavupohjaisina,
-eli mikäli sovellus tarvitsee esimerkiksi tietuepohjaista tiedostonkäsittelyä jää sen toteutus sovelluksen vastuulle.
-
 Tavallisten tiedostojen ja hakemistojen lisäksi Unix-tiedostojärjestelmä tukee viittä eri erikoistiedostotyyppiä.
 Merkittävin näistä on \emph{symbolinen linkki} (\emph{symbolic link}). (todo).
 
@@ -215,6 +211,9 @@ Onnistuessaan funktiot palauttavat kuinka monta tavua luettiin tai kirjoitettiin
 Paluuarvo voi siis olla pienempi kuin mitä ohjelma pyysi lukemaan tai kirjoittamaan,
 esimerkiksi jos kirjoittaessa levy täyttyi kesken tai luettaessa
 tiedosto loppui kesken.
+Unixissa tavallisia tiedostoja voi käsitellä vain tavupohjaisina,
+eli mikäli sovellus tarvitsee esimerkiksi tietuepohjaista tiedostonkäsittelyä,
+jää sen toteutus sovelluksen vastuulle.
 
 Jokaisella tavalliseen tiedostoon viittaavalla tiedostokahvalla on sijainti tavuina missä kohtaa tiedostoa ollaan ja josta lukeminen tai kirjoittaminen aloitetaan.
 Tiedostoa avatessa tiedostokahvan sijainti on normaalisti tiedoston alussa ja luku- ja kirjoitusoperaatiot onnistuessaan sijainti tiedostossa siirtyy eteenpäin paluuarvon verran.
