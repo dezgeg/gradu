@@ -924,7 +924,7 @@ ja mitkä käyttöjärjestelmä kirjoittaa taustalla.
 \subsubsection{Tiedoston luominen}
 \label{ChapExt2FileCreation}
 Taulukossa~\ref{TabExt2Creation} nähdään levykirjoitukset,
-jota aiheutuu luotaessa tyhjään \texttt{ext2}-tiedostojärjestelmän juurihakemistoon uusi tyhjä tiedosto kutsulla \texttt{creat("new", 0755)}:
+jota aiheutuu luotaessa tyhjään \texttt{ext2}-tiedostojärjestelmän juurihakemistoon uusi tiedosto kutsulla \texttt{creat("new", 0755)}:
 
 % Before:
 % debugfs 1.44.1 (24-Mar-2018)
@@ -1194,7 +1194,17 @@ jota aiheutuu kun tiedostojärjestelmään luodaan uusi tiedosto \texttt{new} ja
 \end{table}
 
 Molemmat testiohjelman tekemät tiedostojärjestelmäkutsut valmistuvat aiheuttamatta yhtään levykirjoitusta,
-eli \texttt{ext2}:n tapaan operaatiot tehdään ensin pelkästään muistissa ja kirjoitetaan vasta myöhemmin taustalla levylle.
+eli \texttt{ext2}:n tapaan operaatiot tehdään ensin pelkästään keskusmuistissa ja kirjoitetaan vasta myöhemmin taustalla levylle.
+Itse levykirjoitukset alkavat vasta noin viiden sekunnin päästä transaktion avaamisella kohdassa \#5.
+Sekä \texttt{creat()}- että \texttt{write()}-kutsuista aiheutuneet metadatapäivitykset ovat yhdistetty yhdeksi transaktioksi,
+jonka kuvaajalohko sekä 7 sisältölohkoa kirjoitetaan journaliin kohdassa \#7.
+Kun käytetään \texttt{ordered}-journalointitilaa,
+ei \texttt{new}-tiedostoon kirjoitettuja datalohkoja \texttt{new} kirjoiteta journaliin.
+Kaikkien datalohkojen pitää kuitenkin olla kirjoitettuna ennen kuin transaktion sitoutuminen voidaan tehdä,
+joten niiden kirjoitus tehdäänkin kohdassa \#6.
+Kohdassa \#8 kirjoitettu sitoutumislohko päättää transaktion.
+Lopulta voidaan tehdä päivitykset tiedostojärjestelmän varsinaisiin levyrakenteisiin kohdissa \#9--\#15,
+jotka tapahtuvat täysin samalla tavalla kuin \texttt{ext2}-tiedostojärjestelmässä.
 
 %%%%% \begin{enumerate}
 %%%%%     \item{Noin 5.4 sekunnin jälkeen journalin lohkoon 0 eli otsakelohkoon päivitetään kertomaan että palautuminen on tarpeen alkaen journalin lohkosta 1.}
