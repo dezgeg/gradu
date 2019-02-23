@@ -1033,7 +1033,8 @@ Käyttäjän näkökulmasta tiedostojärjestelmään on siis syntynyt `viallinen
 
 \subsubsection{Tiedostoon kirjoitus}
 \label{ChapExt2FileWrite}
-Jatketaan edellisen kohdan tiedostojärjestelmästä ja kirjoitetaan \texttt{new}-tiedostoon 64 kilotavun eli 16 lohkon verran dataa:
+Jatketaan edellisen kohdan tiedostojärjestelmästä ja kirjoitetaan \texttt{new}-tiedostoon 64 kilotavun eli 16 lohkon verran dataa.
+Taulukosta~\ref{TabExt2Append} nähdään siitä syntyvät levykirjoitukset:
 % \texttt{creat("new", 0755)} tapahtuu seuraavasti:
 \begin{table}[H]
 \centering
@@ -1049,6 +1050,7 @@ Jatketaan edellisen kohdan tiedostojärjestelmästä ja kirjoitetaan \texttt{new
     8  & 5.226    & +0.000   & 8192 -- 8208 & Tiedoston \texttt{new} 16 datalohkoa sekä yksi epäsuora lohko                            \\        % 3
 \end{tabular}
 \caption{Olemassa olevan tiedostoon lisäyksestä seuraavat levyoperaatiot.}
+\label{TabExt2Append}
 \end{table}
 
 Levyvälimuistien olemassaolo näkyy tässäkin esimerkissä,
