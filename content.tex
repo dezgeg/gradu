@@ -1169,9 +1169,6 @@ jota aiheutuu kun tiedostojärjestelmään luodaan uusi tiedosto \texttt{new} ja
     close(fd);
 \end{minted}
 %
-Molemmat testiohjelman tekemät tiedostojärjestelmäkutsut valmistuvat aiheuttamatta yhtään levykirjoituksia,
-eli \texttt{ext2}:n tapaan operaation tehdään ensin pelkästään muistissa ja kirjoitetaan vasta myöhemmin taustalla levylle:
-
 \begin{table}[H]
 \centering
 \begin{tabular}{l | l | l | l | p{7cm}}
@@ -1195,6 +1192,9 @@ eli \texttt{ext2}:n tapaan operaation tehdään ensin pelkästään muistissa ja
 \caption{Tiedoston luonnista ja sinne kirjoittamisesta seuraavat levyoperaatiot \texttt{ext3}-tiedostojärjestelmässä.}
 \label{TabExt3CreatAndWrite}
 \end{table}
+
+Molemmat testiohjelman tekemät tiedostojärjestelmäkutsut valmistuvat aiheuttamatta yhtään levykirjoitusta,
+eli \texttt{ext2}:n tapaan operaatiot tehdään ensin pelkästään muistissa ja kirjoitetaan vasta myöhemmin taustalla levylle.
 
 %%%%% \begin{enumerate}
 %%%%%     \item{Noin 5.4 sekunnin jälkeen journalin lohkoon 0 eli otsakelohkoon päivitetään kertomaan että palautuminen on tarpeen alkaen journalin lohkosta 1.}
