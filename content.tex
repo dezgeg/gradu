@@ -457,7 +457,8 @@ printf("Tallennus valmis.\n");
 \end{samepage}
 %
 \texttt{write()}-ja \texttt{rename()}-kutsujen väliin on siis lisätty yksi \texttt{fsync()}-kutsu riville 3 takaamaan että näiden operaatioiden järjestys ei vaihdu levylle kirjoittaessa.
-Tämä tekee tiedoston tallennusoperaatiosta atomisen mutta ei vielä takaa pysyvyyttä.
+Tämä tekee tiedoston tallennusoperaatiosta atomisen,
+mutta ei vielä takaa pysyvyyttä.
 Pysyvyyteen vaaditaan \texttt{fsync()}-operaation suoritus kohdetiedoston sisältävälle hakemistolle rivillä 7,
 mikä takaa että \texttt{rename()}-kutsun tekemän muutokset itse hakemiston sisällölle ovat päätyneet levylle.
 
@@ -521,8 +522,8 @@ BOB:n voidaan siis vain todeta jonkin persistenssiominaisuuden paikkaansa pitäm
 Seuraavien operaatioiden osalta tutkittiin niiden atomisuutta:
 %
 \begin{itemize}
-    \item{Tiedoston olemassa olevan sisällön ylikirjoitus erikokoisilla \texttt{write()}-kutsulla.}
-    \item{Sisällön lisääminen tiedoston loppuun erikokoisilla \texttt{write()}-kutsulla.}
+    \item{Tiedoston olemassa olevan sisällön ylikirjoitus erikokoisilla \texttt{write()}-kutsuilla.}
+    \item{Sisällön lisääminen tiedoston loppuun erikokoisilla \texttt{write()}-kutsuilla.}
     \item{Hakemisto-operaatioita, kuten \texttt{link()}, \texttt{unlink()} ja \texttt{rename()}.}
 \end{itemize}
 %
