@@ -735,11 +735,11 @@ itse tiedostojärjestelmä ei käytä tätä tilaa mitenkään.
 Valtaosa \texttt{ext2}:n levynkäytöstä on lohkoryhmiä,
 joista jokainen lohkoryhmä viimeistä lukuun ottamatta vie yhtä paljon tilaa levyltä.
 Jokainen \texttt{ext2}:n lohkoryhmä on puolestaan jaettu seuraaviin tietorakenteisiin:
-\emph{superlohkoon} (superblock),
-\emph{lohkoryhmien kuvaajiin} (block group descriptors),
-\emph{lohkobittikarttoihin} (block bitmap),
-\emph{inodebittikarttoihin} (inode bitmap),
-\emph{inodetauluun} (inode table) sekä datalohkoihin.
+\emph{superlohkoon} (\emph{superblock}),
+\emph{lohkoryhmien kuvaajiin} (\emph{block group descriptors}),
+\emph{lohkobittikarttoihin} (\emph{block bitmap}),
+\emph{inodebittikarttoihin} (\emph{inode bitmap}),
+\emph{inodetauluun} (\emph{inode table}) sekä datalohkoihin.
 Näistä superlohko ja lohkoryhmien kuvaajat ovat koko tiedostojärjestelmälle yhtenäistä metadataa,
 joiden periaatteessa riittäisi olla levyllä vain kerran,
 mutta \texttt{ext2} säilyttää kuitenkin kummastakin niistä useita kopioita siltä varalta että ensisijainen kopio näistä tietorakenteista korruptoituu.
@@ -990,7 +990,7 @@ jota aiheutuu luotaessa tyhjään \texttt{ext2}-tiedostojärjestelmän juurihake
     5  & 30.847   & +0.000   & 516 & Juurihakemisto: lisätään hakemistoalkio \texttt{new} osoittamaan inodeen 12                 \\ \hline % 1
     6  & 61.567   & +30.721  & 4   & Lohkoryhmän 0 inodetaulu: inoden 12 käyttöoikeudet, aikaleimat, koko sekä lohkoviittaukset alustetaan. Juurihakemistoinoden aikaleimoja päivitetään. \\        % 4
 \end{tabular}
-\caption{Tiedoston luomisesta seuraavat levyoperaatiot.}
+\caption{Tiedoston luomisesta seuraavat levyoperaatiot \texttt{ext2}-tiedostojärjestelmässä.}
 \label{TabExt2Creation}
 \end{table}
 %
@@ -1049,7 +1049,7 @@ Taulukosta~\ref{TabExt2Append} nähdään siitä syntyvät levykirjoitukset:
     7  & 5.226    & +0.000   & 4          & Lohkoryhmän 0 inodetaulu: inoden \texttt{new} attribuuteista päivitetään sen koko, aikaleima ja viittaukset data- ja epäsuoriin lohkoihin               \\ \hline % 2
     8  & 5.226    & +0.000   & 8192 -- 8208 & Tiedoston \texttt{new} 16 datalohkoa sekä yksi epäsuora lohko                            \\        % 3
 \end{tabular}
-\caption{Olemassa olevan tiedostoon lisäyksestä seuraavat levyoperaatiot.}
+\caption{Olemassa olevan tiedoston loppuun lisäyksestä seuraavat levyoperaatiot \texttt{ext2}-tiedostojärjestelmässä.}
 \label{TabExt2Append}
 \end{table}
 
