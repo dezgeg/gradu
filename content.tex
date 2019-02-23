@@ -534,6 +534,7 @@ joista mielekkäitä tilanteita ovat levyn sektorin koon (tai vähemmän) verran
 \newcommand{\ordY}{$\bullet$}
 \newcommand{\ordN}{{\small $\times$}}
 \begin{table}[h!]
+\centering
 \bgroup
 %\def\arraystretch{0.9}
 \setlength{\tabcolsep}{0.3em}
@@ -573,6 +574,7 @@ mutta kaatumistilanteen jälkeen havaitaan tilanne jossa ainoastaan \texttt{oper
 todetaan operaatioiden uudelleenjärjestymisen olevan mahdollista \texttt{operaatio1()}:n ja \texttt{operaatio2()}:n välillä.
 
 \begin{table}[h!]
+\centering
 \bgroup
 %\def\arraystretch{0.9}
 \setlength{\tabcolsep}{0.3em}
@@ -666,6 +668,7 @@ on itse tietokanta konsistentissa tilassa ja palautumiseen riittää ainoastaan 
 Muuten palautetaan tietokanta konsistentiksi peruuttamalla rollback journalin 
 
 \begin{table}[h!]
+\centering
 \bgroup
 %\def\arraystretch{0.9}
 \setlength{\tabcolsep}{0.3em}
@@ -977,6 +980,7 @@ jota aiheutuu luotaessa tyhjään \texttt{ext2}-tiedostojärjestelmän juurihake
 % => type, mode, size, blkcount, timestamps, block pointers
 
 \begin{table}[H]
+\centering
 \begin{tabular}{l | l | l | l | p{7cm}}
     \# & $t$ (s) & $\Delta t$ (s) & lohkot & kuvaus \\ \hline \hline
     1  & 0.000    &          &     & \texttt{creat()}-kutsu alkaa   \\ \hline %
@@ -1032,6 +1036,7 @@ Käyttäjän näkökulmasta tiedostojärjestelmään on siis syntynyt `viallinen
 Jatketaan edellisen kohdan tiedostojärjestelmästä ja kirjoitetaan \texttt{new}-tiedostoon 64 kilotavun eli 16 lohkon verran dataa:
 % \texttt{creat("new", 0755)} tapahtuu seuraavasti:
 \begin{table}[H]
+\centering
 \begin{tabular}{l | l | l | l | p{7cm}}
     \# & $t$ (s) & $\Delta t$ (s) & lohkot & kuvaus \\ \hline \hline
     1  & 0.000    & +0.000   &            & \texttt{open()}-kutsu alkaa    \\ \hline %
@@ -1166,23 +1171,24 @@ Molemmat testiohjelman tekemät tiedostojärjestelmäkutsut valmistuvat aiheutta
 eli \texttt{ext2}:n tapaan operaation tehdään ensin pelkästään muistissa ja kirjoitetaan vasta myöhemmin taustalla levylle:
 
 \begin{table}[H]
-\begin{tabular}{l | l | l | l | l | p{7cm}}
-    \# & aika (s) & $\Delta t$ & lohko & lkm & kuvaus \\ \hline \hline
-    1  & 0.000    & +0.000   &      &      & \texttt{creat()}-kutsu alkaa   \\ \hline %
-    2  & 0.001    & +0.001   &      &      & \texttt{creat()}-kutsu loppuu  \\ \hline %
-    3  & 0.002    & +0.000   &      &      & \texttt{write()}-kutsu alkaa   \\ \hline %
-    4  & 0.002    & +0.001   &      &      & \texttt{write()}-kutsu loppuu  \\ \hline %
-    5  & 5.411    & +5.408   & 521  & 1    & Journalin otsakelohko: palautuminen on tarpeen alkaen journalin lohkosta 1                       \\ \hline % 3
-    6  & 5.411    & +0.000   & 9216 & 16   & Tiedoston \texttt{new} datalohkot                               \\ \hline % 2
-    7  & 5.411    & +0.000   & 522  & 8    & Journalin lohkoihin 1--8 kirjoitetaan yksi kuvaajalohko sekä 7 sisältölohkoa. Päivitettävät lohkot ovat 3, 1, 4, 516, 0, 2, 8722                       \\ \hline % 4
-    8  & 5.411    & +0.000   & 530  & 1    & Journalin lohko 9: sitoutumislohko                       \\ \hline % 6
-    9  & 36.131   & +30.720  & 0    & 1    & Superlohko: vapaiden lohkojen ja inodejen määriä vähennetään                     \\ \hline % 10
-    10 & 36.131   & +0.000   & 1    & 1    & Lohkoryhmien kuvaajat: vapaiden lohkojen ja inodejen määriä vähennetään                     \\ \hline % 10
-    11 & 36.131   & +0.000   & 2    & 1    & Lohkobittikartta: merkitään lohkot 8722 ja 9216--9231 varatuksi                     \\ \hline % 10
-    12 & 36.131   & +0.000   & 3    & 1    & Lohkoryhmän 0 inodebittikartta: merkitään inode 12 varatuksi \\ \hline % 10
-    13 & 36.131   & +0.000   & 4    & 1    & Lohkoryhmän 0 inodetaulu: inoden 12 käyttöoikeudet, aikaleimat, koko sekä lohkoviittaukset alustetaan. Juurihakemistoinoden aikaleimoja päivitetään.                      \\ \hline % 10
-    14 & 36.131   & +0.000   & 516  & 1    & Juurihakemisto: lisätään hakemistoalkio \texttt{new} osoittamaan inodeen 12                 \\ \hline % 9
-    15 & 36.131   & +0.000   & 8722 & 1    & Tiedoston \texttt{new} epäsuora lohko: tiedoston lohkot 12--15 merkitään viittaamaan lohkoihin 9228--9231 \\        % 8
+\centering
+\begin{tabular}{l | l | l | l | p{7cm}}
+    \# & aika (s) & $\Delta t$ (s) & lohkot & kuvaus \\ \hline \hline
+    1  & 0.000    & +0.000   &              & \texttt{creat()}-kutsu alkaa   \\ \hline %
+    2  & 0.001    & +0.001   &              & \texttt{creat()}-kutsu loppuu  \\ \hline %
+    3  & 0.002    & +0.000   &              & \texttt{write()}-kutsu alkaa   \\ \hline %
+    4  & 0.002    & +0.001   &              & \texttt{write()}-kutsu loppuu  \\ \hline %
+    5  & 5.411    & +5.408   & 521          & Journalin otsakelohko: palautuminen on tarpeen alkaen journalin lohkosta 1                       \\ \hline % 3
+    6  & 5.411    & +0.000   & 9216 -- 9231 & Tiedoston \texttt{new} datalohkot                               \\ \hline % 2
+    7  & 5.411    & +0.000   & 522 -- 529   & Journalin lohkoihin 1--8 kirjoitetaan yksi kuvaajalohko sekä 7 sisältölohkoa. Päivitettävät lohkot ovat 3, 1, 4, 516, 0, 2, 8722                       \\ \hline % 4
+    8  & 5.411    & +0.000   & 530          & Journalin lohko 9: sitoutumislohko                       \\ \hline % 6
+    9  & 36.131   & +30.720  & 0            & Superlohko: vapaiden lohkojen ja inodejen määriä vähennetään                     \\ \hline % 10
+    10 & 36.131   & +0.000   & 1            & Lohkoryhmien kuvaajat: vapaiden lohkojen ja inodejen määriä vähennetään                     \\ \hline % 10
+    11 & 36.131   & +0.000   & 2            & Lohkobittikartta: merkitään lohkot 8722 ja 9216--9231 varatuksi                     \\ \hline % 10
+    12 & 36.131   & +0.000   & 3            & Lohkoryhmän 0 inodebittikartta: merkitään inode 12 varatuksi \\ \hline % 10
+    13 & 36.131   & +0.000   & 4            & Lohkoryhmän 0 inodetaulu: inoden 12 käyttöoikeudet, aikaleimat, koko sekä lohkoviittaukset alustetaan. Juurihakemistoinoden aikaleimoja päivitetään.                      \\ \hline % 10
+    14 & 36.131   & +0.000   & 516          & Juurihakemisto: lisätään hakemistoalkio \texttt{new} osoittamaan inodeen 12                 \\ \hline % 9
+    15 & 36.131   & +0.000   & 8722         & Tiedoston \texttt{new} epäsuora lohko: tiedoston lohkot 12--15 merkitään viittaamaan lohkoihin 9228--9231 \\        % 8
 \end{tabular}
 \caption{Tiedoston luonnista ja sinne kirjoittamisesta seuraavat levyoperaatiot \texttt{ext3}-tiedostojärjestelmässä.}
 \label{TabExt3CreatAndWrite}
