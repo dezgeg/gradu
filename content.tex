@@ -1157,11 +1157,11 @@ Journalia aletaan lukea otsakelohkon ilmaisemasta kohdasta eteenpäin,
 ja jokaisen kokonaan lokiin kirjoitetun transaktion sisältölohkot kirjoitetaan kuvaajalohkon osoittamiin paikkoihin levyllä.
 
 \subsection{Käytännön esimerkki \texttt{ext3}:n tekemistä levykirjoituksista}
-\texttt{ext3}:n tekemiä levykirjoituksia tutkittiin QEMU-virtuaalikoneella samanlaisella testiasetelmalla kuin aiemmin \texttt{ext2}:n kohdalla tehtiin luvussa~\ref{ChapExt2Fs}.
+\texttt{ext3}:n tekemiä levykirjoituksia tutkittiin QEMU-virtuaalikoneella samalla testiasetelmalla kuin aiemmin \texttt{ext2}:n kohdalla tehtiin luvussa~\ref{ChapExt2Fs}.
 1 gigatavun levylle \texttt{mkfs.ext3} loi rakenteeltaan muuten samanlaisen tiedostojärjestelmän kuin \texttt{ext2}:n tapauksessa,
 paitsi että lohkoryhmä 0 sisältää 32 megatavun kokoisen journalin.
-Testiohjelmana käytetään seuraavaa koodinpätkää,
-joka luo tiedostojärjestelmään uuden tiedoston \texttt{new} ja kirjoittaa sinne 64 kilotavua dataa:
+Taulukossa~\ref{TabExt3CreatAndWrite} nähdään levykirjoitukset,
+jota aiheutuu kun tiedostojärjestelmään luodaan uusi tiedosto \texttt{new} ja kirjoitetaan 64 kilotavua dataa seuraavalla ohjelmalla:
 %
 \begin{minted}[linenos]{c}
     int fd = creat("/mnt/fs/new", 0644);
