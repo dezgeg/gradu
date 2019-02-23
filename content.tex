@@ -524,7 +524,7 @@ Seuraavien operaatioiden osalta tutkittiin niiden atomisuutta:
 \begin{itemize}
     \item{Tiedoston olemassa olevan sisällön ylikirjoitus erikokoisilla \texttt{write()}-kutsuilla.}
     \item{Sisällön lisääminen tiedoston loppuun erikokoisilla \texttt{write()}-kutsuilla.}
-    \item{Hakemisto-operaatioita, kuten \texttt{link()}, \texttt{unlink()} ja \texttt{rename()}.}
+    \item{Hakemisto-operaatiot, kuten \texttt{link()}, \texttt{unlink()} ja \texttt{rename()}.}
 \end{itemize}
 %
 \texttt{write()}-kutsun tapauksessa on siis erikseen tutkittu tilanteita jossa tiedoston pituus kasvaa ja tilanteita jossa pelkästään ylikirjoitetaan olemassa olevaa sisältöä.
@@ -564,7 +564,7 @@ jossa tiedoston kokoa on ehditty kasvattamaan mutta itse dataa ei ole vielä kir
 jolloin kaatumistilanteen jälkeen tiedoston lopusta voidaan havaita nollatavuja lisätyn datan sijaan.
 
 Toinen tutkittu persistenssiominaisuuksien kategoria on tiedostojärjestelmäoperaatioiden järjestyksen vaihtuminen levylle kirjoittaessa.
-Tilanteissa jossa ohjelmakoodissa tehdään peräkkäin toisistaan riippumattomat operaatiot
+Tilanteissa jossa ohjelmakoodissa tehdään peräkkäin toisistaan riippumattomat operaatiot:
 \begin{minted}{c}
     operaatio1();
     operaatio2();
