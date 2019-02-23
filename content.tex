@@ -566,7 +566,7 @@ jolloin kaatumistilanteen jälkeen tiedoston lopusta voidaan havaita nollatavuja
 
 Toinen tutkittu persistenssiominaisuuksien kategoria on tiedostojärjestelmäoperaatioiden järjestyksen vaihtuminen levylle kirjoittaessa.
 Tilanteissa jossa ohjelmakoodissa tehdään peräkkäin toisistaan riippumattomat operaatiot:
-\begin{minted}{c}
+\begin{minted}[linenos]{c}
     operaatio1();
     operaatio2();
 \end{minted}
@@ -636,7 +636,7 @@ Näitä sovellusten käyttämiä mekanismeja kutsutaan \emph{päivitysprotokolli
 Tarkastellaan nyt lähemmin ALICEn löytämää haavoittuvuutta SQLite-tietokantakirjastosta.
 SQLite on laajasti käytetty SQL-kyselykieleen pohjautuva tietokanta,
 joka tarjoaa täyden tuen SQL-kielen transaktioille.
-Transaktionaalisten päivitysten tekemiseen SQLite käyttää sisäisesti joko historiallista rollback journal-menetelmää tai uudempaa Write-Ahead Logging-menetelmää~\cite{SqliteAnalysis},
+Transaktionaalisten päivitysten tekemiseen SQLite käyttää sisäisesti joko historiallista rollback journal-menetelmää tai uudempaa \emph{write-ahead logging}-menetelmää~\cite{SqliteAnalysis},
 missä käytettävä menetelmä on käyttäjän valittavissa.
 ALICEn löytävä haavoittuvuus koskee yksinomaan rollback journal-tilaa,
 jonka päivitysprotokolla on seuraavanlainen~\cite{PosixDataConsistency}:
@@ -1116,7 +1116,7 @@ eli hakemistoalkion uudelleennimeäminen toisella levysektorilla sijaitsevaan ha
 Yksi keino kaikkien näiden kriteereiden täyttämiseksi on lisätä tiedostojärjestelmään jokin menetelmä \emph{transaktioille},
 joilla koko tiedostojärjestelmän metadataan voidaan tehdä päivityksiä atomisesti.
 \texttt{ext3} toteuttaa transaktioille käyttäen kirjausta,
-joka pohjautuu pääpiirteissään tietokantajärjestelmissä käytettyyn Write-Ahead Logging-menetelmään~\cite{AriesWal}.
+joka pohjautuu pääpiirteissään tietokantajärjestelmissä käytettyyn \emph{write-ahead logging}-menetelmään~\cite{AriesWal}.
 Kirjauksen perusajatuksena on että aina ennen varsinaisten levytietorakenteiden muuttamista kirjataan ylös erilliseen \emph{journaliin} ylös kaikki muutokset,
 jota transaktion yhteydessä tullaan tekemään.
 Nyt mahdollisen kaatumistilanteen sattuessa voidaan journalin sisällön perusteella aina toistaa kaikki muutokset ja viedä transaktio loppuun.
@@ -1163,7 +1163,7 @@ paitsi että lohkoryhmä 0 sisältää 32 megatavun kokoisen journalin.
 Testiohjelmana käytetään seuraavaa koodinpätkää,
 joka luo tiedostojärjestelmään uuden tiedoston \texttt{new} ja kirjoittaa sinne 64 kilotavua dataa:
 %
-\begin{minted}{c}
+\begin{minted}[linenos]{c}
     int fd = creat("/mnt/fs/new", 0644);
     write(fd, "XXX...XXX", 64 * 1024);
     close(fd);
@@ -1525,7 +1525,7 @@ Pehmeiden päivitysten ja levyvälimuistien yhdistelmällä voidaan joutua tilan
 Otetaan esimerkiksi lähtötilanne,
 jossa muuten tyhjässä tiedostojärjestelmässä on pelkästään yksi tyhjä tiedosto \texttt{/oldfile} ja sille tehdään seuraavat operaatiot:
 %
-\begin{minted}{c}
+\begin{minted}[linenos]{c}
 open("/newfile", O_CREAT | O_WRONLY, 0644);
 unlink("/oldfile");
 \end{minted}
