@@ -81,7 +81,8 @@ Ensimmäinen akateemisen maailman tuottama Unix-johdannainen on Berkeleyn yliopi
 AT\&T:n puhelinverkkotoiminnan monopoliaseman purkaantuminen avasi sille tilaisuuden myydä Unixia kaupallisesti,
 joka julkaistiin Unix System V-nimellä vuonna 1983.
 
-Markkinoilla oli siis saatavilla useita periaatteessa Unix-pohjaisia käyttöjärjestelmiä mutta jotka kaikki käytännössä toimivat hieman eri tavalla.
+Markkinoilla oli siis saatavilla useita periaatteessa Unix-pohjaisia käyttöjärjestelmiä,
+mutta jotka kaikki käytännössä toimivat hieman eri tavalla.
 Sovellusohjelmoijan kannalta tämä hankaloitti huomattavasti monella eri Unix-järjestelmällä toimivien ohjelmien toteutusta.
 Tämän ratkaisemiseksi kehiteltiin POSIX-standardi~\cite{PosixSpec} yhtenäistämään eri Unix-toteutusten tarjoamat sovellusrajapinnat.
 Ensimmäinen versio standardista julkaistiin vuonna 1988.
@@ -724,7 +725,7 @@ Muuten palautetaan tietokanta konsistentiksi peruutuslokin sisällön perusteell
 %Total 16 12 10 17 31
 \end{tabular}
 \egroup
-    \caption{Joidenkin sovellusten haavoittuuvuudet kaatumistilanteissa eri tiedostojärjestelmillä~\cite[taulukko 3(c), s. 11]{PosixDataConsistency}.}
+\caption{Joidenkin sovellusten haavoittuuvuudet kaatumistilanteissa eri tiedostojärjestelmillä~\cite[taulukko 3(c), s. 11]{PosixDataConsistency}.}
 \label{TabAppVulnerabilities}
 \end{table}
 
@@ -754,8 +755,8 @@ versioon ilman tiedostojärjestelmän uudelleenformatointia~\cite{Ext4Status}.
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.7\textwidth]{gfx/ext2-structure.pdf}
-    \caption{\texttt{ext2}:n rakenne levyllä~\cite{LinuxKernelBook}.}
+    \includegraphics[width=0.8\textwidth]{gfx/ext2-structure.pdf}
+    \caption{\texttt{ext2}:n rakenne levyllä korkealla tasolla~\cite{LinuxKernelBook}.}
     \label{FigExt2DiskFormat}
 \end{figure}
 
@@ -779,7 +780,7 @@ joiden periaatteessa riittäisi olla levyllä vain kerran,
 mutta \texttt{ext2} säilyttää kuitenkin kummastakin niistä useita kopioita siltä varalta että ensisijainen kopio näistä tietorakenteista korruptoituu.
 
 \subsection{Superlohkon sisältö}
-Superlohko sisältää muun muassa seuraavanlaisia arvoja tiedostojärjestelmästä, enkoodattuna 32-bittisinä little-endian-kokonaislukuina:
+Superlohko sisältää muun muassa seuraavanlaisia arvoja tiedostojärjestelmästä, enkoodattuna 32-bittisinä little-endian-kokonaislukuina~\cite{LinuxKernelBook}:
 \begin{itemize}
     \item Tiedostojärjestelmän lohkon (block) koko \texttt{s\_log\_block\_size}. Yleisesti käytettyjä lohkon kokoja on 1, 2, ja 4 kilotavua.
           Mahdollisia tiedostojärjestelmän lohkokokoja rajoittaa se, että lohkon koon täytyy olla käytettävän levyn sektorin koon moninkerta.
@@ -801,7 +802,8 @@ Tiedostojärjestelmää luodessa valitut \texttt{s\_blocks\_\-per\_\-group}- ja 
 
 \subsection{Lohkoryhmäkuvaajien sisältö}
 Kuten superlohkon kohdalla, lohkoryhmäkuvaajista säilytetään kopioita useassa kohtaa levyä.
-Lohkoryhmäkuvaajat on yksinkertaisesti taulukko seuraavista tietorakenteesta:
+Lohkoryhmäkuvaajat sisältävät yhteenvetotietoa jokaisesta tiedostojärjestelmän lohkoryhmästä.
+Jokaiselle lohkoryhmälle pidetään yllä seuraavia arvoja:
 \begin{itemize}
     \item \texttt{bg\_block\_bitmap} kertoo lohkon, josta kyseisen lohkoryhmän lohkobittikartta alkaa.
           Bittikartan bitit kertovat mitkä lohkoryhmän datalohkoista ovat käytössä.
@@ -817,13 +819,13 @@ Lohkoryhmäkuvaajat on yksinkertaisesti taulukko seuraavista tietorakenteesta:
 \subsection{Inoden rakenne}
 
 \texttt{ext2}:ssa tietyn inoden paikannus inodenumeron perusteella on yksinkertaista.
-Kuten edellä nähtiin, jokaisessa lohkoryhmässä on sama määrä inodeja ja lohkoryhmän sisällä inodet sijaitsevat yksinkertaisesti taulukossa.
+Kuten edellä nähtiin, jokaisessa lohkoryhmässä on sama määrä inodeja ja lohkoryhmän sisällä inodet sijaitsevat perättäin taulukossa.
 Inodeiden numerointi alkaa ykkösestä, joten inoden numerosta voidaan laskea lohkoryhmän numero kaavalla:
 $$ n_\text{bg} = \frac{n_\text{ino} - 1}{\texttt{s\_inodes\_per\_group}} $$
 
-Kenttä \texttt{i\_blocks} viittaa lohkoihin jossa inoden data sijaitsee.
-Kentän formaatti on 15-alkioinen taulukko 32-bittisiä kokonaislukuja,
-jonka sisältö tulkitaan seuraavasti:
+Inoden datalohkoihin viitataan \emph{lohkopuun} (\emph{block map}) avulla.
+Inoden kenttä \texttt{i\_blocks} sisältää 15-alkioisen taulukon lohkonumeroita,
+jotka tulkitaan seuraavasti:
 \begin{itemize}
     \item Taulukon ensimmäiset 12 alkiota sisältävät lohkonumerot tiedoston ensimmäiselle 12 lohkolle (lohkot 0--11).
           Nämä ovat \emph{suoria lohkoja} (\emph{direct blocks}).
@@ -836,10 +838,10 @@ jonka sisältö tulkitaan seuraavasti:
 \end{itemize}
 
 \begin{figure}
-    \label{FigExt2BlockMap}
     \centering
     \includegraphics[scale=1.1]{gfx/ext2-blocks.pdf}
     \caption{Ext2:n lohkopuu.}
+    \label{FigExt2BlockMap}
 \end{figure}
 
 \subsection{Hakemiston rakenne}
@@ -848,11 +850,11 @@ jotka sijaitsevat inoden datalohkoissa.
 Hakemistoalkion koko on vaihtuvan mittainen riippuen hakemistoalkion sisältämän tiedostonimen pituudesta.
 Hakemistoalkio sijaitsee aina kokonaan yhden datalohkon sisällä.
 Hakemistoalkio koostuu vakiokokoisesta otsakkeesta jota välittömästi seuraa tiedostonimi.
-Otsakkeen rakenne on seuraavanlainen:
+Otsakkeen rakenne on seuraavanlainen~\cite{LinuxKernelBook}:
 
 \begin{samepage}
 \begin{minted}{c}
-struct {
+struct ext2_dir_entry_2 {
     uint32_t inode;
     uint16_t rec_len;
     uint8_t name_len;
