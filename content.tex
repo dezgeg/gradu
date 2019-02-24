@@ -715,30 +715,31 @@ sanotaan että sovelluksella on \emph{kaatumishaavoittuvuus} (\emph{crash vulner
 % jonka päivitysprotokolla on seuraavanlainen~\cite{PosixDataConsistency}:
 % Fig 4(F)
 
-
 \begin{table}[h!]
 \centering
 \bgroup
 %\def\arraystretch{0.9}
 \setlength{\tabcolsep}{0.3em}
-\begin{tabular}{r|c|c|c|c|c|}
-             & \hdr{ext3-writeback} & \hdr{ext3} & \hdr{ext3-datajournal} & \hdr{ext4-ordered} & \hdr{btrfs} \\ \hline
-    LevelDB 1.10     & 3 & 1 & 1 & 2 & 4 \\
-    LevelDD 1.15     & 2 & 1 & 1 & 2 & 3 \\
-    LMDB             &   &   &   &   &   \\
-    GDBM             & 3 & 3 & 2 & 3 & 4 \\
-    HSQLDB           &   &   &   &   & 4 \\
-    SQLite-Rollback  & 1 & 1 & 1 & 1 & 1 \\
-    SQLite-WAL       &   &   &   &   &   \\
-    PostgreSQL       &   &   &   &   &   \\
-    HDFS             &   &   &   &   & 1 \\
-    ZooKeeper        & 1 & 1 &   & 1 & 1 \\
+\begin{tabular}{r|c|c|c|}
+             &  \hdr{ext3} & \hdr{ext4} & \hdr{btrfs} \\ \hline
+    LevelDB 1.10     & 1 & 2 & 4 \\
+    LevelDD 1.15     & 1 & 2 & 3 \\
+    LMDB             &   &   &   \\
+    GDBM             & 3 & 3 & 4 \\
+    HSQLDB           &   &   & 4 \\
+    SQLite-Rollback  & 1 & 1 & 1 \\
+    SQLite-WAL       &   &   &   \\
+    PostgreSQL       &   &   &   \\
+    HDFS             &   &   & 1 \\
+    ZooKeeper        & 1 & 1 & 1 \\
 %Total 16 12 10 17 31
 \end{tabular}
 \egroup
 \caption{Joidenkin sovellusten haavoittuuvuudet kaatumistilanteissa eri tiedostojärjestelmillä~\cite[taulukko 3(c), s. 11]{PosixDataConsistency}.}
 \label{TabAppVulnerabilities}
 \end{table}
+
+Taulukossa~\ref{TabAppVulnerabilities} nähdään artikkelin testaamien tietokantasovellusten sisältämien kaatumishaavoittuvuuksien määrän kolmella eri Linux-tiedostojärjestelmällä.
 
 \section{\texttt{ext2}-tiedostojärjestelmä}
 \label{ChapExt2Fs}
