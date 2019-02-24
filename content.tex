@@ -659,7 +659,7 @@ joka tarjoaa yksinkertaisen tiedostojärjestelmää käyttävän SQL-kyselykiele
 SQLite tukee SQL-kielen transaktioita,
 mutta tukee vain yhtä samanaikaista transaktiota kerrallaan.
 Oletuskonfiguraatiossaan SQLite käyttää \emph{peruutuslokia} (\emph{rollback journal}) tietokantasivujen atomiseen päivittämiseen~\cite{SqliteAnalysis}.
-Pääpiirteissään SQLite tekee seuraavat tiedostojärjestelmäoperaatiot jokaisen kirjoittavan tietokantatransaktion yhteydessä~\cite{}:
+Pääpiirteissään SQLite tekee seuraavat tiedostojärjestelmäoperaatiot jokaisen kirjoittavan tietokantatransaktion yhteydessä~\cite{PosixDataConsistency}:
 %
 \begin{enumerate}
     \item{\texttt{creat(journal)}}
@@ -701,6 +701,8 @@ Jokaiselle mahdolliselle tiedostojärjestelmän tilalle puolestaan ajetaan tarki
 joka kertoo onko kaatumisen jälkeinen tilanne konsistentti sovelluksen näkökulmasta.
 Esimerkiksi SQL-tietokannan kohdalla mielekäs testitapaus voisi olla saman arvon lisääminen kahteen eri tauluun yhden transaktion sisällä.
 Tätä testitapausta vastaava tarkistusohjelma voisi tarkastaa ovatko edellämainittujen taulujen sisällöt samat.
+Jos yhdelläkin simuloidulla kaatumistilanteella tarkistusohjelma ilmaisee sovelluksen tilan olevan sisäisesti epäkonsistentti,
+sanotaan että sovelluksella on \emph{kaatumishaavoittuvuus} (\emph{crash vulnerability}) testatulla tiedostojärjestelmällä.
 
 %
 %%% Erinäisten sovellusten päivitysprotokollien tutkimista varten kehitetty työkalu ALICE (\emph{Application-Level Intelligent Crash Explorer}) toimii samantyyppisellä periaatteella kuin aiemmin kuvattu BOB:
@@ -712,8 +714,6 @@ Tätä testitapausta vastaava tarkistusohjelma voisi tarkastaa ovatko edellämai
 % ALICEn löytävä haavoittuvuus koskee yksinomaan rollback journal-tilaa,
 % jonka päivitysprotokolla on seuraavanlainen~\cite{PosixDataConsistency}:
 % Fig 4(F)
-
-
 
 
 \begin{table}[h!]
