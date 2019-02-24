@@ -640,10 +640,10 @@ että aiemmin kaatumisturvalliseksi todettu sovellus ei enää olekaan sitä.
 Tarkastellaankin lyhyesti edelleen ``All File Systems Are Not Created Equal: On the Complexity of Crafting Crash-consistent Applications''\cite{PosixDataConsistency}-artikkelissa tehtyä tutkimusta sovellusten kaatumisturvallisuudesta eri tiedostojärjestelmillä.
 
 \subsection{Sovellusten päivitysprotokollat}
-
 Aiemmin aliluvussa~\ref{SubChapTextEditor} nähtiin,
 miten tekstieditorin tiedoston tallennuksesta saatiin tehtyä kaatumisturvallinen POSIX-tiedostojärjestelmäoperaatioita koostamalla.
-Tässä kyseisessä käyttötapauksessa päästiin haluttuun lopputulokseen varsin suoraviivaisella toteutuksella, jossa yksinkertaisesti kirjoitettiin koko tiedosto uudestaan.
+Tässä kyseisessä käyttötapauksessa päästiin haluttuun lopputulokseen varsin suoraviivaisella toteutuksella,
+jossa yksinkertaisesti kirjoitettiin koko tiedosto uudestaan.
 Muuntyyppisillä sovelluksilla voi olla huomattavastikin monimutkaisempia vaatimuksia.
 Esimerkiksi SQL-kyselykielen perustoiminnallisuuksiin kuuluvat transaktiot,
 joiden avulla relaatiotietokannassa voidaan atomisesti päivittää useita, mahdollisesti eri tauluihin kuuluvia rivejä atomisesti~\cite{DatabaseFundamentals}.
