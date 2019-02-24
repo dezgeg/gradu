@@ -203,33 +203,29 @@ int close(int fildes);
 
 \subsection{Tiedoston luku ja kirjoitus}
 
-Tiedostosta luku ja tiedostoon kirjoitus tapahtuu ohjelmoijan näkökulmasta suhteellisen
-samalla tavalla, funktioilla \texttt{read} ja \texttt{write}:
+Tiedostosta luku ja tiedostoon kirjoitus tapahtuu funktioilla \texttt{read} ja \texttt{write}:
 
 % http://pubs.opengroup.org/onlinepubs/9699919799/functions/read.html#tag_16_474
 % http://pubs.opengroup.org/onlinepubs/9699919799/functions/write.html#tag_16_685
 \begin{minted}{c}
-ssize_t read(int fildes, void *buf, size_t nbyte);
+ssize_t  read(int fildes,       void *buf, size_t nbyte);
 ssize_t write(int fildes, const void *buf, size_t nbyte);
 \end{minted}
 %
 Ensimmäinen parametri \texttt{fildes} on tiedostokahva jota operoidaan.
 \texttt{buf} on osoitin \texttt{nbyte} tavun kokoiseen puskuriin johon
 luetaan tai josta kirjoitetaan.
-Kerralla kirjoitettavan tai luettavan datan määrä voi olla mielivaltaisen kokoinen,
-vaikka taustalla oleva media tukisi vain esimerkiksi 512 tavun kokoisen sektorin lukemista tai kirjoittamista.
-Tämä on yksi tapa jolla tiedostojärjestelmä abstraktoi laitteistoa.
 Onnistuessaan funktiot palauttavat kuinka monta tavua luettiin tai kirjoitettiin.
 Paluuarvo voi siis olla pienempi kuin mitä ohjelma pyysi lukemaan tai kirjoittamaan,
-esimerkiksi jos kirjoittaessa levy täyttyi kesken tai luettaessa
-tiedosto loppui kesken.
+esimerkiksi jos kirjoittaessa levy täyttyi tai luettaessa tiedosto loppui kesken.
 Unixissa tavallisia tiedostoja voi käsitellä vain tavupohjaisina,
 eli mikäli sovellus tarvitsee esimerkiksi tietuepohjaista tiedostonkäsittelyä,
 jää sen toteutus sovelluksen vastuulle.
 
 Jokaisella tavalliseen tiedostoon viittaavalla tiedostokahvalla on sijainti tavuina missä kohtaa tiedostoa ollaan ja josta lukeminen tai kirjoittaminen aloitetaan.
-Tiedostoa avatessa tiedostokahvan sijainti on normaalisti tiedoston alussa ja luku- ja kirjoitusoperaatiot onnistuessaan sijainti tiedostossa siirtyy eteenpäin paluuarvon verran.
-Tiedostokahvan sijaintia tiedostossa voi siirtää \texttt{lseek()}-kutsulla:
+Tiedostoa avatessa tiedostokahvan sijainti on normaalisti tiedoston alussa,
+ja luku- ja kirjoitusoperaatiot onnistuessaan siirtävät sijaintia tiedostossa eteenpäin.
+Tiedostokahvan sijaintia tiedostossa voi myös siirtää erikseen \texttt{lseek()}-funktiolla:
 
 % http://pubs.opengroup.org/onlinepubs/9699919799/functions/lseek.html#tag_16_310
 \begin{minted}{c}
@@ -243,14 +239,20 @@ että tiedostokahvan sijaintia siirretään eteenpäin \texttt{offset} tavua ja
 että tiedostokahvan sijainniksi asetetaan \texttt{offset} tavua eteenpäin laskien tiedoston lopusta.
 Onnistuessaan \texttt{lseek()}-kutsu palauttaa sijainnin johon siirryttiin.
 Sijainnin voi siis selvittää siirtymättä tiedostossa kutsulla \texttt{lseek(fd, 0, SEEK\_CUR)}.
+Unix-tiedostojärjestelmissä lukeminen tai kirjoittaminen voidaan tehdä mihin tahansa kohtaa tiedostoa ja niin pienillä tai suurilla datamäärillä kuin on tarpeen.
+Eli vaikka tiedostojärjestelmä sijaitsisi kiintolevyllä joka pystyy lukemaan tai kirjoittamaan vain 512 tavun sektoreita kerrallaan,
+voivat sovellukset lukea ja kirjoittaa tavun tarkkuudella.
+Tämä on yksi tapa jolla tiedostojärjestelmä abstraktoi laitteistoa.
 
 Unix-tiedostojärjestelmät tukevat \emph{harvoja} (\emph{sparse}) tiedostoja,
-eli tiedostoissa voi olla kohtia jossa niille ei ole varattu levytilaa mutta niistä lukeminen onnistuu ja palauttaa nollatavuja.
+eli tiedostoissa voi olla kohtia jossa niille ei ole varattu levytilaa,
+mutta niistä lukeminen onnistuu ja palauttaa nollatavuja.
 Harvojen tiedostojen tekeminen onnistuu \texttt{lseek()}-funktion avulla siirtymällä tiedostossa eteenpäin kohtaan johon ei ole kirjoitettu mitään.
 Esimerkiksi kirjoittamalla ensin 32 kilotavua,
 siirtymällä eteenpäin 32 kilotavua kutsulla \texttt{lseek(fd, 32768, SEEK\_CUR)},
 ja kirjoittamalla toiset 32 kilotavua pitäisi lopputuloksena olla tiedosto jonka koko on 96 kilotavua mutta vie vain 64 kilotavua levytilaa.
-Tiedoston metadatan voi lukea \texttt{fstat()}- tai \texttt{stat()}-funktioilla.
+
+Tiedoston metadatan voi lukea \texttt{fstat()}- tai \texttt{stat()}-funktioilla:
 
 % http://pubs.opengroup.org/onlinepubs/9699919799/functions/fstat.html#tag_16_173
 % myös: int lstat(const char *path, struct stat *buf);
