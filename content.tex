@@ -1293,10 +1293,10 @@ Lokipohjaiset tiedostojärjestelmät sen sijaan kääntävät tämän tilanteen 
 mutta tästä lokiin kirjoitetusta lohkosta tuleekin uusi sijainti kyseiselle metadatalle.
 Tällä tekniikalla vältytään siis metadatan kahdesti kirjoittamiselta,
 mutta toisaalta nyt on tarpeen tehdä päivityksiä muualla päin tiedostojärjestelmää kertomaan muokatun metadatalohkon uusi sijainti levyllä.
-Tässä luvussa tutkitaan Sprite LFS:ää, joka on varhainen toteutus lokipohjaisesta tiedostojärjestelmästä.
+Tässä luvussa tutkitaan Sprite LFS:ää, joka on varhainen toteutus lokipohjaisesta tiedostojärjestelmästä~\cite{SpriteRosenblumThesis}.
 
 \subsection{Sprite LFS:n periaate}
-Sprite LFS on vuosina 1989--1990 kehitelty tiedostojärjestelmä Berkeleyn yliopiston kokeelliseen Sprite-käyttöjärjestelmään.
+Sprite LFS on vuosina 1989--1990 kehitelty tiedostojärjestelmä Berkeleyn yliopiston kokeelliseen Sprite-käyttöjärjestelmään~\cite{SpriteRosenblumThesis}.
 Motivaatio uuden tiedostojärjestelmän kehittämiseen oli sekä parempi kaatumisturvallisuus että suorituskyky levylle kirjoittaessa.
 Perinteisiä mekaanisia kiintolevyjä käytettäessä suorituskyvyn kannalta huomioon otettavaa on niille ominainen \emph{hakuaika},
 mikä tarkoittaa että levyltä useiden lohkojen lukeminen tai kirjoittaminen vie enemmän aikaa mikäli lohkot eivät sijaitse levyllä peräkkäin.
@@ -1313,7 +1313,7 @@ mikä tapahtuu \emph{segmentin puhdistuksella} (\emph{segment cleaning}).
 
 \subsection{Sprite LFS:n levyrakenne}
 
-Sprite LFS:llä on merkittävästi yhtenäisyyksiä perinteisen Berkeley Fast Filesystem-tiedostojärjestelmän kanssa ja siten myös \texttt{ext2}:n kanssa.
+Sprite LFS:llä on merkittävästi yhtenäisyyksiä perinteisen Berkeley Fast Filesystem-tiedostojärjestelmän kanssa ja siten myös \texttt{ext2}:n kanssa~\cite{SpriteRosenblumThesis}.
 Tässä luvussa selitetään pelkät eroavaisuudet luvussa~\ref{ChapExt2Fs} esiteltyihin \texttt{ext2}:n levytietorakenteisiin.
 %Seuraavilta osin Sprite LFS toimii samoin kuin aiemmin luvussa~\ref{ChapExt2Fs} esitelty ext2:
 %\begin{itemize}
@@ -1354,7 +1354,8 @@ kumpi on uudempi.
 \label{SubsectSpriteLfsExample}
 
 Tarkastellaan esimerkkinä tilannetta,
-jossa luodaan tiedostojärjestelmän alihakemistoon \texttt{testdir} tiedosto \texttt{newfile} ja kirjoitetaan sinne yhden lohkon verran dataa.
+jossa luodaan tiedostojärjestelmän alihakemistoon \texttt{testdir} tiedosto \texttt{newfile},
+ja kirjoitetaan sinne yhden lohkon verran dataa.
 Kokonaisuutena tiedostojärjestelmälle tehdään seuraavat operaatiot:
 
 \begin{enumerate}
