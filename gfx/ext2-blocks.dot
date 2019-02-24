@@ -53,9 +53,16 @@ digraph ext2 {
         b_d_10 [shape=box,label="10"];
         b_d_11 [shape=box,label="11"];
 
+        b_dots_1 [shape=plaintext,fontsize=5,label="..."];
+
         b_1id [shape=box,label="1035"];
 
+        b_dots_2 [shape=plaintext,fontsize=5,label="..."];
+
         b_2id [shape=box,label="1049611"];
+
+        b_dots_3 [shape=plaintext,fontsize=5,label="..."];
+
         b_3id [shape=box,label="1074791435"];
     }
 
@@ -95,11 +102,14 @@ digraph ext2 {
     idb1_3id:last -> b_3id:w;
 
     // retarded crap
-    //b11:s   -> b12:n   [style=invis];
-    //b12:s   -> b1035:n [style=invis];
-    //b1035:s -> b1036:n [style=invis];
-    //b1036:s -> b2060:n [style=invis];
+    b_d_4:s   -> b_d_5:n   [style=invis];
+    b_d_5:s   -> b_d_6:n   [style=invis];
+    b_d_6:s   -> b_d_7:n   [style=invis];
 
-    //idb1:s -> idb2_0:n [style=invis];
-    //idb2_0:b1036:s -> idb2_1023:n [style=invis];
+    b_d_11:s   -> b_dots_1:n   [style=invis];
+    b_dots_1:s   -> b_1id:n    [style=invis];
+    b_1id:s   -> b_dots_2:n    [style=invis];
+    b_dots_2:s   -> b_2id:n    [style=invis];
+    b_2id:s   -> b_dots_3:n    [style=invis];
+    b_dots_3:n -> b_3id:n [style=invis];
 }
