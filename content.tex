@@ -630,9 +630,18 @@ Toisaalta paremman suorituskyvyn omaava \texttt{writeback}-optio aiheuttaa enemm
 %Tästä seuraakin suoraan kysymys siitä kuinka nämä erot vaikuttavat sovellusohjelmiin,
 %ja onkin samalla toinen ``All File Systems Are Not Created Equal: On the Complexity of Crafting Crash-consistent Applications''-artikkelin tutkima aihe.
 
+\section{Katsaus sovellusten kaatumisturvallisuuteen}
+
+Edellisessä luvussa nähtiin,
+miten eri tiedostojärjestelmillä tapahtuu merkittävästi erilaisia seurauksia kaatumistilanteissa.
+Tämä on järjestelmän ylläpitäjän ja sovellusten kannalta varsin harmillista,
+sillä toiseen tiedostojärjestelmään siirtyminen voikin aiheuttaa sen,
+että aiemmin kaatumisturvalliseksi todettu sovellus ei enää olekaan sitä.
+Tarkastellaankin lyhyesti edelleen ``All File Systems Are Not Created Equal: On the Complexity of Crafting Crash-consistent Applications''\cite{PosixDataConsistency}-artikkelissa tehtyä tutkimusta sovellusten kaatumisturvallisuudesta eri tiedostojärjestelmillä.
+
 \subsection{Sovellusten päivitysprotokollat}
 
-Aiemmin luvussa~\ref{ChapPosixDataConsistency} nähtiin,
+Aiemmin aliluvussa~\ref{SubChapTextEditor} nähtiin,
 miten tekstieditorin tiedoston tallennuksesta saatiin tehtyä kaatumisturvallinen POSIX-tiedostojärjestelmäoperaatioita koostamalla.
 Tässä kyseisessä käyttötapauksessa päästiin haluttuun lopputulokseen varsin suoraviivaisella toteutuksella, jossa yksinkertaisesti kirjoitettiin koko tiedosto uudestaan.
 Muuntyyppisillä sovelluksilla voi olla huomattavastikin monimutkaisempia vaatimuksia.
