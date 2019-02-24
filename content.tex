@@ -779,7 +779,7 @@ Näistä superlohko ja lohkoryhmien kuvaajat ovat koko tiedostojärjestelmälle 
 joiden periaatteessa riittäisi olla levyllä vain kerran,
 mutta \texttt{ext2} säilyttää kuitenkin kummastakin niistä useita kopioita siltä varalta että ensisijainen kopio näistä tietorakenteista korruptoituu.
 
-\subsection{Superlohkon sisältö}
+\subsection{Superlohko ja lohkoryhmäkuvaajat}
 Superlohko sisältää muun muassa seuraavanlaisia arvoja tiedostojärjestelmästä, enkoodattuna 32-bittisinä little-endian-kokonaislukuina~\cite{LinuxKernelBook}:
 \begin{itemize}
     \item Tiedostojärjestelmän lohkon (block) koko \texttt{s\_log\_block\_size}. Yleisesti käytettyjä lohkon kokoja on 1, 2, ja 4 kilotavua.
@@ -800,7 +800,6 @@ joka on erillinen datalohkoista.
 Tiedostojärjestelmää luodessa valitut \texttt{s\_blocks\_\-per\_\-group}- ja \texttt{s\_inodes\_\-per\_\-group}-parametrit määräävät inodejen ja datalohkojen suhteellisen osuuden koko levytilasta.
 \texttt{ext2}:aa käyttäessä voikin joutua tilanteeseen, jossa käyttäjän näkökulmasta levytilaa (eli datalohkoja) on runsaasti vapaana, mutta kaikki inodet ovat käytössä, tai päinvastoin.
 
-\subsection{Lohkoryhmäkuvaajien sisältö}
 Kuten superlohkon kohdalla, lohkoryhmäkuvaajista säilytetään kopioita useassa kohtaa levyä.
 Lohkoryhmäkuvaajat sisältävät yhteenvetotietoa jokaisesta tiedostojärjestelmän lohkoryhmästä.
 Jokaiselle lohkoryhmälle pidetään yllä seuraavia arvoja:
