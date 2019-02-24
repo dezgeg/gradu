@@ -135,12 +135,16 @@ jotka tiedoston omistaja voi määritellä erikseen joko tiedoston omistajalle, 
 Unix-tiedostojärjestelmä myös ylläpitää kolmea aikaleimaa eri tarkoituksiin:
 milloin tiedoston sisältöä on viimeksi luettu (access timestamp), milloin tiedoston sisältöä on viimeksi muokattu (data modification timestamp) sekä milloin tiedostoa ylipäätään on muokattu (status change timestamp).
 
-Eräs varsin erikoinen ominaisuus on \emph{kovat linkit} (\emph{hard link}), mikä käytännössä tarkoittaa että tiedostolla (mutta ei hakemistolla) voi olla useita nimiä tiedostojärjestelmässä.
+Eräs varsin erikoinen ominaisuus,
+jota ei yleensä esiinny Unix-tiedostojärjestelmien ulkopuolella on \emph{kovat linkki} (\emph{hard link}),
+mikä käytännössä tarkoittaa että tiedostolla (mutta ei hakemistolla) voi olla useita nimiä tiedostojärjestelmässä.
 Kovan linkin luominen tehdään olemassa olevalle tiedostolle,
 jonka jälkeen kyseistä tiedostoa voi käsitellä täysin identtisesti sekä alkuperäisellä nimellä että linkin nimellä.
 Jälkikäteen ei ole edes mahdollista erottaa kumpi tiedoston nimistä oli se,
 jolla tiedosto oli alunperin luotu.
 Yhden samaan tiedostoon viittaavan nimen poistaminen ei vaikuta muihin nimiin mitenkään.
+Kovan linkin luominen hakemistolle ei ole mahdollista useimmissa Unix-tiedostojärjestelmissä,
+koska tällöin hakemistojen \texttt{..}-nimi ei olisi enää yksikäsitteinen.
 Sanotaankin, että Unix-tiedostojärjestelmässä tiedostojen ja hakemistojen nimi on erillään niiden \emph{inodesta},
 joka sisältää kaiken informaation kuten sisällön ja attribuutit.
 Hakemistot sen sijaan sisältävät vain viitteen nimestä inodeen.
@@ -149,7 +153,15 @@ jolla inodeen viitataan.
 Sovellusohjelmoijan tai käyttäjän kannalta inoden numerolla ei tosin ole muuta käyttöä kuin että sillä voidaan selvittää viittaavatko kaksi eri tiedostonimeä samaan inodeen.
 
 Tavallisten tiedostojen ja hakemistojen lisäksi Unix-tiedostojärjestelmä tukee viittä eri erikoistiedostotyyppiä.
-Merkittävin näistä on \emph{symbolinen linkki} (\emph{symbolic link}). (todo).
+Merkittävin näistä on \emph{symbolinen linkki} (\emph{symbolic link}),
+joka on hakemistopolun muodossa oleva alias johonkin toiseen sijaintiin tiedostojärjestelmässä.
+Useimmissa yhteyksissä symbolisen linkkin käyttö osana tiedostopolkua ohjautuu linkin kohteeseen.
+Esimerkiksi jos \texttt{/home/admin} on symbolinen linkki polkuun \texttt{/root},
+johtaisi tiedoston \texttt{/home/admin/readme.txt} avaaminen tosiasiassa tiedoston \texttt{/root/readme.txt} avaamiseen.
+Poikkeuksena symbolisen linkin poistaminen tai uudelleennimeäminen kohdistuu linkkiin itseensä, eikä sen kohteeseen.
+Koska symbolinen linkki sisältää pelkän tiedostopolun merkkijonona,
+voi symbolisen linkin kohde olla mitä tahansa, mukaanlukien hakemisto tai toinen symbolinen linkki,
+tai kohteen ei edes tarvitse olla olemassa.
 
 Muita tuettuja erikoistiedostoja ovat prosessien väliseen kommunikaatioon käytetyt \emph{nimetty putki} (\emph{named pipe}) ja \emph{paikallinen pistoke} (\emph{domain socket}),
 sekä laitetiedostot \emph{merkkilaite} (\emph{character device}) ja \emph{lohkolaite} (\emph{block device}).
