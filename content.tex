@@ -1513,8 +1513,9 @@ FFS-tiedostojärjestelmän kaatumisturvallisuutta alettiin parantamaan alkaen BS
 Käytettäväksi menetelmäksi valittiin \emph{pehmeät päivitykset} (\emph{soft updates}).
 Verrattuna muihin kilpaileviin tekniikoihin kuten journalointiin tai lokipohjaisiin tiedostojärjestelmiin,
 pehmeät päivitykset eivät edellytä mitään muutoksia tai lisäyksiä tiedostojärjestelmän levyformaattiin.
-Sen sijaan pehmeät päivitykset perustuvat levykirjoitusten tekemiseen aina sellaisessa järjestyksessä jossa kaatumistilanteet eivät voi aiheuttaa merkittäviä epäkonsistenssiuksia tiedostojärjestelmän metadataan,
-jolloin \texttt{fsck}-ohjelman ajaminen kaatumistilanteen jälkeen ei ole enää tarpeen.
+Sen sijaan pehmeät päivitykset perustuvat levykirjoitusten tekemiseen aina sellaisessa järjestyksessä,
+jossa kaatumistilanteet eivät voi aiheuttaa merkittäviä epäkonsistenssiuksia tiedostojärjestelmän metadataan.
+Tällöin \texttt{fsck}-ohjelman ajaminen kaatumistilanteen jälkeen ei ole enää tarpeen.
 
 \subsection{Pehmeät päivitykset ja \emph{päivitysriippuvuudet}}
 Aiemmin aliluvussa~\ref{ChapExt2FileCreation} esiteltiin mahdollisia epäkonsistenssiuksia,
