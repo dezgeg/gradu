@@ -413,6 +413,7 @@ Lisäksi on varmistettava erikseen että tiedoston inodeen viittaavat tiedostoni
 Tämä tapahtuu kutsumalla \texttt{fsync()}-funktiota hakemistolle jossa tiedostonimi sijaitsee.
 
 \subsection{Esimerkki tiedoston tallentamisesta tekstieditorissa}
+\label{SubChapTextEditor}
 Tarkastellaan nyt esimerkin avulla,
 miten POSIXin levyvälimuistin käsittelyfunktioilla voidaan toteuttaa kaatumisturvallisia sovelluksia.
 Melkeinpä yksinkertaisin mahdollinen sovellus,
@@ -508,7 +509,7 @@ Persistenssiominaisuudet ovat käytöksiä,
 joita ilmenee tiedostojärjestelmän kaatumistilanteessa,
 ja jotka jakautuvat kohteen kategoriaan: operaatioiden atomisuuteen ja operaatioiden uudelleenjärjestelyyn.
 Esimerkiksi \texttt{write()}-kutsun osalta voidaan tutkia tapahtuuko kirjoitus atomisesti kaatumistilanteen sattuessa ja voiko kirjoitus tapahtua eri järjestyksessä suhteessa johonkin toiseen tiedostojärjestelmäkutsuun.
-Persistenssiominaisuuksien testaus tehtiin BOB-työkalulla (\emph{Block Order Breaker}),
+Persistenssiominaisuuksien testaus tehtiin artikkelissa BOB-työkalulla (\emph{Block Order Breaker}),
 Sen periaatteena on nauhoittaa testattavan tiedostojärjestelmän tekemiä levykirjoituksia lokitiedostoon,
 josta voidaan jälkikäteen käydä läpi kaikki mahdolliset kaatumistilanteet läpi.
 Nyt kaatumistilanteista voidaan etsiä vastaesimerkkejä joissa testattava persistenssiominaisuus ei päde.
@@ -708,17 +709,14 @@ Muuten palautetaan tietokanta konsistentiksi peruuttamalla rollback journalin
 \section{\texttt{ext2}-tiedostojärjestelmä}
 \label{ChapExt2Fs}
 Edellisissä luvuissa nähtiin sovellusohjelmoijan näkökulmasta millaisia tiedostojärjestelmärajapintoja POSIX-spesifikaatio antaa sovellusten käytettäväksi sekä kuinka niitä täytyy käyttää oikein kaatumisturvallisuuden säilyttämiseksi.
-Nyt siirrytään tarkastelemaan miten itse tiedostojärjestelmän pitää toimia jotta kaatumisturvallisuus säilyy koko kokonaisuuden kannalta.
-Esimerkiksi aiemmin nähdyn tekstieditoriesimerkin toiminnan kannalta on kriittistä että \texttt{rename()}-kutsu toimii atomisesti,
+Nyt siirrytään tarkastelemaan miten itse tiedostojärjestelmän pitää toimia,
+jotta kaatumisturvallisuus säilyy koko kokonaisuuden kannalta.
+Esimerkiksi aiemmin aliluvussa~\ref{SubChapTextEditor} nähdyn tekstieditoriesimerkin toiminnan kannalta on kriittistä,
+että \texttt{rename()}-kutsun toimii atomisesti,
 joten tiedostojärjestelmän täytyy siis pystyä toteuttamaan tämä sekä joitakin muita lupauksia tiedostojärjestelmäkutsujen toiminnasta.
-Tässä luvussa vastataan näihin kysymyksiin perehtymällä Linuxin \texttt{ext2}-tiedostojärjestelmän sisäiseen toimintaan ja sen rakenteeseen levyllä.
-Tiedostojärjestelmän levyrakenne vaikuttaa olennaisesti siihen minkälaisia epäkonsistenttiuksia tiedostojärjestelmään voi syntyä virhetilanteissa,
-joten vahva ymmärrys \texttt{ext2}:n levyformaatista on tarpeen tutkittaessa \texttt{ext2}:n käyttäytymistä kaatumistilanteessa luvussa~\ref{ChapExt2Crash}.
-Lisäksi \texttt{ext2}:n levyrakenne on vahvasti BSD-käyttöjärjestelmän Berkeley Fast Filesystem-tiedostojärjestelmän inspiroima~\cite{Ext2Design},
-sekä yleisestikin ottaen on varsin suoraviivainen tapa toteuttaa Unix-tyylinen tiedostojärjestelmä,
-joten \texttt{ext2}:n ymmärrys auttaa merkittävästi muidenkin saman aikakauden Unix-tyylisten tiedostojärjestelmien ymmärtämisessä.
+Tässä luvussa aloitetaan perehtymään Linuxin \texttt{ext2}-tiedostojärjestelmän sisäiseen toimintaan ja sen rakenteeseen levyllä.
 
-\subsection{Historia}
+\subsection{\texttt{ext2}:n perusteet}
 
 \texttt{ext2} (``Second extended filesystem'') on tiedostojärjestelmä,
 joka on luotu jo Linuxin varhaisina aikoina, vuosina 1992--1993~\cite{Ext2Design}.
@@ -731,9 +729,6 @@ Esimerkiksi tiedostonimen pituus oli rajoitettu 14 merkkiin ja tiedoston koko 64
 mutta on lisäksi suunniteltu siten että tiedostojärjelmän levyformaattia voidaan laajentaa taaksepäin yhteensopivasti.
 \texttt{ext2}:lle onkin kehitetty seuraajat \texttt{ext3} ja \texttt{ext4}, joissa olemassa oleva \texttt{ext2}- tai \texttt{ext3}-osio voidaan päivittää seuraavaan
 versioon ilman tiedostojärjestelmän uudelleenformatointia~\cite{Ext4Status}.
-Merkittävin näiden seuraajien tuoma parannus on \texttt{ext3}:n kirjaus,
-joka parantaa huomattavasti tiedostojärjestelmän kykyä säilyä konsistenttina kaatumistilanteessa \texttt{ext2}:n verrattuna.
-\texttt{ext3}:a ja kirjaavia tiedostojärjestelmiä yleisesti käsitelläänkin myöhemmin luvussa~\ref{ChapJournallingFs}.
 
 \begin{figure}
     \centering
@@ -742,6 +737,9 @@ joka parantaa huomattavasti tiedostojärjestelmän kykyä säilyä konsistenttin
     \label{FigExt2DiskFormat}
 \end{figure}
 
+Yleisellä tasolla \texttt{ext2} on varsin suoraviivainen toteutus Unix-tyylisestä tiedostojärjestelmästä,
+ja lisäksi vahvasti BSD-käyttöjärjestelmän Berkeley Fast Filesystem-tiedostojärjestelmän inspiroima~\cite{Ext2Design}.
+Vahva ymmärrys \texttt{ext2}:n rakenteesta auttaakin merkittävästi muiden saman aikakauden Unix-tyylisten tiedostojärjestelmien ymmärtämisessä.
 \texttt{ext2}:n levyrakenne korkealla tasolla on esitetty kuvassa~\ref{FigExt2DiskFormat}~\cite{LinuxKernelBook}.
 Korkeimmalla tasolla \texttt{ext2}:n rakenne on jaettu kahteen osaan: on \emph{käynnistyslohkoon} sekä useisiin \emph{lohkoryhmiin}.
 Käynnistyslohkon tarkoitus on yksinkertaisesti varattua tilaa jollekin \texttt{ext2}:ta riippumattomalle käynnistyslataajalle,
