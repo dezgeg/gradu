@@ -1078,13 +1078,12 @@ Tämän esimerkin kaatumistilanne voi puolestaan aiheuttaa seuraavia epäkonsist
 Näistä tilanteista kaksi ensimmäistä johtaa datalohkojen vuotamiseen,
 eli samantyyppiseen tilanteeseen kuten edellisen aliluvun esimerkissä josta aiheutui vapaiden inodejen vuotaminen.
 Kolmannessa kaatumistilanteessa taas päädytään tilanteeseen,
-missä tiedoston \texttt{new} inoden kokoa on kasvatettu onnistuneesti ja siihen on lisätty viittaukset datalohkoihin sekä epäsuoraan lohkoon,
+missä tiedoston \texttt{new} inoden kokoa on kasvatettu onnistuneesti ja siihen on lisätty viittaukset sekä datalohkoihin että epäsuoraan lohkoon,
 mutta itse lohkojen sisältö jäi kirjoittamatta.
 Datalohkojen osalta tämä tietää mahdollista tietoturvaongelmaa,
-sillä alustamattomat datalohkot ovat voineet olla osa jotakin jonkun toisen käyttäjän omistamaa sittemmin poistettua tiedostoa.
+sillä alustamattomat datalohkot ovat voineet olla osa jonkun toisen käyttäjän omistamaa sittemmin poistettua tiedostoa.
 Nyt ne ovat kaatumistilanteen seurauksena luettavissa \texttt{new}-tiedostosta,
 eikä \texttt{e2fsck} kykene tunnistamaan tai korjaamaan tilannetta ollenkaan.
-
 Alustamattoman epäsuoran lohkon seuraukset ovat sitäkin vakavammat,
 koska lohkon aiempi data tulkitaan nyt lohko-osoittimina.
 Pahimmillaan alustamaton lohko-osoitin voi osoittaa jonkun muun inoden omistamaan lohkoon,
@@ -1147,8 +1146,11 @@ Relevantteja ominaisuusbittejä ovat `taaksepäin yhteensopivat' ominaisuudet \t
 Ominaisuus \texttt{dir\_index} tuo hakemistoihin hajautukseen pohjautuvan indeksirakenteen nopeuttamaan hakemistosta hakua tiedostonimen perusteella ja voidaan sivuuttaa kaatumisturvallisuuden tutkimisen kannalta.
 
 %Ominaisuus \texttt{journal} tarkoittaa että journalille on varattu tila levyltä kun taas \texttt{needs\_recovery} asetetaan ilmaisemaan että journalin läpikäynti tarvitaan konsistenssin palautumiseen.
-Toisin kuin monille muille \texttt{ext2}:n levytietorakenteille, journalin sijaintia levyllä ei ole ennalta määrätty vaan tila sille varataan erityisen inoden avulla data-alueelta samaan tapaan kuin muille tiedostoille~\cite{Ext2Journal}.
-Muista inodeista poiketen journalin inode ei ole paikannettavissa normaalisti hakemistorakenteen kautta vaan se paikannetaan \texttt{journal}-laajennoksen tuomasta uudesta superlohkon kentästä.
+Toisin kuin monille muille \texttt{ext2}:n levytietorakenteille,
+journalin sijaintia levyllä ei ole ennalta määrätty,
+vaan tila sille varataan erityisen inoden avulla data-alueelta samaan tapaan kuin muille tiedostoille~\cite{Ext2Journal}.
+Muista inodeista poiketen journalin inode ei ole paikannettavissa normaalisti hakemistorakenteen kautta,
+vaan se paikannetaan \texttt{journal}-laajennoksen tuomasta uudesta superlohkon kentästä.
 Inoden käyttö journalin lohkojen paikantamiseen mahdollistaa journalin lisäämisen olemassa olevaan \texttt{ext2}-tiedostojärjestelmään helposti,
 kunhan tiedostojärjestelmässä on vapaata tilaa,
 ja ilman että koko tiedostojärjestelmää täytyy alustaa uudelleen.
@@ -1163,10 +1165,29 @@ eli muokattavien lohkojen lukumäärä $n$ ja lista lohkonumeroita.
 Kuvaajalohkoa seuraa kunkin muokattavan lohkon sisältö, eli yhteensä $n$ sisältölohkoa.
 Transaktion päättää sitoutumislohko,
 jonka olemassaololla voidaan tunnistaa journaliin keskeneräisesti kirjoitetut transaktiot.
-
 Kaatumisesta palautuminen tämän pohjalta on varsin yksinkertaista.
 Journalia aletaan lukea otsakelohkon ilmaisemasta kohdasta eteenpäin,
 ja jokaisen kokonaan lokiin kirjoitetun transaktion sisältölohkot kirjoitetaan kuvaajalohkon osoittamiin paikkoihin levyllä.
+
+\texttt{ext3}:ssa kirjausta käytetään aina itse tiedostojärjestelmän metadatan päivitykseen.
+Tähän lukeutuu superlohko, lohkoryhmien kuvaajat, inodetaulu, inode- ja lohkobittikartat, sekä data-alueella hakemistolohkot ja epäsuorat lohkot.
+Tiedostojen datalohkojen osalta \texttt{ext3} tarjoaa kolme eri journalointitilaa,
+joista järjestelmän ylläpitäjä voi valita mitä käytetään~\cite{JournalingAnalysis}:
+%
+\begin{itemize}
+    \item{\texttt{writeback}-tila: Kirjausta ei käytetä datalohkoille,
+          ja datalohkojen kirjoitus tehdään täysin riippumattomasti journalikirjoituksista.}
+    \item{\texttt{ordered}-tila: Kirjausta ei käytetä datalohkoille,
+          mutta datalohkojen kirjoitus tapahtuu aina ennen transaktion sitoutumista.
+          Tämä on \texttt{ext3}:n oletus.}
+    \item{\texttt{datajournal}-tila: Kirjausta käytetään myös datalohkoille,
+          eli ne kirjoitetaan ensin journaliin ja vasta transaktion sitoutumisen jälkeen varsinaisille sijainneille levyllä.}
+\end{itemize}
+%
+Aiemmin luvussa~\ref{ChapPosixDataConsistency} vertailtiin eri tiedostojärjestelmien persistenssiominaisuuksia,
+ja nämä kolme journalointitilaa vastaavat suoraan tutkittuja tiedostojärjestelmäkonfiguraatioita \texttt{ext3-writeback}, \texttt{ext3} ja \texttt{ext3-datajournal}.
+Huomionarvoista on, että \texttt{writeback}-journalointitilaa käytettäessä alustamattomista datalohkoista johtuva tietoturva-ongelma on edelleen mahdollinen kaatumistilanteessa,
+muilla journalointitiloilla tätä ei esiinny.
 
 \subsection{Käytännön esimerkki \texttt{ext3}:n tekemistä levykirjoituksista}
 \texttt{ext3}:n tekemiä levykirjoituksia tutkittiin QEMU-virtuaalikoneella samalla testiasetelmalla kuin aiemmin \texttt{ext2}:n kohdalla tehtiin luvussa~\ref{ChapExt2Fs}.
