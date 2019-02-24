@@ -126,8 +126,9 @@ Juurihakemiston tapauksessa \texttt{..}-nimi vie takaisin juurihakemistoon itsee
 
 Nimen lisäksi kaikilla tiedostoilla ja hakemistoilla on jonkin verran metadataa muun muassa käyttöoikeuksille sekä aikaleimoille.
 Koska useissa yhteyksissä sekä tiedostot että hakemistot toimivat yhtenäisesti,
-on Unix-tiedostojärjestelmistä puhuttaessa yleisesti konventio sanoa että Unixissa hakemistotkin ovat tiedostoja,
-jolloin käytetään termiä \emph{tavallinen tiedosto} (\emph{regular file}) viittaamaan yleiskielen termiin ``tiedosto''.
+on Unix-tiedostojärjestelmistä puhuttaessa yleisesti tapana sanoa,
+että Unixissa hakemistotkin ovat tiedostoja.
+Tällöin käytetään termiä \emph{tavallinen tiedosto} (\emph{regular file}) viittaamaan yleiskielen termiin ``tiedosto''.
 
 Jokaiselle tiedostolle on tallennettu sen omistavan käyttäjän tunnus (\emph{user id, UID}) sekä ryhmän tunnus (\emph{group id, GID}).
 Näiden lisäksi tiedostoilla on kolme käyttöoikeutta: luku-, kirjoitus- sekä suoritusoikeus,
@@ -136,7 +137,7 @@ Unix-tiedostojärjestelmä myös ylläpitää kolmea aikaleimaa eri tarkoituksii
 milloin tiedoston sisältöä on viimeksi luettu (access timestamp), milloin tiedoston sisältöä on viimeksi muokattu (data modification timestamp) sekä milloin tiedostoa ylipäätään on muokattu (status change timestamp).
 
 Eräs varsin erikoinen ominaisuus,
-jota ei yleensä esiinny Unix-tiedostojärjestelmien ulkopuolella on \emph{kovat linkki} (\emph{hard link}),
+jota ei yleensä esiinny Unix-tiedosto\-järjestelmien ulkopuolella on \emph{kova linkki} (\emph{hard link}),
 mikä käytännössä tarkoittaa että tiedostolla (mutta ei hakemistolla) voi olla useita nimiä tiedostojärjestelmässä.
 Kovan linkin luominen tehdään olemassa olevalle tiedostolle,
 jonka jälkeen kyseistä tiedostoa voi käsitellä täysin identtisesti sekä alkuperäisellä nimellä että linkin nimellä.
@@ -152,7 +153,7 @@ Jokaisella inodella on yksilöivä numero,
 jolla inodeen viitataan.
 Sovellusohjelmoijan tai käyttäjän kannalta inoden numerolla ei tosin ole muuta käyttöä kuin että sillä voidaan selvittää viittaavatko kaksi eri tiedostonimeä samaan inodeen.
 
-Tavallisten tiedostojen ja hakemistojen lisäksi Unix-tiedostojärjestelmä tukee viittä eri erikoistiedostotyyppiä.
+Tavallisten tiedostojen ja hakemistojen lisäksi Unix-tie\-dos\-to\-jär\-jes\-tel\-mä tukee viittä eri erikoistiedostotyyppiä.
 Merkittävin näistä on \emph{symbolinen linkki} (\emph{symbolic link}),
 joka on hakemistopolun muodossa oleva alias johonkin toiseen sijaintiin tiedostojärjestelmässä.
 Useimmissa yhteyksissä symbolisen linkkin käyttö osana tiedostopolkua ohjautuu linkin kohteeseen.
@@ -162,7 +163,6 @@ Poikkeuksena symbolisen linkin poistaminen tai uudelleennimeäminen kohdistuu li
 Koska symbolinen linkki sisältää pelkän tiedostopolun merkkijonona,
 voi symbolisen linkin kohde olla mitä tahansa, mukaanlukien hakemisto tai toinen symbolinen linkki,
 tai kohteen ei edes tarvitse olla olemassa.
-
 Muita tuettuja erikoistiedostoja ovat prosessien väliseen kommunikaatioon käytetyt \emph{nimetty putki} (\emph{named pipe}) ja \emph{paikallinen pistoke} (\emph{domain socket}),
 sekä laitetiedostot \emph{merkkilaite} (\emph{character device}) ja \emph{lohkolaite} (\emph{block device}).
 Erikoistiedoston voi avata ja useissä yhteyksissä käsitellä kuten tavallisiakin tiedostoja,
