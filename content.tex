@@ -43,7 +43,8 @@ Tämän tutkielman tavoitteena on tarkastella kaatumisturvallisuutta molemmista 
 Ensimmäisessä osuudessa keskitytään tarkastelemaan sovellusten näkökulmasta:
 luvussa~\ref{ChapUnixFsBasics} tarkastellaan Unix-tiedosto\-järjestelmärajapintojen perusteita ja luvussa~\ref{ChapPosixDataConsistency} kuinka niitä tulisi käyttää kaatumisturvallisuuden takaamiseksi.
 Luvussa~\ref{ChapPosixSafetyStudy} tarkastellaan käytännön tutkimusta siitä,
-miten kaatumistilanteet vaikuttavat eri tiedostojärjestelmillä ja kuinka hyvin olemassa olevat sovellukset ottavat ne huomioon.
+miten kaatumistilanteet vaikuttavat eri tiedostojärjestelmillä.
+Lopuksi luvussa~\ref{ChapAppConsistency} tutkitaan kuinka hyvin olemassa olevat sovellukset ottavat kaatumistilanteet huomioon.
 Tutkielman toisessa osuudessa keskitytään tarkastelemaan tiedostojärjestelmien sisäisten tietorakenteiden eheyden säilymistä.
 Luvussa~\ref{ChapExt2Fs} esitellään perinteisen mutta ei kovin kaatumisturvallisen Linux-tiedostojärjestelmän, \texttt{ext2}:n, sisäistä rakennetta ja luvussa~\ref{ChapExt2Crash} mitä seurauksia kaatumistilanteilla on \texttt{ext2}:lle.
 Lopuksi esitellään tekniikoita,
@@ -258,8 +259,8 @@ Tiedoston metadatan voi lukea \texttt{fstat()}- tai \texttt{stat()}-funktioilla:
 % http://pubs.opengroup.org/onlinepubs/9699919799/functions/fstat.html#tag_16_173
 % myös: int lstat(const char *path, struct stat *buf);
 \begin{minted}{c}
-int fstat(int fildes, struct stat *buf);
-int stat(const char *path, struct stat *buf);
+int fstat(int fildes,       struct stat *buf);
+int  stat(const char *path, struct stat *buf);
 \end{minted}
 %
 Onnistuessaan funktio täyttää \texttt{struct stat}-tietueen,
@@ -272,7 +273,7 @@ josta löytyy muun muassa seuraavia kenttiä:
     \item Kentät \texttt{uid\_t st\_uid} ja \texttt{gid\_t st\_gid} kertovat tiedoston omistavan käyttäjän sekä ryhmän tunnuksen numeerisen arvon.
     \item Kentät \texttt{st\_atim}, \texttt{st\_mtim} ja \texttt{st\_ctim} kertovat tiedoston aikaleimat.
 \end{itemize}
-
+%
 % \begin{minted}{c}
 %         mode_t st_mode          Mode of file (see below).
 %         uid_t st_uid            User ID of file.
@@ -294,7 +295,7 @@ josta löytyy muun muassa seuraavia kenttiä:
 %                         may vary from file to file.
 % blkcnt_t st_blocks      Number of blocks allocated for this object.
 %
-
+%
 Tiedoston, mutta ei hakemistoa, voi poistaa \texttt{unlink()}-funktiolla.
 Hakemiston poistamiseen käytetään funktiota \texttt{rmdir()} ja poistettavan hakemiston täytyy olla tyhjä:
 %
@@ -410,7 +411,8 @@ Funktiokutsu ei palaa kunnes data on turvallisesti kirjoitettu levylle.
 \texttt{fdatasync()}-kutsu ei vaikuta tiedoston metadataan muuten kuin että kutsun onnistuessa taataan että tiedostoon tähän asti tehdyt kirjoitukset ovat luettavissa kaatumisen jälkeenkin.
 Käytännössä käyttäjän näkökulmasta tämä takaa vain että tiedoston koko on ajan tasalla.
 Funktio \texttt{fsync()} on vahvempi versio \texttt{fdatasync()}:stä joka lisäksi pakottaa kaiken tiedoston viittaavan inoden metadatan kirjoitettavan levylle.
-Lisäksi on varmistettava erikseen että tiedoston inodeen viittaavat tiedostonimet ovat kirjoitettu pysyvästi levylle.
+Lisäksi on varmistettava erikseen,
+että tiedoston inodeen viittaavat tiedostonimet ovat kirjoitettu pysyvästi levylle.
 Tämä tapahtuu kutsumalla \texttt{fsync()}-funktiota hakemistolle jossa tiedostonimi sijaitsee.
 
 \subsection{Esimerkki tiedoston tallentamisesta tekstieditorissa}
@@ -510,13 +512,13 @@ Persistenssiominaisuudet ovat käytöksiä,
 joita ilmenee tiedostojärjestelmän kaatumistilanteessa,
 ja jotka jakautuvat kohteen kategoriaan: operaatioiden atomisuuteen ja operaatioiden uudelleenjärjestelyyn.
 Esimerkiksi \texttt{write()}-kutsun osalta voidaan tutkia tapahtuuko kirjoitus atomisesti kaatumistilanteen sattuessa ja voiko kirjoitus tapahtua eri järjestyksessä suhteessa johonkin toiseen tiedostojärjestelmäkutsuun.
-Persistenssiominaisuuksien testaus tehtiin artikkelissa BOB-työkalulla (\emph{Block Order Breaker}),
+Persistenssiominaisuuksien testaus tehtiin artikkelissa BOB-työkalulla (\emph{Block Order Breaker}).
 Sen periaatteena on nauhoittaa testattavan tiedostojärjestelmän tekemiä levykirjoituksia lokitiedostoon,
 josta voidaan jälkikäteen käydä läpi kaikki mahdolliset kaatumistilanteet läpi.
 Nyt kaatumistilanteista voidaan etsiä vastaesimerkkejä joissa testattava persistenssiominaisuus ei päde.
 BOB:n voidaan siis vain todeta jonkin persistenssiominaisuuden paikkaansa pitämättömyys, mutta ei toisinpäin.
 
-\subsection{Tutkittujen tiedostojärjestelmien persistenssiominaisuudet}
+\subsection{Tutkittuja persistenssiominaisuuksia}
 \newcommand{\atY}{$\bullet$}
 \newcommand{\atN}{{\small $\times$}}
 
@@ -582,10 +584,12 @@ jolloin kaatumistilanteen jälkeen tiedoston lopusta voidaan havaita nollatavuja
 
 Toinen tutkittu persistenssiominaisuuksien kategoria on tiedostojärjestelmäoperaatioiden järjestyksen vaihtuminen levylle kirjoittaessa.
 Tilanteissa jossa ohjelmakoodissa tehdään peräkkäin toisistaan riippumattomat operaatiot:
+\begin{samepage}
 \begin{minted}[linenos]{c}
     operaatio1();
     operaatio2();
 \end{minted}
+\end{samepage}
 mutta kaatumistilanteen jälkeen havaitaan tilanne jossa ainoastaan \texttt{operaatio2()} on suoritettu loppuun,
 todetaan operaatioiden uudelleenjärjestymisen olevan mahdollista \texttt{operaatio1()}:n ja \texttt{operaatio2()}:n välillä.
 
@@ -632,6 +636,7 @@ Toisaalta paremman suorituskyvyn omaava \texttt{writeback}-optio aiheuttaa enemm
 %ja onkin samalla toinen ``All File Systems Are Not Created Equal: On the Complexity of Crafting Crash-consistent Applications''-artikkelin tutkima aihe.
 
 \section{Katsaus sovellusten kaatumisturvallisuuteen}
+\label{ChapAppConsistency}
 
 Edellisessä luvussa nähtiin,
 miten eri tiedostojärjestelmillä tapahtuu merkittävästi erilaisia seurauksia kaatumistilanteissa.
@@ -747,7 +752,7 @@ Edellisissä luvuissa nähtiin sovellusohjelmoijan näkökulmasta millaisia tied
 Nyt siirrytään tarkastelemaan miten itse tiedostojärjestelmän pitää toimia,
 jotta kaatumisturvallisuus säilyy koko kokonaisuuden kannalta.
 Esimerkiksi aiemmin aliluvussa~\ref{SubChapTextEditor} nähdyn tekstieditoriesimerkin toiminnan kannalta on kriittistä,
-että \texttt{rename()}-kutsun toimii atomisesti,
+että \texttt{rename()}-kutsu toimii atomisesti,
 joten tiedostojärjestelmän täytyy siis pystyä toteuttamaan tämä sekä joitakin muita lupauksia tiedostojärjestelmäkutsujen toiminnasta.
 Tässä luvussa aloitetaan perehtymään Linuxin \texttt{ext2}-tiedostojärjestelmän sisäiseen toimintaan ja sen rakenteeseen levyllä.
 
@@ -831,10 +836,17 @@ Jokaiselle lohkoryhmälle pidetään yllä seuraavia arvoja:
 
 \texttt{ext2}:ssa tietyn inoden paikannus inodenumeron perusteella on yksinkertaista.
 Kuten edellä nähtiin, jokaisessa lohkoryhmässä on sama määrä inodeja ja lohkoryhmän sisällä inodet sijaitsevat perättäin taulukossa.
-Inodeiden numerointi alkaa ykkösestä, joten inoden numerosta voidaan laskea lohkoryhmän numero kaavalla:
+Inodeiden numerointi alkaa ykkösestä,
+joten inoden numerosta voidaan laskea lohkoryhmän numero kaavalla:
 $$ n_\text{bg} = \frac{n_\text{ino} - 1}{\texttt{s\_inodes\_per\_group}} $$
+Jakolaskun jakojäännös kertoo puolestaan inoden paikan lohkoryhmässä.
 
-Inoden datalohkoihin viitataan \emph{lohkopuun} (\emph{block map}) avulla.
+\texttt{ext2}-tiedostojärjestelmän inoden rakenne on esitetty kuvassa~\ref{FigExt2BlockMap}.
+Suurin osa inoden kentistä sisältää tiedoston metadatan,
+joka on luettavissa \texttt{fstat()}-funktiolla.
+Esimerkiksi kentät \texttt{i\_atime}, \texttt{i\_ctime} ja \texttt{i\_mtime} sisältävät inoden aikaleimat,
+joilla jotka ovat yksi-yhteen vastaavat \texttt{struct stat}-tietueen kentillä \texttt{st\_atim}, \texttt{st\_ctim} ja \texttt{st\_mtim}.
+Tiedoston datalohkoihin viitataan \emph{lohkopuun} (\emph{block map}) avulla.
 Inoden kenttä \texttt{i\_blocks} sisältää 15-alkioisen taulukon lohkonumeroita,
 jotka tulkitaan seuraavasti:
 \begin{itemize}
@@ -857,8 +869,8 @@ jotka tulkitaan seuraavasti:
 
 \subsection{Hakemiston rakenne}
 \texttt{ext2}:n hakemisto koostuu \emph{hakemistoalkioista} (\emph{directory entry}),
-jotka sijaitsevat inoden datalohkoissa.
-Hakemistoalkion koko on vaihtuvan mittainen riippuen hakemistoalkion sisältämän tiedostonimen pituudesta.
+jotka sijaitsevat hakemistoinoden datalohkoissa.
+Hakemistoalkion koko on vaihtuvan mittainen ja riippuu hakemistoalkion sisältämän tiedostonimen pituudesta.
 Hakemistoalkio sijaitsee aina kokonaan yhden datalohkon sisällä.
 Hakemistoalkio koostuu vakiokokoisesta otsakkeesta jota välittömästi seuraa tiedostonimi.
 Otsakkeen rakenne on seuraavanlainen~\cite{LinuxKernelBook}:
@@ -881,33 +893,31 @@ Koska kentän koko on 8 bittiä, rajoittuu tiedostonimen maksimipituudeksi 255.
 Kenttä \texttt{rec\_len} kertoo koko hakemistoalkion koon,
 jonka perusteella voidaan paikantaa hakemiston seuraava hakemistoalkio,
 joka voi olla suurempi kuin otsakkeen koko ja tiedostonimen pituus.
+Esimerkiksi 1024 tavun lohkokokoa käytettäesä alihakemisto,
+johon on luotu tiedostot \texttt{abc}, \texttt{defghijklmn} ja \texttt{opqrstuvwxyz},
+voisi näyttää seuraavalta:
 
-\texttt{ext2}:ssa siis hakemistoalkion paikantaminen tiedostonimen perusteella on aikavaativuudeltaan $O(n)$,
-mikä tarkoittaa heikkoa suorituskykyä hakemiston koon kasvaessa.
-Yksi \texttt{ext2}:n välittömän seuraajan, \texttt{ext3}:n tuomista uudistuksista on hajautukseen pohjautuva hakemistorakenne.
-
-\subsection{Esimerkki hakemistosta}
-Tarkastellaan hakemiston rakennetta luotaessa 1024 tavun lohkokokoa käyttävän tiedostojärjestelmän juureen alihakemisto \texttt{dir} ja sinne tyhjät tiedostot \texttt{abc}, \texttt{defghijklmn} ja \texttt{opqrstuvwxyz}.
-Linux-ajurin luoma rakenne on seuraavanlainen:
-
-\begin{tabular}{llll}
+\begin{tabular}{l|l|l|p{6.5cm}}
     \texttt{inode} & \texttt{rec\_len} & \texttt{name\_len} & tiedostonimi \\ \hline
     12 & 12  & 1  & \texttt{"."}            sekä 3 0-tavua. \\
     2  & 12  & 2  & \texttt{".."}           sekä 2 0-tavua. \\
     13 & 12  & 3  & \texttt{"abc"}          sekä 1 0-tavu. \\
     14 & 20  & 11 & \texttt{"defghijklmn"}  sekä 1 0-tavu. \\
-    15 & 968 & 12 & \texttt{"opqrstuvwxyz"} sekä loput alkiosta ovat 0-tavuja. \\
+    15 & 968 & 12 & \texttt{"opqrstuvwxyz"}, sekä loput lohkosta 0-tavuja. \\
 \end{tabular}
 %
-Nyt poistettaessa tiedosto \texttt{defghijklmn} muuttuu kolmannen hakemistoalkion (nimen \texttt{abc}) sisällöksi:
-
-\begin{tabular}{llll}
-    \texttt{inode} & \texttt{rec\_len} & \texttt{name\_len} & tiedostonimi \\ \hline
-    13 & 20  & 3  & "abc"\\
-\end{tabular} \\
+%Nyt poistettaessa tiedosto \texttt{defghijklmn} muuttuu kolmannen hakemistoalkion (nimen \texttt{abc}) sisällöksi:
 %
-Siis poistettavaa hakemistoalkiota edeltävän hakemistoalkion \texttt{rec\_len}-kenttää kasvatetaan ``hyppäämään'' poistetun alkion yli.
-
+%\begin{tabular}{llll}
+%    \texttt{inode} & \texttt{rec\_len} & \texttt{name\_len} & tiedostonimi \\ \hline
+%    13 & 20  & 3  & "abc"\\
+%\end{tabular} \\
+%%
+%Siis poistettavaa hakemistoalkiota edeltävän hakemistoalkion \texttt{rec\_len}-kenttää kasvatetaan ``hyppäämään'' poistetun alkion yli.
+%
+%\texttt{ext2}:ssa siis hakemistoalkion paikantaminen tiedostonimen perusteella on aikavaativuudeltaan $O(n)$,
+%mikä tarkoittaa heikkoa suorituskykyä hakemiston koon kasvaessa.
+%Yksi \texttt{ext2}:n välittömän seuraajan, \texttt{ext3}:n tuomista uudistuksista on hajautukseen pohjautuva hakemistorakenne.
 \section{\texttt{ext2} kaatumistilanteissa}
 \label{ChapExt2Crash}
 Keskitytään seuraavaksi kaatumistilanteisiin ja niistä syntyviin mahdollisiin epäkonsistenssiuksiin \texttt{ext2}:n levytietorakenteisiin.
@@ -915,7 +925,7 @@ Tarkastellaan ensin tiedostojärjestelmän konsistenssiuden määritteleviä inv
 Lisäksi tutkitaan käytännössä,
 miten Linuxin \texttt{ext2}-tiedostojärjestelmäajuri tekee levykirjoituksia ja mitä käytännön seurauksia kaatumistilanteilla on.
 
-\subsection{Tiedostojärjestelmän invariantit ja tarkistus- ja korjausohjelma \emph{fsck}}
+\subsection{Tiedostojärjestelmän invariantit ja tarkistusohjelma \emph{fsck}}
 
 Kuten edellisen luvun kuvauksesta \texttt{ext2}:n levytietorakenteista selvisi,
 yksinkertainenkin tiedostojärjestelmä koostuu useasta eri levylle kirjoitettavasta tietorakenteesta.
