@@ -1533,6 +1533,8 @@ Tähän Btrfs käyttää \emph{kirjoittaessa kopioivaa} (\emph{copy-on-write}) t
 Sen perusajatuksena on,
 että levylle aiemmin kirjoitettuja datalohkoja tai B-puun lohkoja ei ylikirjoiteta niitä muokattaessa,
 vaan niistä kirjoitetaan aina uudet kopiot tiedostojärjestelmän vapaille lohkoille.
+Tilanvarauspuuta täytyy päivittää samassa yhteydessä,
+koska uusille lohkoille täytyy luonnollisesti varata tila ja vanhat lohkot mahdollisesti vapauttaa.
 Lohkon kirjoituksesta aiheutuvan kopioinnin seurauksena kaikki viittaukset lohkon vanhaan sijaintiin täytyy päivittää viittaamaan lohkon uuteen sijaintiin,
 mikä aiheuttaa lisää kirjoittaessa kopiointia.
 Prosessia jatketaan B-puun lehdistä ylöspäin taso kerrallaan,
@@ -1540,6 +1542,23 @@ kunnes koko tiedostojärjestelmää kuvaavan B-puun juuresta on kirjoitettu uusi
 Lopuksi tiedostojärjestelmän superlohko päivitetään osoittamaan uuteen B-puun juureen,
 mikä onkin tiedostojärjestelmän ainoa tietorakenne,
 jota päivitetään päällekirjoituksilla.
+
+\subsection{Tilannevedokset}
+Pääasiallinen kirjoittaessa kopioivien tiedostojärjestelmien etu on \emph{tilannevedosten} (\emph{snapshot}) tehokas toteutus.
+Tilannevedosta tehdessä otetaan koko tiedostojärjestelmän senhetkisestä tilasta ikään kuin kopio,
+jota voidaan myöhemmin tarkastella ja käsitellä.
+Koko tiedostojärjestelmän kopioimiseen verrattuna operaatio tapahtuu atomisesti ja välittömästi eikä vie kaksinkertaista määrää levytilaa.
+Tyypillinen käyttötapaus tilannevedoksille on varmuuskopiointi.
+Järjestelmä voidaan esimerkiksi laittaa tekemään tilannevedos tunnin välein,
+jolloin käyttäjät voivat palauttaa tuoreitakin vahingossa poistettuja tiedostoja jostakin aiemmasta tilannevedoksesta.
+
+Tilannevedosta luodessa kirjataan ylös annettu nimi sekä alitiedostojärjestelmäpuun juuren sisältämän lohkon numero luontihetkellä.
+Koska Btrfs ei koskaan ylikirjoita mitään käytössä olevaa levytietorakennetta,
+ei millään tilannevedoksen luonnin jälkeen tehdyllä kirjoituksella ole vaikutusta tilannevedoksen sisältöön.
+Tiedostojärjestelmän täytyy ainoastaan huolehtia,
+että tilannevedokseen sisältyviä levylohkoja ei vapauteta niin kauan kuin tilannevedos on olemassa.
+Koska sama levylohko voi olla osa useaa tilannevedosta,
+käyttää Btrfs \emph{viitelaskentaa} (\emph{reference counting}) pitämään kirjaa milloin levylohko voidaan vapauttaa.
 
 \section{Kirjoitusjärjestyksen hallintaan perustuvat tiedostojärjestelmät (``soft updates'')}
 \label{ChapSoftUpdates}
