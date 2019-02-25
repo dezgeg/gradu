@@ -1486,24 +1486,39 @@ struct btrfs_key {
 \end{minted}
 B-puun sisältämiä avain-arvo-pareja käytetään oleellisesti yhdistämään \texttt{type}-tyyppinen tietue \texttt{objectid}-kentän osoittamaan metadatarakenteeseen.
 Esimerkiksi inoden kohdalla \texttt{objectid} on sama kuin inoden numero.
-B-puussa voi samalle \texttt{objectid}:lle olla useita samantyyppisiä tietueita,
+Samalle \texttt{objectid}:lle voi esiintyä useita samantyyppisiä tietueita,
 jolloin \texttt{offset}-kenttää käytetään määräämään tietueiden järjestys samantyyppisten tietueiden välillä.
+B-puun sivun kokona käytetään tyypillisesti 4096 tavua,
+ja alkion arvon täytyy aina mahtua yhden levysivun sisälle.
 
 % Suurin osa perinteisistä tiedostojärjestelmän tietorakenteista sijaitsee \emph{alitaltiopuussa} (\emph{subvolume tree}),
 % josta löytyvät sekä inodet, hakemistoalkiot että viittaukset tiedoston dataan.
-Kutakin tiedostojärjestelmän inodea vastaa yksi avain-arvo-pari tyyppiä \texttt{INODE\_ITEM} jossa \texttt{objectid} sisältä inoden numeron, \texttt{offset}-kenttää ei käytetä ja alkion arvo sisältää tyypilliset inoden attribuutit kuten koon, käyttöoikeudet ja aikaleimat.
-Hakemistojen sisältö ilmaistaan liittämällä hakemistoinodeen \texttt{DIR\_ITEM}-tyyppinen avain-arvo-pari jokaista hakemistoalkiota kohden.
-Koska B-puun avaimilla on kiinteä pituus, ei tiedostonimeä voida lisätä osaksi avainta,
-vaan tiedostonimestä lasketaan 64-bittinen hajautusarvo,
-joka sisällytetään \texttt{offset}-kenttään ja arvo sisältää itse tiedostonimen ja inodenumeron.
-Tällä tavoin yksittäisen tiedostonimen paikannus hakemistosta voidaan edelleen tehdä yhdellä B-puu-kyselyllä vaikka tiedostonimien listaus aakkosjärjestyksessä tai osavälikyselyt eivät ole mahdollisia.
-
+Jokaista tiedostojärjestelmän inodea ilmaisee B-puussa sijaitseva avain-arvo-pari tyyppiä \texttt{INODE\_ITEM}.
+Avaimen \texttt{objectid} sisältää inoden numeron ja \texttt{offset}-kenttää ei käytetä.
+Alkion arvo puolestaan sisältää tyypilliset inoden attribuutit,
+kuten tiedoston koon, käyttöoikeudet ja aikaleimat.
 Inoden datalohkoihin viitataan lohkopuun sijaan \emph{extent}-tietueilla.
-Yksi extent-tietue on oleellisesti pari \texttt{(alkulohko, pituus)} jolla voidaan kerralla kuvata useampi tiedoston datalohko perättäisiin fyysisiin lohkoihin levyllä.
-Siis esimerkiksi tilanteessa jossa tiedoston data sijaitsee tuhannella perättäisellä levylohkolla,
-voidaan tämä kuvaus esittää yhdellä extent-tietueella kun taas lohkopuuta käyttäessä jokainen lohko vaatii yhden alkion per lohko, eli yhteensä 1000 alkiota.
-Pienien tiedostojen sisältö on myös mahdollista säilyttää suoraan B-puun lehtisivun sisällä,
-mikä välttää hukkatilan syntymisen tilanteissa missä tiedoston koko on tiedostojärjestelmän lohkokokoa pienempi.
+Yksi extent-tietue on oleellisesti pari \texttt{(alkulohko, pituus)},
+jolla voidaan kerralla kuvata useampi tiedoston datalohko perättäisiin fyysisiin lohkoihin levyllä.
+Esimerkiksi tilanteessa,
+jossa tiedoston data sijaitsee tuhannella perättäisellä levylohkolla,
+voidaan tämä esittää yhdellä extent-tietueella.
+Jokaista inoden extent-tietuetta kohden inodeen liitetään \texttt{EXTENT\_DATA}-tyyppinen avain-arvo-pari,
+jossa \texttt{offset} ilmaisee kohdan,
+johon kyseiset lohkot kuuluvat tiedostossa.
+Pienien tiedostojen sisältö on myös mahdollista säilyttää suoraan B-puun lehtisivun sisällä.
+
+Toisin kuin kaikissa aiemmin nähdyissä tiedostojärjestelmissä,
+hakemiston sisältämät hakemistoalkiot eivät sijaitse hakemistoinoden datalohkoilla,
+vaan suoraan B-puussa.
+Jokaista hakemistoalkoita kohti liitetään hakemistoinodeen \texttt{DIR\_ITEM}-tyyppinen avain-arvo-pari.
+Koska Btrfs:n B-puun avaimilla on kiinteä pituus,
+ei tiedostonimeä voida lisätä osaksi avainta.
+Sen sijaan tiedostonimestä lasketaan 64-bittinen hajautusarvo,
+joka sisällytetään avaimen \texttt{offset}-kenttään,
+ja alkion arvo sisältää itse tiedostonimen ja inodenumeron.
+Tämä mahdollistaa yksittäisen tiedostonimen paikantamisen hakemistosta tehokkaasti yhdellä B-puu-kyselyllä,
+mutta esimerkiksi tiedostonimien listaus aakkosjärjestyksessä ei ole mahdollista.
 
 \subsection{Levyrakenteiden päivitys copy-on-write-tekniikalla}
 Kuten aiemmin nähtiin, kaikki tiedostojärjestelmäoperaatiot ovat oleellisesti vain muokkauksia tiedostojärjestelmän pohjalla olevana B-puu-tietorakenteeseen.
