@@ -167,7 +167,7 @@ voi symbolisen linkin kohde olla mitä tahansa, mukaanlukien hakemisto tai toine
 tai kohteen ei edes tarvitse olla olemassa.
 Muita tuettuja erikoistiedostoja ovat prosessien väliseen kommunikaatioon käytetyt \emph{nimetty putki} (\emph{named pipe}) ja \emph{paikallinen pistoke} (\emph{domain socket}),
 sekä laitetiedostot \emph{merkkilaite} (\emph{character device}) ja \emph{lohkolaite} (\emph{block device}).
-Erikoistiedoston voi avata ja useissä yhteyksissä käsitellä kuten tavallisiakin tiedostoja,
+Erikoistiedoston voi avata ja useissa yhteyksissä käsitellä kuten tavallisiakin tiedostoja,
 mutta luku- ja kirjoitusoperaatioilla on jokin muu merkitys.
 Esimerkiksi tulostinta vastaavaan merkkilaitetiedostoon tehty kirjoitus saatetaankin tulostaa paperille.
 Erikoistiedostojen käyttäminen tähän tarkoitukseen mahdollistaa esimerkiksi käyttöoikeuksien asettamisen laitteille täsmälleen samaan tapaan kuin muillekin tiedostoille.
@@ -214,7 +214,8 @@ ssize_t  read(int fildes,       void *buf, size_t nbyte);
 ssize_t write(int fildes, const void *buf, size_t nbyte);
 \end{minted}
 %
-Ensimmäinen parametri \texttt{fildes} on tiedostokahva jota operoidaan.
+Ensimmäinen parametri \texttt{fildes} on tiedostokahva,
+jota operoidaan.
 \texttt{buf} on osoitin \texttt{nbyte} tavun kokoiseen puskuriin johon
 luetaan tai josta kirjoitetaan.
 Onnistuessaan funktiot palauttavat kuinka monta tavua luettiin tai kirjoitettiin.
@@ -233,8 +234,9 @@ Tiedostokahvan sijaintia tiedostossa voi myös siirtää erikseen \texttt{lseek(
 \begin{minted}{c}
 off_t lseek(int fildes, off_t offset, int whence);
 \end{minted}
-Ensimmäinen parametri \texttt{fildes} on tiedostokahva jota operoidaan.
-Kolmas parametri \texttt{whence} kertoo miten \texttt{offset}-parametri tulkitaan.
+Ensimmäinen parametri \texttt{fildes} on tiedostokahva,
+jota operoidaan.
+Kolmas parametri \texttt{whence} kertoo, miten \texttt{offset}-parametri tulkitaan.
 Sallittuja arvoja ovat vakiot \texttt{SEEK\_SET}, \texttt{SEEK\_CUR} ja \texttt{SEEK\_END},
 jotka tarkoittavat vastaavasti että tiedostokahvan sijainniksi asetetaan \texttt{offset},
 että tiedostokahvan sijaintia siirretään eteenpäin \texttt{offset} tavua ja
@@ -421,7 +423,8 @@ Tämä tapahtuu kutsumalla \texttt{fsync()}-funktiota hakemistolle jossa tiedost
 Tarkastellaan nyt esimerkin avulla,
 miten POSIXin levyvälimuistin käsittelyfunktioilla voidaan toteuttaa kaatumisturvallisia sovelluksia.
 Melkeinpä yksinkertaisin mahdollinen sovellus,
-jossa kaatumisturvallisuus on tärkeää on perus tekstieditori.
+jossa kaatumisturvallisuus on tärkeää,
+on perus tekstieditori.
 Tyypillinen käyttötapaus on, että käyttäjä avaa editorissa tiedoston, muokkaa sitä, ja tallentaa muokatun sisällön samalla nimellä alkuperäisen tiedoston päälle.
 Luotettavan editorin kuuluu tehdä tiedoston tallennus atomisesti,
 eli kaatumistilanteen sattuessa joko tiedoston täytyy sisältää joko uusi tai alkuperäinen sisältö.
@@ -706,7 +709,7 @@ jotka ovat riippuvaisia simuloidun tiedostojärjestelmän persistenssiominaisuuk
 Jokaiselle mahdolliselle tiedostojärjestelmän tilalle puolestaan ajetaan tarkistusohjelma,
 joka kertoo onko kaatumisen jälkeinen tilanne konsistentti sovelluksen näkökulmasta.
 Esimerkiksi SQL-tietokannan kohdalla mielekäs testitapaus voisi olla saman arvon lisääminen kahteen eri tauluun yhden transaktion sisällä.
-Tätä testitapausta vastaava tarkistusohjelma voisi tarkastaa ovatko edellämainittujen taulujen sisällöt samat.
+Tätä testitapausta vastaava tarkistusohjelma voisi tarkastaa ovatko edellä mainittujen taulujen sisällöt samat.
 Jos yhdelläkin simuloidulla kaatumistilanteella tarkistusohjelma ilmaisee sovelluksen tilan olevan sisäisesti epäkonsistentti,
 sanotaan että sovelluksella on \emph{kaatumishaavoittuvuus} (\emph{crash vulnerability}) testatulla tiedostojärjestelmällä.
 
@@ -1238,7 +1241,7 @@ joista järjestelmän ylläpitäjä voi valita mitä käytetään~\cite{Journali
 %
 Aiemmin luvussa~\ref{ChapPosixDataConsistency} vertailtiin eri tiedostojärjestelmien persistenssiominaisuuksia,
 ja nämä kolme journalointitilaa vastaavat suoraan tutkittuja tiedostojärjestelmäkonfiguraatioita \texttt{ext3-writeback}, \texttt{ext3} ja \texttt{ext3-datajournal}.
-Huomionarvoista on, että \texttt{writeback}-journalointitilaa käytettäessä alustamattomista datalohkoista johtuva tietoturva-ongelma on edelleen mahdollinen kaatumistilanteessa,
+Huomionarvoista on, että \texttt{writeback}-journalointitilaa käytettäessä alustamattomista datalohkoista johtuva tietoturvaongelma on edelleen mahdollinen kaatumistilanteessa,
 muilla journalointitiloilla tätä ei esiinny.
 
 \subsection{Käytännön esimerkki \texttt{ext3}:n tekemistä levykirjoituksista}
@@ -1770,5 +1773,5 @@ Tämän toteuttamiseen ei ole mitään yhtä oikeaa tapaa,
 vaan tutkielmassa tarkasteltiin neljää erilaista tekniikkaa.
 Vaikka menetelmien välillä olikin eroavaisuuksia,
 niistä kolme neljästä perustui pohjimmiltaan tiedostojärjestelmän metadatan transaktionaaliseen päivittämiseen eivätkä siten juurikaan eroa kaatumisturvallisuuden kannalta.
-Uusien tiedostojärjestelmien kehittelyn taustalla osoittautuikin usein olevan muutkin syyt kuin kaatumistuuden parantaminen,
+Uusien tiedostojärjestelmien kehittelyn taustalla osoittautuikin usein olevan muutkin syyt kuin kaatumisturvallisuuden parantaminen,
 kuten Sprite LFS:n tapauksessa paremman suorituskyvyn tavoittelu ja Btrfs:n tapauksessa uusien ominaisuuksien tuominen tiedostojärjestelmään.
