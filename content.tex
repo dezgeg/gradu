@@ -1055,8 +1055,9 @@ jota aiheutuu luotaessa tyhjään \texttt{ext2}-tiedostojärjestelmän juurihake
 Esimerkistä ilmenee selvästi miten \texttt{ext2} hyödyntää välimuistia levyn metadatarakenteille: \texttt{creat()}-kutsu palaa välittömästi eikä siitä aiheudu välittömiä levykirjoituksia.
 Vasta 30 sekuntia myöhemmin tehdään ensimmäiset kolme kirjoitusta,
 jota seuraa toinen 30 sekunnin odotus ennen kuin koko operaatio on saatettu loppuun levyllä.
-Kokonaisuudessaan esimerkki näyttää miten tiedoston luominen on varsin yksinkertaista.
-Levyltä varataan yksi vapaa inode (tässä esimerkissä 12), alustetaan se ja lisätään hakemistoalkio osoittamaan siihen.
+Kokonaisuudessaan esimerkki näyttää miten tiedoston luominen koostuu kolmesta osasta:
+levyltä varataan yksi vapaa inode (tässä esimerkissä 12),
+alustetaan se ja lisätään hakemistoalkio osoittamaan siihen.
 %
 Tämän esimerkin kaatumistilanne voi aiheuttaa seuraavia epäkonsistenssiuksia:
 \begin{enumerate}
