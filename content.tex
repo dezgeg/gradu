@@ -1459,21 +1459,24 @@ ja tilanteesta riippuen koko hakemisto-operaatio saatetaan loppuun tai perutaan 
 
 \section{Kirjoittaessa kopioivat tiedostojärjestelmät}
 \label{ChapCopyOnWrite}
-\subsection{Motivaatio}
 Eräs uudempi,
 niin ikään perinteisistä päälle kirjoittavista tiedostojärjestelmistä poikkeava tekniikka on \emph{kirjoittaessa kopioivat} (\emph{CoW, Copy-on-Write}) tiedostojärjestelmät.
+Tämä tekniikka tuo pääasiassa mahdollisuuden toteuttaa tiettyjä uusia ominaisuuksia,
+kuten \emph{tilannevedoksia} tehokkaasti.
 Merkittävimpiä kirjoittaessa kopioivia tiedostojärjestelmiä on Solaris-käyttöjärjestelmää varten suunniteltu ZFS vuodelta 2005,
-sekä Linuxiin vuodesta 2007 lähtien kehityksen alla ollut Btrfs~\cite{Btrfs} johon tutustutaan tässä luvussa.
+ja Linuxin vuodesta 2007 lähtien kehitetty Btrfs.
+Perehdytään seuraavaksi näistä jälkimmäiseen,
+eli Btrfs:ään.
 
-Btrfs-tiedostojärjestelmän tavoitteena on olla seuraava uuden sukupolven yleiskäyttöinen tiedostojärjestelmä jota voitaisiin käyttää kaikkialla matalatehoisista laitteista, kuten älypuhelimista palvelinsaleihin.
+\subsection{Johdanto Btrfs:ään}
+Btrfs-tiedostojärjestelmän tavoitteena on olla seuraava uuden sukupolven yleiskäyttöinen Linux-tiedostojärjestelmä.
 Verrattuna Linuxin aiempaan vakiintuneeseen \texttt{ext4}-tiedostojärjestelmään Btrfs kilpailee pääasiassa uusilla ominaisuuksilla,
 joista merkittävimmät ovat tarkistussummat sekä datalle että metadatalle, \emph{tilannevedokset} (\emph{snapshot}), tiedostojen pakkaus ja usean levyn tuki.
 Copy-on-write-tekniikka on keskeinen useiden edellä mainittujen ominaisuuksien kannalta.
 
-\subsection{Btrfs:n levyrakenne}
 Btrfs:n levytietorakenteet poikkeavat merkittävästi aiemmissa luvuissa nähdyistä perinteisten Unix-tiedosto\-järjestelmien levytietorakenteista.
 Superlohkoa lukuun ottamatta kaikki Btrfs-tiedostojärjestelmän metadata sijaitsee levyllä B-puuhun pohjautuvassa tietorakenteessa.
-Btrfs:n kaikkien B-puiden avaimena on seuraava 17 tavun kokoinen tietorakenne \texttt{btrfs\_key}:
+B-puun avaimena käytetään aina tietorakennetta \texttt{btrfs\_key}~\cite{Btrfs}:
 \begin{minted}{c}
 struct btrfs_key {
     uint64_t objectid;
@@ -1481,9 +1484,10 @@ struct btrfs_key {
     uint64_t offset;
 }
 \end{minted}
-Jokaisella tiedostojärjestelmäobjektilla on yksilöivä tunniste \texttt{objectid},
-ja B-puun sisältämiä avain-arvo-pareja käytetään oleellisesti yhdistämään mahdollisesti useita erityyppisiä tietueita avaimen \texttt{objectid}-kentän osoittamaan tiedostojärjestelmäobjektiin.
-Avaimen \texttt{type}-kenttä kertoo tietueen tyypin ja \texttt{offset}-kenttä tietueiden järjestyksen samantyyppisten tietueiden välillä.
+B-puun sisältämiä avain-arvo-pareja käytetään oleellisesti yhdistämään \texttt{type}-tyyppinen tietue \texttt{objectid}-kentän osoittamaan metadatarakenteeseen.
+Esimerkiksi inoden kohdalla \texttt{objectid} on sama kuin inoden numero.
+B-puussa voi samalle \texttt{objectid}:lle olla useita samantyyppisiä tietueita,
+jolloin \texttt{offset}-kenttää käytetään määräämään tietueiden järjestys samantyyppisten tietueiden välillä.
 
 % Suurin osa perinteisistä tiedostojärjestelmän tietorakenteista sijaitsee \emph{alitaltiopuussa} (\emph{subvolume tree}),
 % josta löytyvät sekä inodet, hakemistoalkiot että viittaukset tiedoston dataan.
