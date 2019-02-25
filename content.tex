@@ -1520,11 +1520,18 @@ ja alkion arvo sisältää itse tiedostonimen ja inodenumeron.
 Tämä mahdollistaa yksittäisen tiedostonimen paikantamisen hakemistosta tehokkaasti yhdellä B-puu-kyselyllä,
 mutta esimerkiksi tiedostonimien listaus aakkosjärjestyksessä ei ole mahdollista.
 
+Btrfs-tiedostojärjestelmä sisältää useita erityyppisiä B-puita.
+Kaikki tähän asti mainitut B-puun alkiot sijaitsevat \emph{alitiedostojärjestelmäpuussa} (\emph{subvolume tree}).
+Muita B-puita käytetään muun muassa tilanvarauksen kirjanpitoon ja tarkistussummille.
+Mahdollisten laitteiston aiheuttamien bittivirheiden tunnistamiseksi Btrfs laskee tarkistussummat kaikille levylohkoille,
+mukaanlukien tiedostojen datalohkoille.
+
 \subsection{Levyrakenteiden päivitys copy-on-write-tekniikalla}
-Kuten aiemmin nähtiin, kaikki tiedostojärjestelmäoperaatiot ovat oleellisesti vain muokkauksia tiedostojärjestelmän pohjalla olevana B-puu-tietorakenteeseen.
+Kuten aiemmin nähtiin, kaikki tiedostojärjestelmäoperaatiot ovat oleellisesti vain muokkauksia tiedostojärjestelmän pohjalla oleviin B-puu-tieto\-ra\-ken\-tei\-siin.
 Muutoksien vieminen levylle palautuukin siis oleellisesti B-puun levyversion päivittämiseen kaatumisturvallisesti.
-Tähän Btrfs käyttää kirjoittaessa kopioivaa tekniikkaa,
-jonka perusajatuksena on että levylle aiemmin kirjoitettuja datalohkoja tai B-puun lohkoja ei ylikirjoiteta niitä muokattaessa,
+Tähän Btrfs käyttää \emph{kirjoittaessa kopioivaa} (\emph{copy-on-write}) tekniikkaa.
+Sen perusajatuksena on,
+että levylle aiemmin kirjoitettuja datalohkoja tai B-puun lohkoja ei ylikirjoiteta niitä muokattaessa,
 vaan niistä kirjoitetaan aina uudet kopiot tiedostojärjestelmän vapaille lohkoille.
 Lohkon kirjoituksesta aiheutuvan kopioinnin seurauksena kaikki viittaukset lohkon vanhaan sijaintiin täytyy päivittää viittaamaan lohkon uuteen sijaintiin,
 mikä aiheuttaa lisää kirjoittaessa kopiointia.
