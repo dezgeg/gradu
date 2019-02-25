@@ -729,7 +729,7 @@ sanotaan että sovelluksella on \emph{kaatumishaavoittuvuus} (\emph{crash vulner
 \begin{tabular}{r|c|c|c|}
              &  \hdr{ext3} & \hdr{ext4} & \hdr{btrfs} \\ \hline
     LevelDB 1.10     & 1 & 2 & 4 \\
-    LevelDD 1.15     & 1 & 2 & 3 \\
+    LevelDB 1.15     & 1 & 2 & 3 \\
     LMDB             &   &   &   \\
     GDBM             & 3 & 3 & 4 \\
     HSQLDB           &   &   & 4 \\
@@ -741,11 +741,14 @@ sanotaan että sovelluksella on \emph{kaatumishaavoittuvuus} (\emph{crash vulner
 %Total 16 12 10 17 31
 \end{tabular}
 \egroup
-\caption{Joidenkin sovellusten haavoittuuvuudet kaatumistilanteissa eri tiedostojärjestelmillä~\cite[taulukko 3(c), s. 11]{PosixDataConsistency}.}
+\caption{Tietokantasovelluksista löytyneitä kaatumishaavoittuuvuksia eri tiedostojärjestelmillä~\cite[taulukko 3(c), s. 11]{PosixDataConsistency}.}
 \label{TabAppVulnerabilities}
 \end{table}
 
-Taulukossa~\ref{TabAppVulnerabilities} nähdään artikkelin testaamien tietokantasovellusten sisältämien kaatumishaavoittuvuuksien määrän kolmella eri Linux-tiedostojärjestelmällä.
+Taulukossa~\ref{TabAppVulnerabilities} nähdään testatuissa tietokantasovelluksissa havaittujen kaatumishaavoittuvuuksien määrä kolmella eri Linux-tiedostojärjestelmällä.
+Kaatumishaavoittuvuuksia ylipäätänsä löytyi valtaosasta sovelluksia.
+Kahden sovelluksen kohdalla esiintyi haavoittuvuuksia,
+jotka ilmenivät ainoastaan \texttt{btrfs}-tiedostojärjestelmällä.
 
 \section{\texttt{ext2}-tiedostojärjestelmä}
 \label{ChapExt2Fs}
